@@ -1,24 +1,34 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AuthState, User, OTPVerify } from '../types';
-import { authAPI } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authAPI } from '@/services/api';
 
-interface AuthContextType extends AuthState {
-  requestOTP: (mobile: string) => Promise<void>;
-  verifyOTP: (data: OTPVerify) => Promise<void>;
+interface User {
+  id: string;
+  mobileNumber: string;
+  role: 'admin' | 'trainer' | 'client';
+  firstName?: string;
+  lastName?: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  login: (user: User, token: string, refreshToken?: string) => void;
   logout: () => void;
-  isLoading: boolean;
+  loading: boolean;
+  isLoading: boolean; // Add this if you want to use isLoading
+  isAuthenticated: boolean;
+
+  requestOTP: (mobileNumber: string) => Promise<void>;
+  verifyOTP: (params: { mobile: string; code: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    token: null,
-    isAuthenticated: false,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAuthStatus();
@@ -26,69 +36,100 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      const userData = await AsyncStorage.getItem('userData');
+      const storedToken = await AsyncStorage.getItem('access_token');
+      const storedUser = await AsyncStorage.getItem('user');
       
-      if (token && userData) {
-        setState({
-          user: JSON.parse(userData),
-          token,
-          isAuthenticated: true,
-        });
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error('Error checking auth status:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const requestOTP = async (mobile: string) => {
+  const login = async (userData: User, authToken: string, refreshToken?: string) => {
     try {
-      await authAPI.requestOTP(mobile);
-      // OTP sent successfully
+      await AsyncStorage.setItem('access_token', authToken);
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      if (refreshToken) {
+        await AsyncStorage.setItem('refresh_token', refreshToken);
+      }
+      setToken(authToken);
+      setUser(userData);
     } catch (error) {
-      console.error('OTP request failed:', error);
-      throw error;
-    }
-  };
-
-  const verifyOTP = async ({ mobile, code }: OTPVerify) => {
-    try {
-      const response = await authAPI.verifyOTP(mobile, code);
-      const { user, token } = response.data;
-
-      await AsyncStorage.setItem('authToken', token);
-      await AsyncStorage.setItem('userData', JSON.stringify(user));
-
-      setState({
-        user,
-        token,
-        isAuthenticated: true,
-      });
-    } catch (error) {
-      console.error('OTP verification failed:', error);
+      console.error('Login error:', error);
       throw error;
     }
   };
 
   const logout = async () => {
-    await AsyncStorage.multiRemove(['authToken', 'userData']);
-    setState({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-    });
+    try {
+      // Call logout API if needed
+      // await authAPI.logout();
+      
+      // Clear storage
+      await AsyncStorage.multiRemove([
+        'access_token',
+        'refresh_token',
+        'user',
+        'user_mobile'
+      ]);
+      setToken(null);
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+
+   // Add OTP methods
+  const requestOTP = async (mobileNumber: string) => {
+    try {
+        
+      await authAPI.sendOTP(mobileNumber);
+      // Store mobile number for verification
+      await AsyncStorage.setItem('user_mobile', mobileNumber);
+    } catch (error) {
+      console.error('Error requesting OTP:', error);
+      throw error;
+    }
+  };
+
+    const verifyOTP = async (params: { mobile: string; code: string }) => {
+    try {
+      const result = await authAPI.verifyOTP(params.mobile, params.code);
+      console.log(result)
+      // Store tokens and user data
+      await AsyncStorage.setItem('access_token', result.access_token);
+      await AsyncStorage.setItem('refresh_token', result.refresh_token);
+      await AsyncStorage.setItem('user', JSON.stringify(result.user));
+      
+      // Update auth state
+      setToken(result.access_token);
+      setUser(result.user);
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = {
+    user,
+    token,
+    login,
+    logout,
+     loading, // This is the actual loading state
+    isLoading: loading, // Alias for loading if you prefer isLoading
+    isAuthenticated: !!token && !!user,
+    requestOTP,
+    verifyOTP,
   };
 
   return (
-    <AuthContext.Provider value={{
-      ...state,
-      requestOTP,
-      verifyOTP,
-      logout,
-      isLoading,
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

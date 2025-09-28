@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://192.168.1.9:3000/'; // Change to your backend URL
+// export const API_BASE_URL = 'http://192.168.1.9:3000/'; // Change to your backend URL
+export const API_BASE_URL = 'http://localhost:3000'; // Change to your backend URL
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -65,26 +66,28 @@ api.interceptors.request.use((config) => {
 // };
 
 export const authAPI = {
-  sendOTP: async (mobileNumber: string) => {
+  sendOTP: async (mobile: string) => {
     const response = await fetchWithAuth('/auth/send-otp', {
       method: 'POST',
-      body: JSON.stringify({ mobileNumber }),
+      body: JSON.stringify({ mobile }),
     });
     return await response.json();
   },
 
-  verifyOTP: async (mobileNumber: string, otp: string) => {
-    const response = await fetchWithAuth('/auth/verify-otp', {
+  verifyOTP: async (mobile: string, code: string) => {
+    const response = await fetchWithAuth('/auth/signin-up', {
       method: 'POST',
-      body: JSON.stringify({ mobileNumber, otp }),
+      body: JSON.stringify({ mobile, code }),
     });
+
+    // console.log(response);
     return await response.json();
   },
 
-  resendOTP: async (mobileNumber: string) => {
+  resendOTP: async (mobile: string) => {
     const response = await fetchWithAuth('/auth/resend-otp', {
       method: 'POST',
-      body: JSON.stringify({ mobileNumber }),
+      body: JSON.stringify({ mobile }),
     });
     return await response.json();
   },

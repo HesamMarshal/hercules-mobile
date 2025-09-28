@@ -6,9 +6,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { AuthScreen } from '../screens/auth/AuthScreen';
 import { ProfileScreen } from '../screens/app/ProfileScreen';
 import { PlansScreen } from '../screens/app/PlansScreen';
-import { ExercisesScreen } from '../screens/app/ExercisesScreen';
 import { SettingsScreen } from '../screens/app/SettingsScreen';
 import { Text } from 'react-native';
+import { ExercisesScreen } from '@/screens/app/ExercisesScreen';
 
 
 const Stack = createNativeStackNavigator();

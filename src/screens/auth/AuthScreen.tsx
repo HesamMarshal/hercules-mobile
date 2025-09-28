@@ -17,6 +17,7 @@ export function AuthScreen() {
 
     setIsLoading(true);
     try {
+    
       await requestOTP(mobile);
       setStep('otp');
       Alert.alert('Success', 'OTP sent to your mobile');
@@ -29,7 +30,7 @@ export function AuthScreen() {
 
   const handleVerifyOTP = async () => {
     if (!code.trim() || code.length !== 5) {
-      Alert.alert('Error', 'Please enter a valid 6-digit OTP');
+      Alert.alert('Error', 'Please enter a valid 5-digit OTP');
       return;
     }
 
@@ -43,6 +44,25 @@ export function AuthScreen() {
       setIsLoading(false);
     }
   };
+  // const formatMobileNumber = (input: string) => {
+  //   // Remove all non-digit characters
+  //   const digits = input.replace(/\D/g, '');
+    
+  //   // Format as (XXX) XXX-XXXX
+  //   if (digits.length <= 3) {
+  //     return digits;
+  //   } else if (digits.length <= 6) {
+  //     return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  //   } else {
+  //     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  //   }
+  // };
+
+
+  //  const handleMobileChange = (text: string) => {
+  //   const formatted = formatMobileNumber(text);
+  //   setMobile(formatted);
+  // };
 
   return (
     <View style={styles.container}>
@@ -73,7 +93,7 @@ export function AuthScreen() {
           <Text style={styles.subtitle}>Enter OTP sent to {mobile}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter 6-digit OTP"
+            placeholder="Enter 5-digit OTP"
             keyboardType="number-pad"
             value={code}
             onChangeText={setCode}
