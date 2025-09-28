@@ -9,6 +9,7 @@ import { PlansScreen } from '../screens/app/PlansScreen';
 import { SettingsScreen } from '../screens/app/SettingsScreen';
 import { Text } from 'react-native';
 import { ExercisesScreen } from '@/screens/app/ExercisesScreen';
+import ExerciseDetailScreen from '@/screens/ExerciseDetailScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,8 +48,16 @@ function TabNavigator() {
 }
 
 export function AppNavigator() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const {user, isAuthenticated, isLoading } = useAuth();
 
+
+   console.log('AppNavigator - Auth State:', { 
+    user: user?.id, 
+    isLoading, 
+    isAuthenticated 
+  });
+
+  // TODO: Create a componnet
   if (isLoading) {
     return (
       <Text style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -57,15 +66,40 @@ export function AppNavigator() {
     );
   }
 
-  return (
+return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isAuthenticated ? (
-          <Stack.Screen name="Auth" component={AuthScreen} />
+        {isAuthenticated ? (
+          // Authenticated Screens
+          <>
+            <Stack.Screen 
+              name="Exercises" 
+              component={ExercisesScreen}
+              options={{ headerShown: true, title: 'Exercises' }}
+            />
+            <Stack.Screen 
+              name="ExerciseDetail" 
+              component={ExerciseDetailScreen}
+              options={{ headerShown: true, title: 'Exercise Details' }}
+            />
+             <Stack.Screen 
+              name="Profile" 
+              component={ProfileScreen}
+              options={{ headerShown: true, title: 'Profile' }}
+            />
+               </>
         ) : (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          // Auth Screens
+          <>
+            <Stack.Screen 
+              name="Auth" 
+              component={AuthScreen}
+            />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export default AppNavigator;
