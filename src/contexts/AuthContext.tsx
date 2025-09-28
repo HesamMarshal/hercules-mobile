@@ -18,7 +18,6 @@ interface AuthContextType {
   loading: boolean;
   isLoading: boolean; // Add this if you want to use isLoading
   isAuthenticated: boolean;
-
   requestOTP: (mobileNumber: string) => Promise<void>;
   verifyOTP: (params: { mobile: string; code: string }) => Promise<void>;
 }
@@ -38,27 +37,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const storedToken = await AsyncStorage.getItem('access_token');
       const storedUser = await AsyncStorage.getItem('user');
+
+      console.log('Stored auth data:', { storedToken: !!storedToken, storedUser: !!storedUser });
       
-      if (storedToken && storedUser) {
+      // if (storedToken && storedUser) {
+      if (storedToken ) {
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        // setUser(JSON.parse(storedUser));
+        //  console.log('User restored from storage:', JSON.parse(storedUser));
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
     } finally {
       setLoading(false);
+      console.log('Auth loading completed');
     }
   };
 
   const login = async (userData: User, authToken: string, refreshToken?: string) => {
     try {
+       console.log('Logging in user:', userData);
+
       await AsyncStorage.setItem('access_token', authToken);
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       if (refreshToken) {
         await AsyncStorage.setItem('refresh_token', refreshToken);
       }
+
       setToken(authToken);
       setUser(userData);
+
+      console.log('Login successful - user set in context');
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -71,6 +80,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // await authAPI.logout();
       
       // Clear storage
+
+       console.log('Logging out user');
       await AsyncStorage.multiRemove([
         'access_token',
         'refresh_token',
@@ -79,6 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ]);
       setToken(null);
       setUser(null);
+       console.log('Logout successful');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -88,28 +100,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    // Add OTP methods
   const requestOTP = async (mobileNumber: string) => {
     try {
-        
+      console.log('Requesting OTP for:', mobileNumber);
       await authAPI.sendOTP(mobileNumber);
       // Store mobile number for verification
       await AsyncStorage.setItem('user_mobile', mobileNumber);
+       console.log('OTP request successful');
     } catch (error) {
       console.error('Error requesting OTP:', error);
       throw error;
     }
   };
 
+  // TODO: Change to signin-up 
     const verifyOTP = async (params: { mobile: string; code: string }) => {
     try {
-      const result = await authAPI.verifyOTP(params.mobile, params.code);
-      console.log(result)
-      // Store tokens and user data
-      await AsyncStorage.setItem('access_token', result.access_token);
-      await AsyncStorage.setItem('refresh_token', result.refresh_token);
-      await AsyncStorage.setItem('user', JSON.stringify(result.user));
-      
-      // Update auth state
-      setToken(result.access_token);
-      setUser(result.user);
+        console.log('Verifying OTP for:', params.mobile);
+        const result = await authAPI.verifyOTP(params.mobile, params.code);
+        console.log('OTP verification result:', result);
+
+
+      // Use the login function to ensure consistent state update
+        await login(result.user, result.access_token, result.refresh_token);
+        
+        
+        // Update auth state
+        // if (result.access_token) 
+          
+        setToken(result.access_token);
+        // setUser(result.user);
+
+        console.log('OTP verification completed successfully');
     } catch (error) {
       console.error('Error verifying OTP:', error);
       throw error;
@@ -123,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logout,
      loading, // This is the actual loading state
     isLoading: loading, // Alias for loading if you prefer isLoading
-    isAuthenticated: !!token && !!user,
+    isAuthenticated: !!token ,
     requestOTP,
     verifyOTP,
   };
