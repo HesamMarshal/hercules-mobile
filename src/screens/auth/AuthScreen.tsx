@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 
-export function AuthScreen() {
+export function AuthScreen({ navigation }: any) {
   const [mobile, setMobile] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState<'mobile' | 'otp'>('mobile');
   const [isLoading, setIsLoading] = useState(false);
-  const { requestOTP, verifyOTP } = useAuth();
+    const { requestOTP, verifyOTP, isAuthenticated } = useAuth();
+
+
+  // Add effect to handle navigation when authentication state changes
+  useEffect(() => {
+    console.log('AuthScreen - isAuthenticated changed:', isAuthenticated);
+    if (isAuthenticated) {
+      console.log('Navigating to Exercises screen...');
+      // Use replace to prevent going back to auth screen
+      navigation.replace('Exercises');
+    }
+  }, [isAuthenticated, navigation]);
 
   const handleRequestOTP = async () => {
+    // const mobileDigits = mobile.replace(/\D/g, '');
+    
     if (!mobile.trim() || mobile.length !== 11) {
       Alert.alert('Error', 'Please enter a valid mobile number');
       return;
@@ -21,6 +34,7 @@ export function AuthScreen() {
       await requestOTP(mobile);
       setStep('otp');
       Alert.alert('Success', 'OTP sent to your mobile');
+
     } catch (error) {
       Alert.alert('Error', 'Failed to send OTP');
     } finally {
@@ -36,8 +50,10 @@ export function AuthScreen() {
 
     setIsLoading(true);
     try {
+      console.log('Starting OTP verification...');
       await verifyOTP({ mobile, code });
-      // Navigation happens automatically via auth state change
+      console.log('OTP verification function completed');
+      // Navigation will be handled by the useEffect above
     } catch (error) {
       Alert.alert('Error', 'Invalid OTP code');
     } finally {
