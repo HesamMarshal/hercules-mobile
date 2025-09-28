@@ -1,105 +1,67 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthScreen } from '../screens/auth/AuthScreen';
-import { ProfileScreen } from '../screens/app/ProfileScreen';
-import { PlansScreen } from '../screens/app/PlansScreen';
-import { SettingsScreen } from '../screens/app/SettingsScreen';
-import { Text } from 'react-native';
+import ExerciseDetailScreen from '../screens/ExerciseDetailScreen';
 import { ExercisesScreen } from '@/screens/app/ExercisesScreen';
-import ExerciseDetailScreen from '@/screens/ExerciseDetailScreen';
+import ProfileScreen from '@/screens/app/ProfileScreen';
 
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-function TabNavigator() {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: { paddingVertical: 10, height: 60 },
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ tabBarIcon: () => <Text>👤</Text> }}
-      />
-      <Tab.Screen 
-        name="Plans" 
-        component={PlansScreen}
-        options={{ tabBarIcon: () => <Text>📋</Text> }}
-      />
-      <Tab.Screen 
-        name="Exercises" 
-        component={ExercisesScreen}
-        options={{ tabBarIcon: () => <Text>💪</Text> }}
-      />
-      <Tab.Screen 
-        name="Settings" 
-        component={SettingsScreen}
-        options={{ tabBarIcon: () => <Text>⚙️</Text> }}
-      />
-    </Tab.Navigator>
-  );
-}
+export const AppNavigator = () => {
+  const { isAuthenticated, loading } = useAuth();
 
-export function AppNavigator() {
-  const {user, isAuthenticated, isLoading } = useAuth();
-
-
-   console.log('AppNavigator - Auth State:', { 
-    user: user?.id, 
-    isLoading, 
-    isAuthenticated 
+  console.log('AppNavigator - Auth State:', { 
+    isAuthenticated, 
+    loading 
   });
 
-  // TODO: Create a componnet
-  if (isLoading) {
+  if (loading) {
     return (
-      <Text style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        Loading...
-      </Text>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="Loading" 
+            component={() => null}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 
-return (
+  return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator>
         {isAuthenticated ? (
-          // Authenticated Screens
+          // User has tokens - show main app
           <>
+            <Stack.Screen 
+              name="Profile" 
+              component={ProfileScreen}
+              options={{ title: 'Profile' }}
+            />
             <Stack.Screen 
               name="Exercises" 
               component={ExercisesScreen}
-              options={{ headerShown: true, title: 'Exercises' }}
+              options={{ title: 'Exercises' }}
             />
             <Stack.Screen 
               name="ExerciseDetail" 
               component={ExerciseDetailScreen}
-              options={{ headerShown: true, title: 'Exercise Details' }}
-            />
-             <Stack.Screen 
-              name="Profile" 
-              component={ProfileScreen}
-              options={{ headerShown: true, title: 'Profile' }}
-            />
-               </>
-        ) : (
-          // Auth Screens
-          <>
-            <Stack.Screen 
-              name="Auth" 
-              component={AuthScreen}
+              options={{ title: 'Exercise Details' }}
             />
           </>
+        ) : (
+          // No tokens - show auth screen
+          <Stack.Screen 
+            name="Auth" 
+            component={AuthScreen}
+            options={{ headerShown: false }}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-export default AppNavigator;
