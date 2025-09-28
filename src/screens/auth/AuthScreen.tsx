@@ -1,5 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
+} from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function AuthScreen({ navigation }: any) {
@@ -7,139 +17,156 @@ export function AuthScreen({ navigation }: any) {
   const [code, setCode] = useState('');
   const [step, setStep] = useState<'mobile' | 'otp'>('mobile');
   const [isLoading, setIsLoading] = useState(false);
-    const { requestOTP, verifyOTP, isAuthenticated } = useAuth();
+  const { requestOTP, verifyOTP, isAuthenticated } = useAuth();
 
-
-  // Add effect to handle navigation when authentication state changes
+  // Redirect when authenticated (has tokens)
   useEffect(() => {
     console.log('AuthScreen - isAuthenticated changed:', isAuthenticated);
     if (isAuthenticated) {
-      console.log('Navigating to Exercises screen...');
-      // Use replace to prevent going back to auth screen
-      navigation.replace('Exercises');
+      console.log('User has tokens, navigating to Profile...');
+      navigation.replace('Profile');
     }
   }, [isAuthenticated, navigation]);
 
   const handleRequestOTP = async () => {
-    // const mobileDigits = mobile.replace(/\D/g, '');
+    const mobileDigits = mobile.replace(/\D/g, '');
     
-    if (!mobile.trim() || mobile.length !== 11) {
+    if (!mobileDigits.trim() || mobileDigits.length < 10) {
       Alert.alert('Error', 'Please enter a valid mobile number');
       return;
     }
 
     setIsLoading(true);
     try {
-    
-      await requestOTP(mobile);
+      await requestOTP(mobileDigits);
       setStep('otp');
       Alert.alert('Success', 'OTP sent to your mobile');
-
-    } catch (error) {
-      Alert.alert('Error', 'Failed to send OTP');
+    } catch (error: any) {
+      console.error('OTP Request Error:', error);
+      Alert.alert('Error', error.message || 'Failed to send OTP');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyOTP = async () => {
-    if (!code.trim() || code.length !== 5) {
-      Alert.alert('Error', 'Please enter a valid 5-digit OTP');
+    if (!code.trim() || code.length < 4) {
+      Alert.alert('Error', 'Please enter a valid OTP');
       return;
     }
 
     setIsLoading(true);
     try {
+      const mobileDigits = mobile.replace(/\D/g, '');
       console.log('Starting OTP verification...');
-      await verifyOTP({ mobile, code });
+      await verifyOTP({ mobile: mobileDigits, code });
       console.log('OTP verification function completed');
       // Navigation will be handled by the useEffect above
-    } catch (error) {
-      Alert.alert('Error', 'Invalid OTP code');
+    } catch (error: any) {
+      console.error('OTP Verification Error:', error);
+      Alert.alert('Error', error.message || 'Invalid OTP code');
     } finally {
       setIsLoading(false);
     }
   };
-  // const formatMobileNumber = (input: string) => {
-  //   // Remove all non-digit characters
-  //   const digits = input.replace(/\D/g, '');
+
+  const formatMobileNumber = (input: string) => {
+    const digits = input.replace(/\D/g, '');
     
-  //   // Format as (XXX) XXX-XXXX
-  //   if (digits.length <= 3) {
-  //     return digits;
-  //   } else if (digits.length <= 6) {
-  //     return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  //   } else {
-  //     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  //   }
-  // };
+    if (digits.length <= 4) {
+      return digits;
+    } else if (digits.length <= 7) {
+      return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    } else {
+      return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 11)}`;
+    }
+  };
 
-
-  //  const handleMobileChange = (text: string) => {
-  //   const formatted = formatMobileNumber(text);
-  //   setMobile(formatted);
-  // };
+  const handleMobileChange = (text: string) => {
+    const formatted = formatMobileNumber(text);
+    setMobile(formatted);
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hercules Fitness</Text>
-      
-      {step === 'mobile' ? (
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your mobile number"
-            keyboardType="phone-pad"
-            value={mobile}
-            onChangeText={setMobile}
-            maxLength={11}
-          />
-          <TouchableOpacity 
-            style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleRequestOTP}
-            disabled={isLoading}
-          >
-            <Text style={styles.buttonText}>
-              {isLoading ? 'Sending...' : 'Send OTP'}
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Hercules Fitness</Text>
+        
+        {step === 'mobile' ? (
+          <View style={styles.form}>
+            <Text style={styles.instruction}>
+              Enter your mobile number
             </Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.form}>
-          <Text style={styles.subtitle}>Enter OTP sent to {mobile}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter 5-digit OTP"
-            keyboardType="number-pad"
-            value={code}
-            onChangeText={setCode}
-            maxLength={6}
-          />
-          <TouchableOpacity 
-            style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleVerifyOTP}
-            disabled={isLoading}
-          >
-            <Text style={styles.buttonText}>
-              {isLoading ? 'Verifying...' : 'Verify OTP'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setStep('mobile')}>
-            <Text style={styles.backText}>Change mobile number</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+            <TextInput
+              style={styles.input}
+              placeholder="09XX XXX XXXX"
+              keyboardType="phone-pad"
+              value={mobile}
+              onChangeText={handleMobileChange}
+              maxLength={13}
+              autoFocus={true}
+            />
+            <TouchableOpacity 
+              style={[styles.button, (isLoading || mobile.replace(/\D/g, '').length < 10) && styles.buttonDisabled]}
+              onPress={handleRequestOTP}
+              disabled={isLoading || mobile.replace(/\D/g, '').length < 10}
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? 'Sending...' : 'Send OTP'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.form}>
+            <Text style={styles.subtitle}>Enter OTP sent to</Text>
+            <Text style={styles.mobileNumber}>{mobile}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter 5-digit OTP"
+              keyboardType="number-pad"
+              value={code}
+              onChangeText={setCode}
+              maxLength={6}
+              autoFocus={true}
+            />
+            <TouchableOpacity 
+              style={[styles.button, (isLoading || code.length < 4) && styles.buttonDisabled]}
+              onPress={handleVerifyOTP}
+              disabled={isLoading || code.length < 4}
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? 'Verifying...' : 'Verify OTP'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => {
+                setStep('mobile');
+                setCode('');
+              }}
+              style={styles.backButton}
+            >
+              <Text style={styles.backText}>Change mobile number</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 28,
@@ -147,10 +174,23 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     color: '#333',
   },
+  instruction: {
+    fontSize: 14,
+    marginBottom: 10,
+    color: '#666',
+    textAlign: 'center',
+  },
   subtitle: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 5,
     color: '#666',
+    textAlign: 'center',
+  },
+  mobileNumber: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 20,
+    color: '#007AFF',
     textAlign: 'center',
   },
   form: {
@@ -164,12 +204,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ddd',
+    fontSize: 16,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
@@ -179,9 +226,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  backButton: {
+    marginTop: 15,
+    padding: 10,
+  },
   backText: {
     color: '#007AFF',
     textAlign: 'center',
-    marginTop: 15,
+    fontSize: 16,
   },
 });

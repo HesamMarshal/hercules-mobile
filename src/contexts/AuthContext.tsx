@@ -11,9 +11,9 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
   token: string | null;
-  login: (user: User, token: string, refreshToken?: string) => void;
+  refreshToken:string | null;
+  login: (token: string, refreshToken?: string) => void;
   logout: () => void;
   loading: boolean;
   isLoading: boolean; // Add this if you want to use isLoading
@@ -25,9 +25,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+    const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuthStatus();
@@ -35,16 +36,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('access_token');
-      const storedUser = await AsyncStorage.getItem('user');
+       const storedToken = await AsyncStorage.getItem('access_token');
+      const storedRefreshToken = await AsyncStorage.getItem('refresh_token');
+       console.log('Stored tokens:', { 
+        accessToken: !!storedToken, 
+        refreshToken: !!storedRefreshToken 
+      });
 
-      console.log('Stored auth data:', { storedToken: !!storedToken, storedUser: !!storedUser });
-      
-      // if (storedToken && storedUser) {
-      if (storedToken ) {
+
+     if (storedToken) {
         setToken(storedToken);
-        // setUser(JSON.parse(storedUser));
-        //  console.log('User restored from storage:', JSON.parse(storedUser));
+        setRefreshToken(storedRefreshToken);
+        console.log('Tokens restored from storage');
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
@@ -54,54 +57,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (userData: User, authToken: string, refreshToken?: string) => {
+  const login = async (accessToken: string, refreshToken?: string) => {
     try {
-       console.log('Logging in user:', userData);
-
-      await AsyncStorage.setItem('access_token', authToken);
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      console.log('Storing tokens');
+      
+      await AsyncStorage.setItem('access_token', accessToken);
       if (refreshToken) {
         await AsyncStorage.setItem('refresh_token', refreshToken);
       }
-
-      setToken(authToken);
-      setUser(userData);
-
-      console.log('Login successful - user set in context');
+      
+      setToken(accessToken);
+      setRefreshToken(refreshToken || null);
+      
+      console.log('Login successful - tokens stored');
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
   };
 
-  const logout = async () => {
+const logout = async () => {
     try {
-      // Call logout API if needed
-      // await authAPI.logout();
-      
-      // Clear storage
-
-       console.log('Logging out user');
+      console.log('Logging out');
       await AsyncStorage.multiRemove([
         'access_token',
         'refresh_token',
-        'user',
         'user_mobile'
       ]);
       setToken(null);
-      setUser(null);
-       console.log('Logout successful');
+      setRefreshToken(null);
+      console.log('Logout successful');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
-
 
    // Add OTP methods
   const requestOTP = async (mobileNumber: string) => {
     try {
       console.log('Requesting OTP for:', mobileNumber);
       await authAPI.sendOTP(mobileNumber);
+
       // Store mobile number for verification
       await AsyncStorage.setItem('user_mobile', mobileNumber);
        console.log('OTP request successful');
@@ -112,24 +108,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // TODO: Change to signin-up 
-    const verifyOTP = async (params: { mobile: string; code: string }) => {
+   const verifyOTP = async (params: { mobile: string; code: string }) => {
     try {
-        console.log('Verifying OTP for:', params.mobile);
-        const result = await authAPI.verifyOTP(params.mobile, params.code);
-        console.log('OTP verification result:', result);
+      console.log('Verifying OTP for:', params.mobile);
+      
+      const response = await fetch('http://localhost:3000/auth/signin-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mobile: params.mobile,
+          code: params.code
+        }),
+      });
+if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'OTP verification failed');
+      }
 
+      const result = await response.json();
+      console.log('OTP verification result:', result);
 
-      // Use the login function to ensure consistent state update
-        await login(result.user, result.access_token, result.refresh_token);
-        
-        
-        // Update auth state
-        // if (result.access_token) 
-          
-        setToken(result.access_token);
-        // setUser(result.user);
+      // Extract tokens from response
+      const { accessToken, refreshToken } = result;
 
-        console.log('OTP verification completed successfully');
+      if (!accessToken) {
+        throw new Error('No access token received');
+      }
+
+      // Store tokens and update state
+      await login(accessToken, refreshToken);
+
+      console.log('OTP verification completed successfully');
     } catch (error) {
       console.error('Error verifying OTP:', error);
       throw error;
@@ -137,8 +148,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const value: AuthContextType = {
-    user,
+    
     token,
+    refreshToken,
     login,
     logout,
      loading, // This is the actual loading state
