@@ -23,7 +23,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "navigationBar": {
-       "backgroundColor": "#ffffff",
+        "backgroundColor": "#ffffff",
         "barStyle": "dark-content"
       }
     },
@@ -42,10 +42,16 @@
         }
       ]
     ],
-     "androidStatusBar": {
+    "androidStatusBar": {
       "backgroundColor": "#ffffff",
       "barStyle": "dark-content",
       "translucent": false
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "df4a7923-c996-4e27-801f-60af4e3e55ed"
+      }
+    },
+    "owner": "hesammarshal"
   }
 }
