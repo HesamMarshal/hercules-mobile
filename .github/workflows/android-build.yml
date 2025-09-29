@@ -1,4 +1,4 @@
-name: Expo Build
+name: Expo Android Build
 
 on:
   push:
@@ -7,11 +7,12 @@ on:
     tags:
       - 'v*'
 
+env:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # make token available to all steps
 
     steps:
       - name: Checkout code
@@ -23,14 +24,27 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Setup EAS (install EAS CLI + auth)
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build Android APK
+        run: eas build --platform android --non-interactive --profile production
 
-      - name: Build Android (submit build)
-        run: eas build --platform android --non-interactive --no-wait
+      - name: Download build artifact
+        run: |
+          # Get the latest build ID and download the APK
+          BUILD_ID=$(eas build:list --platform android --status finished --limit 1 --json | jq -r '.[0].id')
+          eas build:download --platform android --output hercules-app.apk --id $BUILD_ID
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hercules-app
+          path: hercules-app.apk
+          retention-days: 30
