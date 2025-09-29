@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { API_BASE_URL } from '@/services/api';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Button, Card, Title, Paragraph } from 'react-native-paper';
@@ -29,7 +30,8 @@ const ProfileScreen = ({ navigation }: any) => {
       setError('');
 
       // TODO: Use BaseURL
-      const response = await fetch('http://localhost:3000/user/my', {
+//  'http://localhost:3000/user/my'
+      const response = await fetch(`${API_BASE_URL}/user/my`  , {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
