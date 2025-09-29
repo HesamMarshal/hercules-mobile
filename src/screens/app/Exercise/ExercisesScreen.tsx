@@ -11,7 +11,8 @@ import {
   
 } from 'react-native';
 import { Card, Title, Paragraph, Chip, Searchbar, Button } from 'react-native-paper';
-import { styles } from '../ExercisesScreen.styles';
+import { styles } from './ExercisesScreen.styles';
+
 
 
 export const ExercisesScreen = ({ navigation }: any) => {
@@ -98,9 +99,9 @@ export const ExercisesScreen = ({ navigation }: any) => {
     setFilteredExercises(filtered);
   };
 
-  const handleExercisePress = (exercise: Exercise) => {
-    navigation.navigate('ExerciseDetail', { exerciseId: exercise.id });
-  };
+ const handleExercisePress = (exercise: Exercise) => {
+  navigation.navigate('ExerciseDetail', { exerciseId: exercise.id });
+};
 
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
     <TouchableOpacity onPress={() => handleExercisePress(item)}>

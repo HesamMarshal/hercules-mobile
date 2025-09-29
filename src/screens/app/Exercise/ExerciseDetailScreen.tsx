@@ -1,3 +1,5 @@
+import { exerciseAPI } from '@/services/exerciseApi';
+import { Exercise } from '@/types/exercise';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -8,8 +10,8 @@ import {
   Dimensions,
 } from 'react-native';
 import { Card, Title, Paragraph, Text, Chip, Button, Divider } from 'react-native-paper';
-import { exerciseAPI } from '../services/exerciseApi';
-import { Exercise } from '../types/exercise';
+
+
 
 const { width } = Dimensions.get('window');
 
