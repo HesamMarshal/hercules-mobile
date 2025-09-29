@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/contexts/AuthContext';
 import { authAPI } from '@/services/api';
 import { styles } from './OTPVerificationScreen.styles';
+
 // import { styles } from './OTPVerificationScreen.styles';
 
 const OTPVerificationScreen = ({ route, navigation }: any) => {
