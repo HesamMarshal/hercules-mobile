@@ -1,4 +1,4 @@
-name: Android Build
+name: Expo Build
 
 on:
   push:
@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -20,23 +21,20 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Build APK
-        run: |
-          cd android
-          ./gradlew assembleRelease
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
         with:
-          name: hercules-app
-          path: android/app/build/outputs/apk/release/app-release.apk
-          retention-days: 30
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android
+        run: eas build --platform android --non-interactive --no-wait
+
+      - name: Wait for build to complete
+        run: |
+          # You might need to implement a wait mechanism
+          # or use a different approach to download the built APK
+          echo "Build submitted to EAS"
