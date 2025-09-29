@@ -8,7 +8,16 @@ import { ExercisesScreen } from '@/screens/app/ExercisesScreen';
 import ProfileScreen from '@/screens/app/ProfileScreen';
 
 
-const Stack = createStackNavigator();
+// Define stack param list for TypeScript
+export type RootStackParamList = {
+  Auth: undefined;
+  Profile: undefined;
+  Exercises: undefined;
+  ExerciseDetail: { exerciseId: string };
+  Loading: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();

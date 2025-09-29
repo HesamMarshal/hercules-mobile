@@ -28,7 +28,8 @@ const ProfileScreen = ({ navigation }: any) => {
       setLoading(true);
       setError('');
 
-      const response = await fetch('http://localhost:3000/user/profile', {
+      // TODO: Use BaseURL
+      const response = await fetch('http://localhost:3000/user/my', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
