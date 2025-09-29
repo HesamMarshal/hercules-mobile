@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # make token available to all steps
 
     steps:
       - name: Checkout code
@@ -21,20 +23,14 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup EAS
+      - name: Setup EAS (install EAS CLI + auth)
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build Android
-        run: eas build --platform android --non-interactive --no-wait
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Wait for build to complete
-        run: |
-          # You might need to implement a wait mechanism
-          # or use a different approach to download the built APK
-          echo "Build submitted to EAS"
+      - name: Build Android (submit build)
+        run: eas build --platform android --non-interactive --no-wait
