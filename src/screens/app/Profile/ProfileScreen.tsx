@@ -30,7 +30,7 @@ const ProfileScreen = ({ navigation }: any) => {
       setError('');
 
       // TODO: Use BaseURL
-//  'http://localhost:3000/user/my'
+
       const response = await fetch(`${API_BASE_URL}/user/my`  , {
         method: 'GET',
         headers: {
