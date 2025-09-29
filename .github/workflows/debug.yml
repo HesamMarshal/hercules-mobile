@@ -1,0 +1,41 @@
+name: Debug Project Structure
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to debug'
+        required: true
+        default: 'production'
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show project structure
+        run: |
+          echo "=== ROOT DIRECTORY CONTENTS ==="
+          ls -la
+
+          echo ""
+          echo "=== PACKAGE.JSON ==="
+          cat package.json || echo "No package.json found"
+
+          echo ""
+          echo "=== CHECK FOR REACT NATIVE CONFIG FILES ==="
+          find . -name "app.json" -o -name "app.config.js" -o -name "app.config.ts" -o -name "metro.config.js" | head -10
+
+          echo ""
+          echo "=== CHECK FOR ANDROID/IOS DIRECTORIES ==="
+          find . -name "android" -type d -o -name "ios" -type d | head -10
+
+          echo ""
+          echo "=== CHECK FOR GRADLE FILES ==="
+          find . -name "gradlew" -o -name "build.gradle" -o -name "settings.gradle" | head -10
+
+          echo ""
+          echo "=== CHECK FOR EXPO CONFIG ==="
+          find . -name "expo.json" -o -name "eas.json" | head -10

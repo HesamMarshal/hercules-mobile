@@ -1,0 +1,78 @@
+name: Detailed Project Debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to debug'
+        required: true
+        default: 'production'
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Show Node.js version
+        run: |
+          echo "Node.js version:"
+          node --version
+          echo "NPM version:"
+          npm --version
+
+      - name: Analyze project type
+        run: |
+          echo "=== PROJECT TYPE ANALYSIS ==="
+
+          # Check for Expo
+          if [ -f "app.json" ] || [ -f "app.config.js" ] || [ -f "app.config.ts" ]; then
+            echo "🔍 Expo project detected"
+            if [ -f "app.json" ]; then
+              echo "app.json content:"
+              cat app.json
+            fi
+          else
+            echo "❌ No Expo configuration found"
+          fi
+
+          # Check for React Native CLI
+          if [ -d "android" ] || [ -d "ios" ]; then
+            echo "🔍 React Native CLI project detected"
+            echo "Android directory: $(ls -la android 2>/dev/null || echo 'NOT FOUND')"
+            echo "iOS directory: $(ls -la ios 2>/dev/null || echo 'NOT FOUND')"
+          else
+            echo "❌ No Android/iOS directories found"
+          fi
+
+          # Check package.json scripts
+          echo ""
+          echo "=== PACKAGE.JSON SCRIPTS ==="
+          node -e "console.log(JSON.parse(require('fs').readFileSync('package.json')).scripts || 'No scripts found')"
+
+      - name: Check build capabilities
+        run: |
+          echo "=== BUILD CAPABILITIES ==="
+
+          # Check for Gradle (Android)
+          if [ -f "android/gradlew" ]; then
+            echo "✅ Gradle wrapper found - can build Android APK"
+            echo "Gradle version:"
+            ./android/gradlew --version
+          else
+            echo "❌ No Gradle wrapper found"
+          fi
+
+          # Check for EAS (Expo)
+          if [ -f "eas.json" ] || [ -f "app.json" ]; then
+            echo "✅ Expo project - can build with EAS"
+            npx expo --version 2>/dev/null || echo "Expo CLI not available"
+          fi
+
+      - name: List all important files
+        run: |
+          echo "=== IMPORTANT FILES ==="
+          find . -name "*.json" -o -name "*.js" -o -name "*.ts" | grep -E "(package|app|eas|metro|index|App)" | head -20
