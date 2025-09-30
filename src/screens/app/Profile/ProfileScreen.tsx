@@ -40,6 +40,7 @@ const ProfileScreen = ({ navigation }: any) => {
       });
 
       if (!response.ok) {
+        logout();
         throw new Error('Failed to fetch user profile');
       }
 
