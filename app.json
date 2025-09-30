@@ -2,7 +2,7 @@
   "expo": {
     "name": "hercules-mobile",
     "slug": "hercules-mobile",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,15 +15,21 @@
     "ios": {
       "supportsTablet": true
     },
+    "sdkVersion": "51.0.0",
     "android": {
+      "package": "com.hesammarshal.hercules",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-logo.jpg",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "navigationBar": {
-       "backgroundColor": "#ffffff",
+        "backgroundColor": "#ffffff",
         "barStyle": "dark-content"
       }
     },
@@ -42,10 +48,16 @@
         }
       ]
     ],
-     "androidStatusBar": {
+    "androidStatusBar": {
       "backgroundColor": "#ffffff",
       "barStyle": "dark-content",
       "translucent": false
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "df4a7923-c996-4e27-801f-60af4e3e55ed"
+      }
+    },
+    "owner": "hesammarshal"
   }
 }

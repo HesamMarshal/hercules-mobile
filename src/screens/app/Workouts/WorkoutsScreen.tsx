@@ -40,7 +40,7 @@ const WorkoutsScreen = ({ navigation }: any) => {
     try {
       setError('');
       // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:3000/workouts', {
+      // const response = await fetch(`${API_BASE_URL}/workouts` , {
       //   headers: {
       //     'Authorization': `Bearer ${token}`,
       //   },

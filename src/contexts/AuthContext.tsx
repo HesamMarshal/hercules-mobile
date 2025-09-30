@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authAPI } from '@/services/api';
+import { API_BASE_URL, authAPI } from '@/services/api';
 
 interface User {
   id: string;
@@ -112,7 +112,7 @@ const logout = async () => {
     try {
       console.log('Verifying OTP for:', params.mobile);
       
-      const response = await fetch('http://localhost:3000/auth/signin-up', {
+      const response = await fetch(`${API_BASE_URL}/auth/signin-up`    , {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

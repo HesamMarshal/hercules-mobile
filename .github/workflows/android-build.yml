@@ -1,4 +1,4 @@
-name: Android Build
+name: Expo Android Build
 
 on:
   push:
@@ -7,34 +7,44 @@ on:
     tags:
       - 'v*'
 
+env:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '11'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build APK
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        run: eas build --platform android --non-interactive --profile production
+
+      - name: Download build artifact
         run: |
-          cd android
-          ./gradlew assembleRelease
+          # Get the latest build ID and download the APK
+          BUILD_ID=$(eas build:list --platform android --status finished --limit 1 --json | jq -r '.[0].id')
+          eas build:download --platform android --output hercules-app.apk --id $BUILD_ID
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hercules-app
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: hercules-app.apk
+          retention-days: 30
