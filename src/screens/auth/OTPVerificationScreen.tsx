@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from 'react-native';
-import {
-  Card,
-  Title,
-  Paragraph,
-  TextInput,
-  Button,
-  ActivityIndicator,
-} from 'react-native-paper';
+import { View, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { Card, Title, Paragraph, TextInput, Button, ActivityIndicator } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/contexts/AuthContext';
 import { authAPI } from '@/services/api';
-import { styles } from './OTPVerificationScreen.styles';
+import { OTPVerificationStyles as styles } from '@/theme/styles';
 
 // import { styles } from './OTPVerificationScreen.styles';
 
@@ -64,7 +51,6 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
         index: 0,
         routes: [{ name: 'Dashboard' }],
       });
-
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
       if (error.message.includes('Unauthorized') || error.message.includes('Invalid OTP')) {
@@ -101,27 +87,22 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <Card style={styles.card} mode="elevated">
           <Card.Content style={styles.cardContent}>
-            
             {/* Header Section */}
             <View style={styles.header}>
               <Title style={styles.title}>Verify Your Number</Title>
-              <Paragraph style={styles.subtitle}>
-                Enter the verification code sent to
-              </Paragraph>
-              <Paragraph style={styles.mobileNumber}>
-                {formatMobileNumber(mobileNumber)}
-              </Paragraph>
+              <Paragraph style={styles.subtitle}>Enter the verification code sent to</Paragraph>
+              <Paragraph style={styles.mobileNumber}>{formatMobileNumber(mobileNumber)}</Paragraph>
             </View>
 
             {/* Error Message */}
@@ -148,8 +129,8 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
             </View>
 
             {/* Verify Button */}
-            <Button 
-              mode="contained" 
+            <Button
+              mode="contained"
               onPress={handleVerifyOTP}
               loading={isLoading}
               disabled={isLoading || otp.length < 4}
@@ -161,11 +142,9 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
 
             {/* Resend OTP Section */}
             <View style={styles.resendContainer}>
-              <Paragraph style={styles.resendText}>
-                Didn't receive the code? 
-              </Paragraph>
-              <Button 
-                mode="text" 
+              <Paragraph style={styles.resendText}>Didn't receive the code?</Paragraph>
+              <Button
+                mode="text"
                 onPress={handleResendOTP}
                 disabled={!canResend || isLoading}
                 style={styles.resendButton}
@@ -176,15 +155,14 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
             </View>
 
             {/* Back Button */}
-            <Button 
-              mode="outlined" 
+            <Button
+              mode="outlined"
               onPress={() => navigation.goBack()}
               style={styles.backButton}
               disabled={isLoading}
             >
               Change Mobile Number
             </Button>
-
           </Card.Content>
         </Card>
 
@@ -193,9 +171,7 @@ const OTPVerificationScreen = ({ route, navigation }: any) => {
           <View style={styles.loadingOverlay}>
             <View style={styles.loadingContent}>
               <ActivityIndicator size="large" />
-              <Paragraph style={styles.loadingText}>
-                Verifying...
-              </Paragraph>
+              <Paragraph style={styles.loadingText}>Verifying...</Paragraph>
             </View>
           </View>
         )}
