@@ -1,19 +1,19 @@
 import { Exercise } from '../types/exercise';
 import { fetchWithAuth } from './api';
-// import { fetchWithAuth } from './api';
 
 export const exerciseAPI = {
   // Get all exercises with authentication
   getAllExercises: async (): Promise<Exercise[]> => {
     const response = await fetchWithAuth('/exercise');
-    const data = await response.json();
-    return data.exercises || data;
+    const { data } = await response.json();
+    return data.exercise || data;
   },
 
   // Get single exercise by ID with authentication
   getExerciseById: async (id: string): Promise<Exercise> => {
     const response = await fetchWithAuth(`/exercise/${id}`);
-    return await response.json();
+    const result = await response.json();
+    return result.data;
   },
 
   // Search exercises with authentication
