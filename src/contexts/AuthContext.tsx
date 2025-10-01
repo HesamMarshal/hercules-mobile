@@ -37,15 +37,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const storedToken = await AsyncStorage.getItem('access_token');
       const storedRefreshToken = await AsyncStorage.getItem('refresh_token');
-      console.log('Stored tokens:', {
-        accessToken: !!storedToken,
-        refreshToken: !!storedRefreshToken,
-      });
+      // console.log('Stored tokens:', {
+      //   accessToken: !!storedToken,
+      //   refreshToken: !!storedRefreshToken,
+      // });
 
       if (storedToken) {
         setToken(storedToken);
         setRefreshToken(storedRefreshToken);
-        console.log('Tokens restored from storage');
+        // console.log('Tokens restored from storage');
       }
     } catch (error) {
       console.error('Error checking auth status:', error);

@@ -39,10 +39,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 export const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
 
-  console.log('AppNavigator - Auth State:', {
-    isAuthenticated,
-    loading,
-  });
+  // console.log('AppNavigator - Auth State:', {
+  //   isAuthenticated,
+  //   loading,
+  // });
 
   if (loading) {
     return (

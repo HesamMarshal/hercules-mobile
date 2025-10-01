@@ -37,7 +37,7 @@ const ProfileScreen = ({ navigation }: any) => {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response);
+      // console.log(response);
 
       if (!response.ok) {
         logout();
