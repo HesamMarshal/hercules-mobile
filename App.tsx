@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { I18nextProvider } from 'react-i18next';
 import { StatusBar } from 'react-native';
 import { AppNavigator } from './src/navigation/AppNavigator';
-
+import { ThemeProvider } from './src/theme/context/ThemeProvider';
 import { enableScreens } from 'react-native-screens';
 import { RTLProvider } from '@/contexts/RTLContext';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -15,11 +15,13 @@ export default function App() {
   return (
     // TODO: Check ERROR BOUNDARY
     // <ErrorBoundary>
-    <RTLProvider>
-      <AuthProvider>
-        <AppNavigator />
-      </AuthProvider>
-    </RTLProvider>
+    <ThemeProvider defaultMode="light" defaultRTL={true}>
+      <RTLProvider>
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
+      </RTLProvider>
+    </ThemeProvider>
     // </ErrorBoundary>
 
     // <I18nextProvider i18n={i18n}>
