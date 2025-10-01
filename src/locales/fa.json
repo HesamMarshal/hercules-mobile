@@ -14,7 +14,8 @@
     "save": "ذخیره",
     "cancel": "لغو",
     "delete": "حذف",
-    "edit": "ویرایش"
+    "edit": "ویرایش",
+    "retry": "تلاش مجدد"
   },
   "auth": {
     "login": "ورود",
@@ -22,7 +23,10 @@
     "register": "ثبت نام",
     "email": "ایمیل",
     "password": "رمز عبور",
-    "forgotPassword": "رمز عبور را فراموش کرده اید؟"
+    "forgotPassword": "رمز عبور را فراموش کرده اید؟",
+    "login_required": "لطفاً برای مشاهده حرکات ورزشی وارد شوید",
+    "session_expired": "نشست شما منقضی شده است. لطفاً مجدداً وارد شوید",
+    "checking_authentication": "در حال بررسی احراز هویت..."
   },
   "profile": {
     "title": "پروفایل",
@@ -45,5 +49,30 @@
     "exercises": "تمرین ها",
     "sets": "ست ها",
     "reps": "تکرار"
+  },
+  "bodyParts": {
+    "all": "همه",
+    "arms": "بازو",
+    "back": "کمر",
+    "chest": "سینه",
+    "core": "میانه بدن",
+    "legs": "پاها",
+    "shoulders": "شانه",
+    "cardio": "قلبی",
+    "other": "سایر"
+  },
+  "difficulty": {
+    "beginner": "مبتدی",
+    "intermediate": "متوسط",
+    "advanced": "پیشرفته"
+  },
+  "exercise": {
+    "exercise_type": "نوع تمرین",
+    "load_exercises_failed": "بارگذاری حرکات ورزشی ناموفق بود. لطفاً مجدداً تلاش کنید",
+    "search_exercises": "جستجوی حرکات ورزشی...",
+    "loading_exercises": "در حال بارگذاری حرکات ورزشی...",
+    "no_exercises_found": "هیچ حرکت ورزشی مطابق با معیارهای شما یافت نشد",
+    "no_exercises_available": "هیچ حرکت ورزشی موجود نیست",
+    "login_required_exercises": "لطفاً برای مشاهده حرکات ورزشی وارد شوید"
   }
 }

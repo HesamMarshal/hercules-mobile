@@ -14,7 +14,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "retry": "Retry"
   },
   "auth": {
     "login": "Login",
@@ -22,7 +23,10 @@
     "register": "Register",
     "email": "Email",
     "password": "Password",
-    "forgotPassword": "Forgot Password?"
+    "forgotPassword": "Forgot Password?",
+    "login_required": "Please log in to view exercises",
+    "session_expired": "Your session has expired. Please log in again",
+    "checking_authentication": "Checking authentication..."
   },
   "profile": {
     "title": "Profile",
@@ -45,5 +49,30 @@
     "exercises": "Exercises",
     "sets": "Sets",
     "reps": "Reps"
+  },
+  "bodyParts": {
+    "all": "All",
+    "arms": "Arms",
+    "back": "Back",
+    "chest": "Chest",
+    "core": "Core",
+    "legs": "Legs",
+    "shoulders": "Shoulders",
+    "cardio": "Cardio",
+    "other": "Other"
+  },
+  "difficulty": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "exercise": {
+    "exercise_type": "Exercise Type",
+    "load_exercises_failed": "Failed to load exercises. Please try again",
+    "search_exercises": "Search exercises...",
+    "login_required_exercises": "Please log in to view exercises",
+    "loading_exercises": "Loading exercises...",
+    "no_exercises_found": "No exercises matching your criteria were found",
+    "no_exercises_available": "No exercises available"
   }
 }
