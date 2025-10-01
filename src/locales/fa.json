@@ -1,0 +1,49 @@
+{
+  "navigation": {
+    "dashboard": "داشبورد",
+    "profile": "پروفایل",
+    "sessions": "جلسات",
+    "workouts": "تمرینات",
+    "payments": "پرداخت ها",
+    "settings": "تنظیمات"
+  },
+  "common": {
+    "loading": "در حال بارگذاری...",
+    "error": "خطا",
+    "success": "موفق",
+    "save": "ذخیره",
+    "cancel": "لغو",
+    "delete": "حذف",
+    "edit": "ویرایش"
+  },
+  "auth": {
+    "login": "ورود",
+    "logout": "خروج",
+    "register": "ثبت نام",
+    "email": "ایمیل",
+    "password": "رمز عبور",
+    "forgotPassword": "رمز عبور را فراموش کرده اید؟"
+  },
+  "profile": {
+    "title": "پروفایل",
+    "editProfile": "ویرایش پروفایل",
+    "personalInfo": "اطلاعات شخصی",
+    "measurements": "اندازه گیری ها",
+    "goals": "اهداف"
+  },
+  "sessions": {
+    "title": "جلسات",
+    "bookSession": "رزرو جلسه",
+    "upcomingSessions": "جلسات آینده",
+    "pastSessions": "جلسات گذشته",
+    "sessionDetails": "جزئیات جلسه"
+  },
+  "workouts": {
+    "title": "تمرینات",
+    "currentWorkout": "تمرین فعلی",
+    "workoutHistory": "تاریخچه تمرینات",
+    "exercises": "تمرین ها",
+    "sets": "ست ها",
+    "reps": "تکرار"
+  }
+}

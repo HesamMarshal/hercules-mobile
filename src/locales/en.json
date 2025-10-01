@@ -1,0 +1,49 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "sessions": "Sessions",
+    "workouts": "Workouts",
+    "payments": "Payments",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "personalInfo": "Personal Information",
+    "measurements": "Measurements",
+    "goals": "Goals"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "bookSession": "Book Session",
+    "upcomingSessions": "Upcoming Sessions",
+    "pastSessions": "Past Sessions",
+    "sessionDetails": "Session Details"
+  },
+  "workouts": {
+    "title": "Workouts",
+    "currentWorkout": "Current Workout",
+    "workoutHistory": "Workout History",
+    "exercises": "Exercises",
+    "sets": "Sets",
+    "reps": "Reps"
+  }
+}
