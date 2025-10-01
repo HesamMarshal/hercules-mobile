@@ -1,18 +1,18 @@
 export const typography = {
   h1: {
     fontSize: 32,
-    // fontWeight: 'bold' as const,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
+
     lineHeight: 34,
   },
   h2: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
     lineHeight: 30,
   },
   h3: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
     lineHeight: 26,
   },
   body: {

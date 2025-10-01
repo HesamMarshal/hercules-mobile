@@ -51,3 +51,10 @@ export const colors = {
   otpBorder: '#dee2e6',
   otpText: '#495057',
 };
+
+export const otpColors = {
+  inputBackground: colors.surface,
+  inputBorder: colors.border,
+  success: colors.success,
+  error: colors.error,
+};
