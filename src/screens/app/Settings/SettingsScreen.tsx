@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, ScrollView, Alert } from 'react-native';
 import { List, Button, Divider, Text } from 'react-native-paper';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useRTL } from '@/contexts/RTLContext';
+import { settingsStyles as styles } from '@/theme/styles';
 
 const SettingsScreen = () => {
   const { logout } = useAuth();
@@ -168,29 +169,5 @@ const SettingsScreen = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  divider: {
-    marginVertical: 8,
-  },
-  logoutContainer: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  logoutButton: {
-    width: '100%',
-    marginBottom: 16,
-    borderColor: '#d32f2f',
-  },
-  versionText: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-});
 
 export default SettingsScreen;

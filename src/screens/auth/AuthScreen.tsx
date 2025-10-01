@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useRTLStyles } from '@/utils/rtlStyles';
+import { authStyles as styles } from '@/theme/styles';
 
 export function AuthScreen({ navigation }: any) {
   const [mobile, setMobile] = useState('');
@@ -192,83 +193,3 @@ export function AuthScreen({ navigation }: any) {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 40,
-    color: '#333',
-  },
-  instruction: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: '#666',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#666',
-    textAlign: 'center',
-  },
-  mobileNumber: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 20,
-    color: '#007AFF',
-    textAlign: 'center',
-  },
-  form: {
-    width: '100%',
-    maxWidth: 300,
-  },
-  input: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  backButton: {
-    marginTop: 15,
-    padding: 10,
-  },
-  backText: {
-    color: '#007AFF',
-    textAlign: 'center',
-    fontSize: 16,
-  },
-});

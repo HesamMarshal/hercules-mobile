@@ -3,6 +3,7 @@ import { Exercise } from '@/types/exercise';
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import { Card, Title, Paragraph, Text, Chip, Button, Divider } from 'react-native-paper';
+import { exerciseDetailStyles as styles } from '@/theme/styles';
 
 const { width } = Dimensions.get('window');
 
@@ -157,100 +158,5 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#666',
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    marginTop: 8,
-  },
-  card: {
-    margin: 16,
-    elevation: 4,
-  },
-  header: {
-    paddingBottom: 0,
-  },
-  exerciseName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  chipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  difficultyChip: {
-    marginRight: 8,
-  },
-  difficultyText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  body_partChip: {
-    backgroundColor: '#e3f2fd',
-  },
-  divider: {
-    marginVertical: 8,
-  },
-  section: {
-    paddingVertical: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    marginBottom: 12,
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-  },
-  instructions: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  detailLabel: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#333',
-  },
-  detailValue: {
-    fontSize: 16,
-    color: '#666',
-  },
-  videoButton: {
-    marginTop: 8,
-  },
-});
 
 export default ExerciseDetailScreen;

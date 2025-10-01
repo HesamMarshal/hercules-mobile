@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Title, Paragraph, Button, Text } from 'react-native-paper';
 import { useAuth } from '../../../contexts/AuthContext';
-
+import { workoutStyles as styles } from '@/theme/styles';
 interface Workout {
   id: string;
   name: string;
@@ -46,7 +39,7 @@ const WorkoutsScreen = ({ navigation }: any) => {
       //   },
       // });
       // const data = await response.json();
-      
+
       // Mock data for now
       const mockWorkouts: Workout[] = [
         {
@@ -74,7 +67,7 @@ const WorkoutsScreen = ({ navigation }: any) => {
           createdAt: '2024-01-01',
         },
       ];
-      
+
       setWorkouts(mockWorkouts);
     } catch (error: any) {
       setError('Failed to load workouts');
@@ -91,13 +84,15 @@ const WorkoutsScreen = ({ navigation }: any) => {
   };
 
   const renderWorkoutItem = ({ item }: { item: Workout }) => (
-    <TouchableOpacity onPress={() => {/* Navigate to workout detail */}}>
+    <TouchableOpacity
+      onPress={() => {
+        /* Navigate to workout detail */
+      }}
+    >
       <Card style={styles.workoutCard} mode="elevated">
         <Card.Content>
           <Title style={styles.workoutName}>{item.name}</Title>
-          <Paragraph style={styles.workoutDescription}>
-            {item.description}
-          </Paragraph>
+          <Paragraph style={styles.workoutDescription}>{item.description}</Paragraph>
           <View style={styles.workoutDetails}>
             <Text style={styles.detailText}>Duration: {item.duration} min</Text>
             <Text style={styles.detailText}>Difficulty: {item.difficulty}</Text>
@@ -148,69 +143,5 @@ const WorkoutsScreen = ({ navigation }: any) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#666',
-  },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  workoutCard: {
-    marginBottom: 12,
-    elevation: 2,
-  },
-  workoutName: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  workoutDescription: {
-    color: '#666',
-    marginBottom: 8,
-  },
-  workoutDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  detailText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-});
 
 export default WorkoutsScreen;

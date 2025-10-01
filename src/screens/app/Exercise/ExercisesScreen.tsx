@@ -4,7 +4,7 @@ import { Exercise } from '@/types/exercise';
 import { useState, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Title, Paragraph, Chip, Searchbar, Button } from 'react-native-paper';
-import { styles } from './ExercisesScreen.styles';
+import { exerciseStyles as styles } from '@/theme/styles';
 import { useTranslation } from 'react-i18next';
 import { useRTLStyles } from '@/utils/rtlStyles';
 
@@ -153,12 +153,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
         <Card.Content>
           <View style={styles.exerciseHeader}>
             {/* TODO : Deprecated */}
-            <Title
-              style={styles.exerciseName}
-              // textStyle={styles.exerciseName}
-            >
-              {item.name}
-            </Title>
+            <Title style={styles.exerciseName}>{item.name}</Title>
             <Chip
               mode="outlined"
               style={[styles.difficultyChip, getDifficultyStyle(item.difficulty)]}
