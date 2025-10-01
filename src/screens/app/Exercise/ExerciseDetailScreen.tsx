@@ -1,17 +1,8 @@
 import { exerciseAPI } from '@/services/exerciseApi';
 import { Exercise } from '@/types/exercise';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Linking,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import { Card, Title, Paragraph, Text, Chip, Button, Divider } from 'react-native-paper';
-
-
 
 const { width } = Dimensions.get('window');
 
@@ -40,7 +31,7 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
 
   const handleVideoPress = () => {
     if (exercise?.video_link) {
-      Linking.openURL(exercise.video_link).catch(err =>
+      Linking.openURL(exercise.video_link).catch((err) =>
         console.error('Failed to open video URL:', err)
       );
     }
@@ -48,10 +39,14 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return '#4caf50';
-      case 'intermediate': return '#ff9800';
-      case 'advanced': return '#f44336';
-      default: return '#666';
+      case 'beginner':
+        return '#4caf50';
+      case 'intermediate':
+        return '#ff9800';
+      case 'advanced':
+        return '#f44336';
+      default:
+        return '#666';
     }
   };
 
@@ -82,13 +77,16 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
         <Card.Content style={styles.header}>
           <Title style={styles.exerciseName}>{exercise.name}</Title>
           <View style={styles.chipsContainer}>
-            <Chip
+            {/* <Chip
               mode="flat"
-              style={[styles.difficultyChip, { backgroundColor: getDifficultyColor(exercise.difficulty) }]}
+              style={[
+                styles.difficultyChip,
+                { backgroundColor: getDifficultyColor(exercise.difficulty) },
+              ]}
               textStyle={styles.difficultyText}
             >
               {exercise.difficulty.toUpperCase()}
-            </Chip>
+            </Chip> */}
             <Chip mode="outlined" style={styles.body_partChip}>
               {exercise.body_part}
             </Chip>
@@ -99,10 +97,8 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
 
         {/* Exercise Description */}
         <Card.Content style={styles.section}>
-          <Title style={styles.sectionTitle}>Description</Title>
-          <Paragraph style={styles.description}>
-            {exercise.description}
-          </Paragraph>
+          <Title style={styles.sectionTitle}>Instructions</Title>
+          <Paragraph style={styles.description}>{exercise.instruction}</Paragraph>
         </Card.Content>
 
         <Divider style={styles.divider} />
@@ -110,17 +106,17 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
         {/* Exercise Details */}
         <Card.Content style={styles.section}>
           <Title style={styles.sectionTitle}>Details</Title>
-          
+
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Muscle Group:</Text>
             <Text style={styles.detailValue}>{exercise.body_part}</Text>
           </View>
-          
-          <View style={styles.detailRow}>
+
+          {/* <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Difficulty:</Text>
             <Text style={styles.detailValue}>{exercise.difficulty}</Text>
-          </View>
-          
+          </View> */}
+
           {exercise.exercise_type && (
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>exercise_type:</Text>
@@ -135,9 +131,7 @@ const ExerciseDetailScreen = ({ route, navigation }: any) => {
             <Divider style={styles.divider} />
             <Card.Content style={styles.section}>
               <Title style={styles.sectionTitle}>Instructions</Title>
-              <Paragraph style={styles.instructions}>
-                {exercise.instructions}
-              </Paragraph>
+              <Paragraph style={styles.instructions}>{exercise.instructions}</Paragraph>
             </Card.Content>
           </>
         )}

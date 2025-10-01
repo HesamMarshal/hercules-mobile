@@ -2,7 +2,7 @@ export interface Exercise {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  instruction: string;
   category: string;
 
   body_part: string;
