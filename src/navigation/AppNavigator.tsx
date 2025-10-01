@@ -38,11 +38,11 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
-
-  console.log('AppNavigator - Auth State:', {
-    isAuthenticated,
-    loading,
-  });
+  const AuthScreenComponent = (props: any) => <AuthScreen {...props} />;
+  // console.log('AppNavigator - Auth State:', {
+  //   isAuthenticated,
+  //   loading,
+  // });
 
   if (loading) {
     return (
@@ -51,7 +51,8 @@ export const AppNavigator = () => {
         // theme={CustomTheme}
         >
           <Stack.Navigator>
-            <Stack.Screen name="Auth" component={() => null} options={{ headerShown: false }} />
+            {/* <Stack.Screen name="Auth" component={() => null} options={{ headerShown: false }} /> */}
+            <Stack.Screen name="Auth" component={AuthScreenComponent} />
           </Stack.Navigator>
         </NavigationContainer>
       </RTLProvider>
