@@ -5,6 +5,9 @@ import WorkoutsScreen from '../screens/app/Workouts/WorkoutsScreen';
 import SettingsScreen from '../screens/app/Settings/SettingsScreen';
 import ProfileScreen from '@/screens/app/Profile/ProfileScreen';
 import { ExercisesScreen } from '@/screens/app/Exercise/ExercisesScreen';
+import { useRTL } from '../contexts/RTLContext';
+import { I18nManager } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type MainTabParamList = {
   Profile: undefined;
@@ -16,6 +19,8 @@ export type MainTabParamList = {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export const MainTabNavigator = () => {
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -42,6 +47,16 @@ export const MainTabNavigator = () => {
           backgroundColor: 'white',
           borderTopWidth: 1,
           borderTopColor: '#f0f0f0',
+          // Add safe area padding here:
+          paddingBottom: 5,
+          paddingTop: 10,
+          height: 70, // Increase total height if needed
+
+          // paddingBottom: insets.bottom + 10,
+          // paddingTop: 10,
+          // height: 60 + insets.bottom, // Adjust base height as needed
+          // Ensure RTL layout
+          // flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         },
         headerStyle: {
           backgroundColor: '#007AFF',
@@ -50,28 +65,17 @@ export const MainTabNavigator = () => {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+
+        // This ensures proper RTL behavior in React Navigation
+        // animation: I18nManager.isRTL ? 'shift' : 'default',
       })}
+      // Force RTL layout direction
+      // screenLayoutDirection={I18nManager.isRTL ? 'rtl' : 'ltr'}
     >
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
-      />
-      <Tab.Screen 
-        name="Workouts" 
-        component={WorkoutsScreen}
-        options={{ title: 'Workouts' }}
-      />
-      <Tab.Screen 
-        name="Exercises" 
-        component={ExercisesScreen}
-        options={{ title: 'Exercises' }}
-      />
-      <Tab.Screen 
-        name="Settings" 
-        component={SettingsScreen}
-        options={{ title: 'Settings' }}
-      />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'تنظیمات' }} />
+      <Tab.Screen name="Exercises" component={ExercisesScreen} options={{ title: 'حرکات ورزشی' }} />
+      <Tab.Screen name="Workouts" component={WorkoutsScreen} options={{ title: 'تمرینات' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'پروفایل' }} />
     </Tab.Navigator>
   );
 };
