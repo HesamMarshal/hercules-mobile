@@ -43,6 +43,15 @@ export const lineHeights = {
 // Typography scale with RTL support
 export const typography = (isRTL = true) => {
   const baseFontFamily = isRTL ? fontFamily.persian : fontFamily.english;
+  // Define a safe fallback style
+  const fallbackStyle = {
+    fontFamily: baseFontFamily.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: fontWeights.regular,
+    textAlign: isRTL ? 'right' : 'left',
+    letterSpacing: 0,
+  };
 
   return {
     // Display styles
