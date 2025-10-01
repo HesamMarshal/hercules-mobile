@@ -153,7 +153,12 @@ export const ExercisesScreen = ({ navigation }: any) => {
         <Card.Content>
           <View style={styles.exerciseHeader}>
             {/* TODO : Deprecated */}
-            <Title style={styles.exerciseName}>{item.name}</Title>
+            <Title
+              style={styles.exerciseName}
+              // textStyle={styles.exerciseName}
+            >
+              {item.name}
+            </Title>
             <Chip
               mode="outlined"
               style={[styles.difficultyChip, getDifficultyStyle(item.difficulty)]}
