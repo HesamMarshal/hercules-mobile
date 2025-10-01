@@ -147,6 +147,10 @@ export const lightColors = {
   focus: colors.primary[500],
   disabled: colors.neutral[300],
 
+  successContainer: colors.success[100],
+  warningContainer: colors.warning[100],
+  errorContainer: colors.error[100],
+
   // Shadows
   shadow: colors.neutral[900],
 
@@ -205,6 +209,10 @@ export const darkColors = {
   pressed: colors.neutral[600],
   focus: colors.primary[400],
   disabled: colors.neutral[700],
+
+  successContainer: colors.success[800],
+  warningContainer: colors.warning[800],
+  errorContainer: colors.error[800],
 
   // Shadows
   shadow: colors.neutral[50],
