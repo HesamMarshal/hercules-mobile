@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Button, Card, Title, Paragraph } from 'react-native-paper';
 
-
 interface User {
   id: string;
   mobileNumber: string;
@@ -29,24 +28,23 @@ const ProfileScreen = ({ navigation }: any) => {
       setLoading(true);
       setError('');
 
-      // TODO: Use BaseURL
-
-      const response = await fetch(`${API_BASE_URL}/user/my`  , {
+      // logout();
+      const response = await fetch(`${API_BASE_URL}/user/my`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
+      console.log(response);
 
       if (!response.ok) {
         logout();
-        throw new Error('Failed to fetch user profile');
+        throw new Error('Failed  to fetch user profile');
       }
 
       const userData = await response.json();
       setUser(userData);
-      
     } catch (error: any) {
       console.error('Error fetching user profile:', error);
       setError(error.message || 'Failed to load profile');
@@ -84,33 +82,33 @@ const ProfileScreen = ({ navigation }: any) => {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.title}>Profile</Title>
-          
+
           {user ? (
             <>
               <View style={styles.infoSection}>
                 <Text style={styles.label}>Mobile Number:</Text>
                 <Text style={styles.value}>{user.mobileNumber}</Text>
               </View>
-              
+
               <View style={styles.infoSection}>
                 <Text style={styles.label}>Role:</Text>
                 <Text style={styles.value}>{user.role}</Text>
               </View>
-              
+
               {user.firstName && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>First Name:</Text>
                   <Text style={styles.value}>{user.firstName}</Text>
                 </View>
               )}
-              
+
               {user.lastName && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>Last Name:</Text>
                   <Text style={styles.value}>{user.lastName}</Text>
                 </View>
               )}
-              
+
               {user.email && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>Email:</Text>
@@ -124,19 +122,15 @@ const ProfileScreen = ({ navigation }: any) => {
         </Card.Content>
       </Card>
 
-      <Button 
-        mode="contained" 
+      <Button
+        mode="contained"
         onPress={() => navigation.navigate('Exercises')}
         style={styles.button}
       >
         Browse Exercises
       </Button>
 
-      <Button 
-        mode="outlined" 
-        onPress={handleLogout}
-        style={styles.logoutButton}
-      >
+      <Button mode="outlined" onPress={handleLogout} style={styles.logoutButton}>
         Logout
       </Button>
     </ScrollView>

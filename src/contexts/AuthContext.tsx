@@ -12,7 +12,7 @@ interface User {
 
 interface AuthContextType {
   token: string | null;
-  refreshToken:string | null;
+  refreshToken: string | null;
   login: (token: string, refreshToken?: string) => void;
   logout: () => void;
   loading: boolean;
@@ -25,10 +25,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-    const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuthStatus();
@@ -36,15 +35,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
-       const storedToken = await AsyncStorage.getItem('access_token');
+      const storedToken = await AsyncStorage.getItem('access_token');
       const storedRefreshToken = await AsyncStorage.getItem('refresh_token');
-       console.log('Stored tokens:', { 
-        accessToken: !!storedToken, 
-        refreshToken: !!storedRefreshToken 
+      console.log('Stored tokens:', {
+        accessToken: !!storedToken,
+        refreshToken: !!storedRefreshToken,
       });
 
-
-     if (storedToken) {
+      if (storedToken) {
         setToken(storedToken);
         setRefreshToken(storedRefreshToken);
         console.log('Tokens restored from storage');
@@ -53,22 +51,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Error checking auth status:', error);
     } finally {
       setLoading(false);
-      console.log('Auth loading completed');
+      // console.log('Auth loading completed');
     }
   };
 
   const login = async (accessToken: string, refreshToken?: string) => {
     try {
       console.log('Storing tokens');
-      
+
       await AsyncStorage.setItem('access_token', accessToken);
       if (refreshToken) {
         await AsyncStorage.setItem('refresh_token', refreshToken);
       }
-      
+
       setToken(accessToken);
       setRefreshToken(refreshToken || null);
-      
+
       console.log('Login successful - tokens stored');
     } catch (error) {
       console.error('Login error:', error);
@@ -76,14 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-const logout = async () => {
+  const logout = async () => {
     try {
       console.log('Logging out');
-      await AsyncStorage.multiRemove([
-        'access_token',
-        'refresh_token',
-        'user_mobile'
-      ]);
+      await AsyncStorage.multiRemove(['access_token', 'refresh_token', 'user_mobile']);
       setToken(null);
       setRefreshToken(null);
       console.log('Logout successful');
@@ -92,7 +86,7 @@ const logout = async () => {
     }
   };
 
-   // Add OTP methods
+  // Add OTP methods
   const requestOTP = async (mobileNumber: string) => {
     try {
       console.log('Requesting OTP for:', mobileNumber);
@@ -100,29 +94,29 @@ const logout = async () => {
 
       // Store mobile number for verification
       await AsyncStorage.setItem('user_mobile', mobileNumber);
-       console.log('OTP request successful');
+      console.log('OTP request successful');
     } catch (error) {
       console.error('Error requesting OTP:', error);
       throw error;
     }
   };
 
-  // TODO: Change to signin-up 
-   const verifyOTP = async (params: { mobile: string; code: string }) => {
+  // TODO: Change to signin-up
+  const verifyOTP = async (params: { mobile: string; code: string }) => {
     try {
       console.log('Verifying OTP for:', params.mobile);
-      
-      const response = await fetch(`${API_BASE_URL}/auth/signin-up`    , {
+
+      const response = await fetch(`${API_BASE_URL}/auth/signin-up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           mobile: params.mobile,
-          code: params.code
+          code: params.code,
         }),
       });
-if (!response.ok) {
+      if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'OTP verification failed');
       }
@@ -131,7 +125,7 @@ if (!response.ok) {
       console.log('OTP verification result:', result);
 
       // Extract tokens from response
-      const { accessToken, refreshToken } = result;
+      const { accessToken, refreshToken } = result.data;
 
       if (!accessToken) {
         throw new Error('No access token received');
@@ -148,23 +142,18 @@ if (!response.ok) {
   };
 
   const value: AuthContextType = {
-    
     token,
     refreshToken,
     login,
     logout,
-     loading, // This is the actual loading state
+    loading, // This is the actual loading state
     isLoading: loading, // Alias for loading if you prefer isLoading
-    isAuthenticated: !!token ,
+    isAuthenticated: !!token,
     requestOTP,
     verifyOTP,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
