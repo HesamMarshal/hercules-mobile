@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '@/theme/properties/colors';
 import { spacing } from '@/theme/properties/spacing';
-import { typography } from '@/theme/properties/typography';
+import { fontSizes, typography } from '@/theme/properties/typography';
 
 export const exerciseStyles = StyleSheet.create({
   container: {
@@ -65,7 +65,7 @@ export const exerciseStyles = StyleSheet.create({
     backgroundColor: colors.body_part,
   },
   body_partText: {
-    fontSize: 12,
+    fontSize: fontSizes.micro,
   },
   exerciseDescription: {
     color: colors.textSecondary,
@@ -78,11 +78,11 @@ export const exerciseStyles = StyleSheet.create({
   },
   exercise_typeLabel: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSizes.small,
     color: colors.text,
   },
   exercise_typeValue: {
-    fontSize: 14,
+    fontSize: fontSizes.small,
     color: colors.textSecondary,
   },
   errorContainer: {
@@ -92,7 +92,7 @@ export const exerciseStyles = StyleSheet.create({
     padding: spacing.lg,
   },
   errorText: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     color: colors.error,
     textAlign: 'center',
     marginBottom: spacing.md,
@@ -107,7 +107,7 @@ export const exerciseStyles = StyleSheet.create({
     padding: spacing.xl,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     color: colors.textSecondary,
     textAlign: 'center',
   },
@@ -128,12 +128,12 @@ export const exerciseDetailStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
   errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
+    fontSize: fontSizes.body,
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -148,7 +148,7 @@ export const exerciseDetailStyles = StyleSheet.create({
     paddingBottom: 0,
   },
   exerciseName: {
-    fontSize: 24,
+    fontSize: fontSizes.headingPlus,
     fontWeight: 'bold',
     marginBottom: 12,
   },
@@ -163,10 +163,10 @@ export const exerciseDetailStyles = StyleSheet.create({
   difficultyText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: fontSizes.micro,
   },
   body_partChip: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: colors.background,
   },
   divider: {
     marginVertical: 8,
@@ -175,18 +175,18 @@ export const exerciseDetailStyles = StyleSheet.create({
     paddingVertical: 8,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: fontSizes.bodyLarge,
     marginBottom: 12,
   },
   description: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     lineHeight: 24,
-    color: '#333',
+    color: colors.text2, // TODO : fix text
   },
   instructions: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     lineHeight: 24,
-    color: '#333',
+    color: colors.text2, // TODO : fix text
   },
   detailRow: {
     flexDirection: 'row',
@@ -194,16 +194,16 @@ export const exerciseDetailStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    backgroundColor: colors.background,
   },
   detailLabel: {
     fontWeight: 'bold',
-    fontSize: 16,
-    color: '#333',
+    fontSize: fontSizes.body,
+    color: colors.text2, // TODO : fix text
   },
   detailValue: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
   videoButton: {
     marginTop: 8,
@@ -214,7 +214,7 @@ export const exerciseDetailStyles = StyleSheet.create({
 export const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     padding: 16,
   },
   centered: {
@@ -225,12 +225,12 @@ export const profileStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
   errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
+    fontSize: fontSizes.body,
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -241,7 +241,7 @@ export const profileStyles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: fontSizes.headingPlus,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
@@ -252,21 +252,21 @@ export const profileStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: colors.borderLight,
   },
   label: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.text2, // TODO : fix text
   },
   value: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
   noData: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
     marginVertical: 20,
   },
   button: {
@@ -292,7 +292,7 @@ export const OTPVerificationStyles = StyleSheet.create({
   card: {
     marginHorizontal: spacing.sm,
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -345,7 +345,7 @@ export const OTPVerificationStyles = StyleSheet.create({
   },
   otpInput: {
     backgroundColor: colors.surface,
-    fontSize: 18,
+    fontSize: fontSizes.bodyLarge,
     textAlign: 'center',
     fontWeight: '600',
     letterSpacing: 2,
@@ -414,20 +414,20 @@ export const planStyles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    fontSize: 24,
+    fontSize: fontSizes.headingPlus,
     fontWeight: 'bold',
     marginBottom: 20,
   },
   placeholder: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
 });
 
 export const settingsStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
   divider: {
     marginVertical: 8,
@@ -439,11 +439,11 @@ export const settingsStyles = StyleSheet.create({
   logoutButton: {
     width: '100%',
     marginBottom: 16,
-    borderColor: '#d32f2f',
+    borderColor: colors.error,
   },
   versionText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: fontSizes.micro,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });
@@ -453,7 +453,7 @@ export const settingsStyles = StyleSheet.create({
 export const workoutStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     padding: 16,
   },
   centered: {
@@ -463,8 +463,8 @@ export const workoutStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
   },
   listContainer: {
     paddingBottom: 16,
@@ -474,11 +474,11 @@ export const workoutStyles = StyleSheet.create({
     elevation: 2,
   },
   workoutName: {
-    fontSize: 18,
+    fontSize: fontSizes.bodyLarge,
     marginBottom: 8,
   },
   workoutDescription: {
-    color: '#666',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   workoutDetails: {
@@ -486,8 +486,8 @@ export const workoutStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   detailText: {
-    fontSize: 14,
-    color: '#888',
+    fontSize: fontSizes.small,
+    color: colors.textSecondary,
   },
   errorContainer: {
     flex: 1,
@@ -496,8 +496,8 @@ export const workoutStyles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
+    fontSize: fontSizes.body,
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -508,8 +508,8 @@ export const workoutStyles = StyleSheet.create({
     padding: 40,
   },
   emptyText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });
@@ -518,7 +518,7 @@ export const workoutStyles = StyleSheet.create({
 export const authStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -527,28 +527,28 @@ export const authStyles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: fontSizes.displayPlus,
     fontWeight: 'bold',
     marginBottom: 40,
-    color: '#333',
+    color: colors.text2, // TODO : fix text
   },
   instruction: {
-    fontSize: 14,
+    fontSize: fontSizes.small,
     marginBottom: 10,
-    color: '#666',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSizes.body,
     marginBottom: 5,
-    color: '#666',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   mobileNumber: {
-    fontSize: 18,
+    fontSize: fontSizes.bodyLarge,
     fontWeight: '600',
     marginBottom: 20,
-    color: '#007AFF',
+    color: 'colors.info',
     textAlign: 'center',
   },
   form: {
@@ -561,27 +561,27 @@ export const authStyles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ddd',
-    fontSize: 16,
+    borderColor: colors.border,
+    fontSize: fontSizes.body,
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.info,
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: colors.buttonDisabled,
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: fontSizes.body,
     fontWeight: '600',
   },
   backButton: {
@@ -589,8 +589,8 @@ export const authStyles = StyleSheet.create({
     padding: 10,
   },
   backText: {
-    color: '#007AFF',
+    color: 'colors.info',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: fontSizes.body,
   },
 });
