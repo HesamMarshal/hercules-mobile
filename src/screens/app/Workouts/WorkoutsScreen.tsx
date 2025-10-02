@@ -3,14 +3,8 @@ import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } f
 import { Card, Title, Paragraph, Button, Text } from 'react-native-paper';
 import { useAuth } from '../../../contexts/AuthContext';
 import { workoutStyles as styles } from '@/theme/styles';
-interface Workout {
-  id: string;
-  name: string;
-  description: string;
-  duration: number;
-  difficulty: string;
-  createdAt: string;
-}
+import { workoutAPI } from '@/services/workoutsApi';
+import { Workout } from '@/types/workout.type';
 
 const WorkoutsScreen = ({ navigation }: any) => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -20,10 +14,11 @@ const WorkoutsScreen = ({ navigation }: any) => {
   const { token } = useAuth();
 
   useEffect(() => {
-    loadWorkouts();
+    // TODO: Read from plan
+    loadWorkouts(4);
   }, []);
 
-  const loadWorkouts = async () => {
+  const loadWorkouts = async (planId: number) => {
     if (!token) {
       setError('Please login to view workouts');
       setLoading(false);
@@ -32,43 +27,8 @@ const WorkoutsScreen = ({ navigation }: any) => {
 
     try {
       setError('');
-      // TODO: Replace with actual API call
-      // const response = await fetch(`${API_BASE_URL}/workouts` , {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      // });
-      // const data = await response.json();
-
-      // Mock data for now
-      const mockWorkouts: Workout[] = [
-        {
-          id: '1',
-          name: 'Full Body Strength',
-          description: 'Complete full body workout focusing on compound movements',
-          duration: 60,
-          difficulty: 'intermediate',
-          createdAt: '2024-01-01',
-        },
-        {
-          id: '2',
-          name: 'Upper Body Power',
-          description: 'Focus on chest, back, and shoulder strength',
-          duration: 45,
-          difficulty: 'beginner',
-          createdAt: '2024-01-01',
-        },
-        {
-          id: '3',
-          name: 'Lower Body Blast',
-          description: 'Intense leg and core workout',
-          duration: 50,
-          difficulty: 'advanced',
-          createdAt: '2024-01-01',
-        },
-      ];
-
-      setWorkouts(mockWorkouts);
+      const workouts = await workoutAPI.getAllWorkoutsByPlanId(planId);
+      setWorkouts(workouts);
     } catch (error: any) {
       setError('Failed to load workouts');
       console.error('Error loading workouts:', error);
@@ -80,7 +40,8 @@ const WorkoutsScreen = ({ navigation }: any) => {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    loadWorkouts();
+    // TODO: Read from plan
+    loadWorkouts(4);
   };
 
   const renderWorkoutItem = ({ item }: { item: Workout }) => (
@@ -92,7 +53,7 @@ const WorkoutsScreen = ({ navigation }: any) => {
       <Card style={styles.workoutCard} mode="elevated">
         <Card.Content>
           <Title style={styles.workoutName}>{item.name}</Title>
-          <Paragraph style={styles.workoutDescription}>{item.description}</Paragraph>
+          <Paragraph style={styles.workoutDescription}>{item.day_of_week}</Paragraph>
           <View style={styles.workoutDetails}>
             <Text style={styles.detailText}>Duration: {item.duration} min</Text>
             <Text style={styles.detailText}>Difficulty: {item.difficulty}</Text>
@@ -104,6 +65,7 @@ const WorkoutsScreen = ({ navigation }: any) => {
 
   if (loading) {
     return (
+      // TODO: Translate
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
         <Text style={styles.loadingText}>Loading workouts...</Text>
