@@ -8,6 +8,7 @@ import ProfileScreen from '@/screens/app/Profile/ProfileScreen';
 import { ExercisesScreen } from '@/screens/app/Exercise/ExercisesScreen';
 import { useRTL } from '../contexts/RTLContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '@/theme/properties/colors';
 
 export type MainTabParamList = {
   Profile: undefined;
@@ -41,12 +42,12 @@ export const MainTabNavigator = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: colors.activeTintColor,
+        tabBarInactiveTintColor: colors.inactiveTintColor,
         tabBarStyle: {
-          backgroundColor: 'white',
+          backgroundColor: colors.tabBackgroundColor,
           borderTopWidth: 1,
-          borderTopColor: '#f0f0f0',
+          borderTopColor: colors.tabBorderTopColor,
           // Add safe area padding here:
           paddingBottom: 5,
           paddingTop: 10,
@@ -60,9 +61,9 @@ export const MainTabNavigator = () => {
           // flexDirection: isRTL ? 'row-reverse' : 'row',
         },
         headerStyle: {
-          backgroundColor: '#007AFF',
+          backgroundColor: colors.activeTintColor,
         },
-        headerTintColor: 'white',
+        headerTintColor: colors.tabHeaderTintColor,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
