@@ -406,24 +406,6 @@ export const OTPVerificationStyles = StyleSheet.create({
 });
 
 // TODO : Use Above variable and consts
-export const planStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  title: {
-    fontSize: fontSizes.headingPlus,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  placeholder: {
-    fontSize: fontSizes.body,
-    color: colors.textSecondary,
-  },
-});
-
 export const settingsStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -592,5 +574,78 @@ export const authStyles = StyleSheet.create({
     color: 'colors.info',
     textAlign: 'center',
     fontSize: fontSizes.body,
+  },
+});
+
+// TODO : Use Above variable and consts
+export const planStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  listContainer: {
+    padding: 15,
+  },
+  planCard: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  planHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  planName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  planDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 15,
+    lineHeight: 20,
+  },
+  planDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  detailText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 5,
   },
 });
