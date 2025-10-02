@@ -8,10 +8,11 @@ import { MainTabNavigator } from './MainTabNavigator';
 import ExerciseDetailScreen from '@/screens/app/Exercise/ExerciseDetailScreen';
 import { I18nManager } from 'react-native';
 import { RTLProvider } from '@/contexts/RTLContext';
+import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
 
 // Force RTL at app level
-I18nManager.forceRTL(true);
-I18nManager.allowRTL(true);
+// I18nManager.forceRTL(true);
+// I18nManager.allowRTL(true);
 
 // TODO  :Implement theme and dark and light theme
 // Create custom theme based on DefaultTheme
@@ -32,17 +33,13 @@ export type RootStackParamList = {
   Auth: undefined;
   MainTabs: undefined;
   ExerciseDetail: { exerciseId: string };
+  CreatePlan: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
-
-  // console.log('AppNavigator - Auth State:', {
-  //   isAuthenticated,
-  //   loading,
-  // });
 
   if (loading) {
     return (
@@ -74,6 +71,17 @@ export const AppNavigator = () => {
               component={ExerciseDetailScreen}
               options={{
                 title: 'Exercise Details',
+                headerStyle: {
+                  backgroundColor: '#007AFF',
+                },
+                headerTintColor: 'white',
+              }}
+            />
+            <Stack.Screen
+              name="CreatePlan"
+              component={CreatePlanScreen}
+              options={{
+                title: 'CreatePlan',
                 headerStyle: {
                   backgroundColor: '#007AFF',
                 },

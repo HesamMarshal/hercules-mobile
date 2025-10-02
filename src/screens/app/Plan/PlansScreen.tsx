@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, I18nManager } from 
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchWithAuth } from '@/services/api';
-import { ActivityIndicator, Button, Card, Title } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, FAB, Title } from 'react-native-paper';
 import { workoutStyles as styles } from '@/theme/styles';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
@@ -82,6 +82,13 @@ const PlansScreen = ({ navigation }: any) => {
     loadPlans();
   };
 
+  const handleCreatePlan = () => {
+    // Navigate to create plan screen
+    navigation.navigate('CreatePlan', {
+      onPlanCreated: loadPlans, // Refresh the list after creating a plan
+    });
+  };
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -116,20 +123,6 @@ const PlansScreen = ({ navigation }: any) => {
           })
         }
       >
-        {/* <Card style={[styles.workoutCard, rtlAware.card]} mode="elevated">
-          <Card.Content style={rtlAware.cardContent}>
-            <Title style={[styles.workoutName, rtlAware.text]}>{item.name}</Title>
-            <View style={rtlAware.detailsContainer}>
-              <Text style={[styles.detailText, rtlAware.text]}>
-                تاریخ شروع: {formatDate(item.start_date)}
-              </Text>
-              <Text style={[styles.detailText, rtlAware.text]}>
-                تاریخ پایان: {formatDate(item.end_date)}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card> */}
-
         <Card style={[styles.workoutCard, rtlAware.card]} mode="elevated">
           <Card.Content style={rtlAware.cardContent}>
             <View style={rtlAware.planHeader}>
@@ -210,28 +203,42 @@ const PlansScreen = ({ navigation }: any) => {
           </Button>
         </View>
       ) : (
-        <FlatList
-          data={plans}
-          renderItem={renderPlanItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={[styles.listContainer, rtlAware.listContainer]}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              colors={['#007AFF']}
-            />
-          }
-          ListEmptyComponent={
-            <View style={[styles.emptyContainer, rtlAware.container]}>
-              <MaterialIcons name="assignment" size={64} color="#999" />
-              <Text style={[styles.emptyText, rtlAware.text]}>هیچ پلن تمرینی موجود نیست</Text>
-              <Text style={[rtlAware.emptySubtext, rtlAware.text]}>
-                پلن‌های تمرینی شما در اینجا نمایش داده می‌شوند
-              </Text>
-            </View>
-          }
-        />
+        <>
+          <FlatList
+            data={plans}
+            renderItem={renderPlanItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={[styles.listContainer, rtlAware.listContainer]}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={['#007AFF']}
+              />
+            }
+            ListEmptyComponent={
+              <View style={[styles.emptyContainer, rtlAware.container]}>
+                <MaterialIcons name="assignment" size={64} color="#999" />
+                <Text style={[styles.emptyText, rtlAware.text]}>هیچ پلن تمرینی موجود نیست</Text>
+                <Text style={[rtlAware.emptySubtext, rtlAware.text]}>
+                  پلن‌های تمرینی شما در اینجا نمایش داده می‌شوند
+                </Text>
+                <Button
+                  mode="contained"
+                  onPress={handleCreatePlan}
+                  style={rtlAware.emptyButton}
+                  icon="plus"
+                >
+                  ایجاد پلن جدید
+                </Button>
+              </View>
+            }
+          />
+          {/* Floating Action Button */}
+          {plans.length > 0 && (
+            <FAB style={rtlAware.fab} icon="plus" onPress={handleCreatePlan} color="white" />
+          )}
+        </>
       )}
     </View>
   );
@@ -358,6 +365,18 @@ const rtlAware = StyleSheet.create({
     marginHorizontal: 8,
     fontSize: 14,
     color: '#666',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: isRTL ? undefined : 0,
+    left: isRTL ? 0 : undefined,
+    bottom: 0,
+    backgroundColor: '#007AFF',
+  },
+  emptyButton: {
+    marginTop: 16,
+    alignSelf: 'center',
   },
 });
 
