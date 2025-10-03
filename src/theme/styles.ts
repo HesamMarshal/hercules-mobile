@@ -436,8 +436,9 @@ export const settingsStyles = StyleSheet.create({
 
 export const workoutStyles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.background,
+    flex: 1,
+    flexDirection: isRTL ? 'row-reverse' : 'row',
     padding: 16,
   },
   centered: {
@@ -447,12 +448,16 @@ export const workoutStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
+    marginHorizontal: 8,
     fontSize: fontSizes.body,
     color: colors.textSecondary,
   },
   listContainer: {
     paddingBottom: 16,
+    paddingVertical: 8,
+    flexGrow: 1,
   },
+
   workoutCard: {
     marginBottom: 12,
     elevation: 2,
@@ -495,6 +500,232 @@ export const workoutStyles = StyleSheet.create({
     fontSize: fontSizes.body,
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  practicesSection: {
+    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+    marginBottom: 16,
+  },
+  practicesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
+  },
+  practicesList: {
+    width: '100%',
+  },
+  practiceItemContainer: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingHorizontal: 8,
+  },
+  practiceItem: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 8,
+    borderRadius: 6,
+    flex: 1,
+  },
+  practiceIcon: {
+    marginHorizontal: 8,
+  },
+  practiceText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333',
+  },
+  practiceDetails: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+  },
+  practiceDetailText: {
+    fontSize: 12,
+    color: '#666',
+    marginHorizontal: 4,
+    backgroundColor: '#e9ecef',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  loadingPractices: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+  },
+  morePracticesText: {
+    fontSize: 12,
+    color: '#007AFF',
+    marginTop: 4,
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  noPracticesText: {
+    fontSize: 14,
+    color: '#999',
+    fontStyle: 'italic',
+    textAlign: isRTL ? 'right' : 'left',
+  },
+
+  card: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  cardContent: {
+    alignItems: isRTL ? 'flex-end' : 'flex-start',
+  },
+  text: {
+    textAlign: isRTL ? 'right' : 'left',
+    writingDirection: isRTL ? 'rtl' : 'ltr',
+  },
+  workoutHeader: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+    marginBottom: 12,
+  },
+  workoutTitleContainer: {
+    flex: 1,
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  detailsContainer: {
+    flexDirection: 'column',
+    alignItems: isRTL ? 'flex-end' : 'flex-start',
+    width: '100%',
+    marginBottom: 16,
+  },
+  detailItem: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+
+  button: {
+    marginTop: 16,
+    alignSelf: 'center',
+  },
+  emptySubtext: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
+    textAlign: isRTL ? 'right' : 'left',
+    marginBottom: 16,
+  },
+  emptyButton: {
+    marginTop: 16,
+    alignSelf: 'center',
+  },
+  exercisesSection: {
+    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+    marginBottom: 16,
+  },
+  exercisesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
+  },
+  exercisesList: {
+    width: '100%',
+  },
+  exerciseItemContainer: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingHorizontal: 8,
+  },
+  exerciseItem: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 8,
+    borderRadius: 6,
+    flex: 1,
+  },
+  exerciseIcon: {
+    marginHorizontal: 8,
+  },
+  exerciseText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333',
+  },
+  exerciseDetails: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+  },
+  exerciseDetailText: {
+    fontSize: 12,
+    color: '#666',
+    marginHorizontal: 4,
+    backgroundColor: '#e9ecef',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  difficultyBadge: {
+    backgroundColor: colors.activeTintColor,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginHorizontal: 8,
+  },
+  difficultyText: {
+    fontSize: 10,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  moreExercisesText: {
+    fontSize: 12,
+    color: colors.activeTintColor,
+    marginTop: 4,
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  noExercisesText: {
+    fontSize: 14,
+    color: '#999',
+    fontStyle: 'italic',
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  loadingExercises: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+  },
+
+  actionButtons: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 8,
+  },
+  detailButton: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  startButton: {
+    flex: 1,
+    marginHorizontal: 4,
+    backgroundColor: '#28a745',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: isRTL ? undefined : 0,
+    left: isRTL ? 0 : undefined,
+    bottom: 0,
+    backgroundColor: colors.activeTintColor,
   },
 });
 
