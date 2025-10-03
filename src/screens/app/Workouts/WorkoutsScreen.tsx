@@ -21,14 +21,11 @@ import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/nav
 
 const isRTL = I18nManager.isRTL;
 
-// interface WorkoutScreenProps {
-//   route: WorkoutScreenRouteProp;
-//   navigation: WorkoutScreenNavigationProp;
-// }
 interface WorkoutScreenProps {
-  route: any;
-  navigation: any;
+  route: WorkoutScreenRouteProp;
+  navigation: WorkoutScreenNavigationProp;
 }
+
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const { planId, planName } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -99,12 +96,15 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     });
   };
   const handleStartWorkout = (workout: Workout) => {
+    console.log('Call active workout');
     Alert.alert('شروع تمرین', `آیا می‌خواهید تمرین "${workout.name}" را شروع کنید؟`, [
       { text: 'لغو', style: 'cancel' },
       {
         text: 'شروع',
         onPress: () => {
           // Navigate to active workout screen
+          // TODO : Create ActiveWorkout screen???  Session
+
           navigation.navigate('ActiveWorkout', {
             workoutId: workout.id,
             workoutName: workout.name,
@@ -115,6 +115,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   };
 
   const handleAddWorkout = () => {
+    // TODO: Add CreateWorkoutScreen
     navigation.navigate('CreateWorkout', {
       planId: planId,
       onWorkoutCreated: loadWorkouts,
