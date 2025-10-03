@@ -6,8 +6,6 @@ export interface Workout {
   name: string;
   order: number;
   day_of_week: string; //enum
-  // TODO: replace with practice
-  exercises?: Exercise[];
   practices?: Practice[];
 }
 
