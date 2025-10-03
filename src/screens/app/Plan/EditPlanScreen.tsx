@@ -1,8 +1,10 @@
 // src/screens/EditPlanScreen.tsx
 import { planAPI } from '@/services/planApi';
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, Title, Card } from 'react-native-paper';
+import { View, ScrollView, Alert } from 'react-native';
+import { Text, TextInput, Button, Title, Card } from 'react-native-paper';
+import { persianToGregorian, toPersianDate } from '@/utils/date.util';
+import { editPlanstyles as styles } from '@/theme/plan.style';
 
 const EditPlanScreen = ({ navigation, route }: any) => {
   const {
@@ -238,59 +240,5 @@ const EditPlanScreen = ({ navigation, route }: any) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  card: {
-    marginVertical: 8,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 20,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-  },
-  cancelButton: {
-    borderColor: '#666',
-  },
-  noteContainer: {
-    marginTop: 24,
-    padding: 16,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#007AFF',
-  },
-  noteTitle: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#333',
-  },
-  noteText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-    lineHeight: 20,
-  },
-});
-
-// Add Text component import
-import { Text } from 'react-native';
-import { persianToGregorian, toPersianDate } from '@/utils/date.util';
 
 export default EditPlanScreen;

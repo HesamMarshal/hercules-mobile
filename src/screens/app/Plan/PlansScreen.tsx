@@ -1,5 +1,5 @@
 // src/screens/PlansScreen.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, I18nManager, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,7 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
-import { planStyles as styles } from '@/theme/styles';
+import { planStyles as styles } from '@/theme/plan.style';
 import { Plan } from '@/types/plan.type';
 import { planAPI } from '@/services/planApi';
 
