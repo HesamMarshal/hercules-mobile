@@ -1,4 +1,5 @@
 import { Exercise } from './exercise';
+import { Practice } from './practice';
 
 export interface Workout {
   id: string;
@@ -7,6 +8,7 @@ export interface Workout {
   day_of_week: string; //enum
   // TODO: replace with practice
   exercises?: Exercise[];
+  practices?: Practice[];
 }
 
 export interface ExerciseListResponse {
