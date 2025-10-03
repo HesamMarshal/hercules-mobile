@@ -20,6 +20,7 @@ export type RootStackParamList = {
     workoutName: string;
     planId: string;
   };
+  CreatePractice: undefined;
 
   ExerciseDetail: undefined;
 };

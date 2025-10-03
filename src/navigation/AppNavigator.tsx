@@ -14,6 +14,7 @@ import PracticeScreen from '@/screens/app/Practice/PracticeScreen';
 import { colors } from '@/theme/properties/colors';
 // import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
+import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -64,6 +65,11 @@ export const AppNavigator = () => {
               options={({ route }) => ({
                 title: route.params?.workoutName || 'تمرین‌ها',
               })}
+            />
+            <Stack.Screen
+              name="CreatePractice"
+              component={CreatePracticeScreen}
+              options={{ title: 'افزودن تمرین' }}
             />
             <Stack.Screen
               name="ExerciseDetail"
