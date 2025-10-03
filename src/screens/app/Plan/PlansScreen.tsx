@@ -10,16 +10,9 @@ import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
 import { planStyles as styles } from '@/theme/styles';
+import { Plan } from '@/types/plan.type';
 
 const isRTL = I18nManager.isRTL;
-
-interface Plan {
-  id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  workouts?: Workout[];
-}
 
 const PlansScreen = ({ navigation }: any) => {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -142,8 +135,6 @@ const PlansScreen = ({ navigation }: any) => {
                 <Text style={[styles.detailText, styles.text]}>
                   شروع: {formatDate(item.start_date)}
                 </Text>
-              </View>
-              <View style={styles.dateContainer}>
                 <MaterialIcons name="event-busy" size={14} color="#666" />
                 <Text style={[styles.detailText, styles.text]}>
                   پایان: {formatDate(item.end_date)}
