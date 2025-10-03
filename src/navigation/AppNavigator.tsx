@@ -10,25 +10,14 @@ import { I18nManager } from 'react-native';
 import { RTLProvider } from '@/contexts/RTLContext';
 import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
 import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
+import PracticeScreen from '@/screens/app/Practice/PracticeScreen';
+import { colors } from '@/theme/properties/colors';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
 // I18nManager.allowRTL(true);
 
 // TODO  :Implement theme and dark and light theme
-// Create custom theme based on DefaultTheme
-// const CustomTheme = {
-//   ...DefaultTheme,
-//   colors: {
-//     ...DefaultTheme.colors,
-//     primary: '#007AFF',
-//     background: 'white',
-//     card: '#007AFF',
-//     text: 'white',
-//     border: '#f0f0f0',
-//     notification: '#FF3B30',
-//   },
-// };
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -36,6 +25,7 @@ export type RootStackParamList = {
   ExerciseDetail: { exerciseId: string };
   CreatePlan: undefined;
   WorkoutScreen: undefined;
+  PracticeScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -72,7 +62,14 @@ export const AppNavigator = () => {
               name="WorkoutScreen"
               component={WorkoutScreen}
               options={({ route }) => ({
-                title: route.params?.planName || 'تمرین‌ها',
+                title: route.params.planName || 'تمرین‌ها',
+              })}
+            />
+            <Stack.Screen
+              name="PracticeScreen"
+              component={PracticeScreen}
+              options={({ route }) => ({
+                title: route.params?.workoutName || 'تمرین‌ها',
               })}
             />
             <Stack.Screen
@@ -81,7 +78,7 @@ export const AppNavigator = () => {
               options={{
                 title: 'Exercise Details',
                 headerStyle: {
-                  backgroundColor: '#007AFF',
+                  backgroundColor: colors.activeTintColor,
                 },
                 headerTintColor: 'white',
               }}
@@ -92,7 +89,7 @@ export const AppNavigator = () => {
               options={{
                 title: 'CreatePlan',
                 headerStyle: {
-                  backgroundColor: '#007AFF',
+                  backgroundColor: colors.activeTintColor,
                 },
                 headerTintColor: 'white',
               }}
