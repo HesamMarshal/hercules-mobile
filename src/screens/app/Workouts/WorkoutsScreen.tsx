@@ -18,6 +18,7 @@ import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
 import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation';
+import { practiceAPI } from '@/services/practiceApi';
 
 const isRTL = I18nManager.isRTL;
 
@@ -54,23 +55,24 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(+planId);
 
       if (workoutsData && workoutsData.length > 0) {
-        // Load exercises for each workout
-        const workoutsWithExercises = await Promise.all(
+        // Load practices for each workout instead of exercises
+        const workoutsWithPractices = await Promise.all(
           workoutsData.map(async (workout: Workout) => {
             try {
-              // TODO get Practices by workout ID
               setExercisesLoading((prev) => ({ ...prev, [workout.id]: true }));
-              const exercises = await workoutAPI.getExercisesByWorkoutId(workout.id);
-              return { ...workout, exercises: exercises || [] };
+              // Get practices by workout ID instead of exercises
+              const practices = await practiceAPI.getPracticesByWorkoutId(workout.id);
+
+              return { ...workout, practices: practices || [] };
             } catch (error) {
-              console.error(`Error loading exercises for workout ${workout.id}:`, error);
-              return { ...workout, exercises: [] };
+              console.error(`Error loading practices for workout ${workout.id}:`, error);
+              return { ...workout, practices: [] };
             } finally {
               setExercisesLoading((prev) => ({ ...prev, [workout.id]: false }));
             }
           })
         );
-        setWorkouts(workoutsWithExercises);
+        setWorkouts(workoutsWithPractices);
       } else {
         setWorkouts(workoutsData || []);
       }
@@ -82,7 +84,6 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       setRefreshing(false);
     }
   };
-
   const handleRefresh = () => {
     setRefreshing(true);
     loadWorkouts();
@@ -124,44 +125,45 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
   // TODO: Render Practices
   const renderExerciseItem = (exercise: Exercise) => (
-    <View
-      key={exercise.id}
-      style={[workoutStyles.exerciseItem, workoutStyles.exerciseItemContainer]}
-    >
-      <MaterialIcons
-        name="sports-gymnastics"
-        size={14}
-        color="#666"
-        style={workoutStyles.exerciseIcon}
-      />
-      <Text style={[workoutStyles.exerciseText, workoutStyles.text]} numberOfLines={1}>
+    <View key={exercise.id} style={[styles.exerciseItem, styles.exerciseItemContainer]}>
+      <MaterialIcons name="sports-gymnastics" size={14} color="#666" style={styles.exerciseIcon} />
+      <Text style={[styles.exerciseText, styles.text]} numberOfLines={1}>
         {exercise.name}
       </Text>
-      <View style={workoutStyles.exerciseDetails}>
-        {exercise.sets && <Text style={workoutStyles.exerciseDetailText}>{exercise.sets} ست</Text>}
-        {exercise.reps && (
-          <Text style={workoutStyles.exerciseDetailText}>{exercise.reps} تکرار</Text>
-        )}
+      <View style={styles.exerciseDetails}>
+        {exercise.sets && <Text style={styles.exerciseDetailText}>{exercise.sets} ست</Text>}
+        {exercise.reps && <Text style={styles.exerciseDetailText}>{exercise.reps} تکرار</Text>}
+      </View>
+    </View>
+  );
+  const renderPracticeItem = (practice: Practice) => (
+    <View key={practice.id} style={[styles.practiceItem, styles.practiceItemContainer]}>
+      <MaterialIcons name="fitness-center" size={16} color="#666" style={styles.practiceIcon} />
+      <Text style={[styles.practiceText, styles.text]} numberOfLines={1}>
+        {practice.exercise.name}
+      </Text>
+      <View style={styles.practiceDetails}>
+        <Text style={styles.practiceDetailText}>{practice.sets} ست</Text>
+        <Text style={styles.practiceDetailText}>{practice.reps} تکرار</Text>
       </View>
     </View>
   );
 
   const renderWorkoutItem = ({ item }: { item: Workout }) => {
-    const isLoadingExercises = exercisesLoading[item.id];
-    const hasExercises = item.exercises && item.exercises.length > 0;
+    const isLoadingPractices = exercisesLoading[item.id]; // You might want to rename this state to practicesLoading
+    const hasPractices = item.practices && item.practices.length > 0;
 
-    // TODO: Change difficulty and other items based on workout and practices
     return (
-      <Card style={[styles.workoutCard, workoutStyles.card]} mode="elevated">
-        <Card.Content style={workoutStyles.cardContent}>
+      <Card style={[styles.workoutCard, styles.card]} mode="elevated">
+        <Card.Content style={styles.cardContent}>
           {/* Workout Header */}
           <TouchableOpacity onPress={() => handleWorkoutPress(item)}>
-            <View style={workoutStyles.workoutHeader}>
-              <View style={workoutStyles.workoutTitleContainer}>
-                <Title style={[styles.workoutName, workoutStyles.text]}>{item.name}</Title>
+            <View style={styles.workoutHeader}>
+              <View style={styles.workoutTitleContainer}>
+                <Title style={[styles.workoutName, styles.text]}>{item.name}</Title>
                 {item.difficulty && (
-                  <View style={workoutStyles.difficultyBadge}>
-                    <Text style={workoutStyles.difficultyText}>{item.difficulty}</Text>
+                  <View style={styles.difficultyBadge}>
+                    <Text style={styles.difficultyText}>{item.difficulty}</Text>
                   </View>
                 )}
               </View>
@@ -175,62 +177,58 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
           </TouchableOpacity>
 
           {/* Workout Details */}
-          <View style={workoutStyles.detailsContainer}>
-            {item.day_of_week && (
-              <Text style={[styles.detailText, workoutStyles.text]}>{item.day_of_week}</Text>
+          <View style={styles.detailsContainer}>
+            {item.description && (
+              <Text style={[styles.detailText, styles.text]}>{item.description}</Text>
             )}
-            {item.day_of_week && (
-              <View style={workoutStyles.detailItem}>
+            {item.duration && (
+              <View style={styles.detailItem}>
                 <MaterialIcons name="schedule" size={14} color="#666" />
-                <Text style={[styles.detailText, workoutStyles.text]}>
-                  {item.day_of_week} دقیقه
-                </Text>
+                <Text style={[styles.detailText, styles.text]}>{item.duration} دقیقه</Text>
               </View>
             )}
           </View>
 
-          {/* Exercises Section */}
-          <View style={workoutStyles.exercisesSection}>
-            <Text style={[workoutStyles.exercisesTitle, workoutStyles.text]}>
-              حرکات ({hasExercises ? item.exercises!.length : 0})
+          {/* Practices Section (instead of Exercises) */}
+          <View style={styles.practicesSection}>
+            <Text style={[styles.practicesTitle, styles.text]}>
+              تمرین‌ها ({hasPractices ? item.practices!.length : 0})
             </Text>
 
-            {isLoadingExercises ? (
-              <View style={workoutStyles.loadingExercises}>
+            {isLoadingPractices ? (
+              <View style={styles.loadingPractices}>
                 <ActivityIndicator size="small" color="#007AFF" />
-                <Text style={[workoutStyles.loadingText, workoutStyles.text]}>
-                  در حال بارگذاری حرکات...
-                </Text>
+                <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
               </View>
-            ) : hasExercises ? (
-              <View style={workoutStyles.exercisesList}>
-                {item.exercises!.slice(0, 3).map(renderExerciseItem)}
-                {item.exercises!.length > 3 && (
-                  <Text style={[workoutStyles.moreExercisesText, workoutStyles.text]}>
-                    + {item.exercises!.length - 3} حرکت دیگر
+            ) : hasPractices ? (
+              <View style={styles.practicesList}>
+                {item.practices!.slice(0, 3).map(renderPracticeItem)}
+                {item.practices!.length > 3 && (
+                  <Text style={[styles.morePracticesText, styles.text]}>
+                    + {item.practices!.length - 3} تمرین دیگر
                   </Text>
                 )}
               </View>
             ) : (
-              <Text style={[workoutStyles.noExercisesText, workoutStyles.text]}>
-                هیچ حرکتی برای این تمرین تعریف نشده
+              <Text style={[styles.noPracticesText, styles.text]}>
+                هیچ تمرینی برای این workout تعریف نشده
               </Text>
             )}
           </View>
 
           {/* Action Buttons */}
-          <View style={workoutStyles.actionButtons}>
+          <View style={styles.actionButtons}>
             <Button
               mode="outlined"
               onPress={() => handleWorkoutPress(item)}
-              style={workoutStyles.detailButton}
+              style={styles.detailButton}
             >
               مشاهده جزئیات
             </Button>
             <Button
               mode="contained"
               onPress={() => handleStartWorkout(item)}
-              style={workoutStyles.startButton}
+              style={styles.startButton}
             >
               شروع تمرین
             </Button>
@@ -239,22 +237,21 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       </Card>
     );
   };
-
   if (loading) {
     return (
-      <View style={[styles.centered, workoutStyles.container]}>
+      <View style={[styles.centered, styles.container]}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={[styles.loadingText, workoutStyles.text]}>در حال بارگذاری تمرین‌ها...</Text>
+        <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, workoutStyles.container]}>
+    <View style={[styles.container, styles.container]}>
       {error ? (
-        <View style={[styles.errorContainer, workoutStyles.container]}>
-          <Text style={[styles.errorText, workoutStyles.text]}>{error}</Text>
-          <Button mode="contained" onPress={loadWorkouts} style={workoutStyles.button}>
+        <View style={[styles.errorContainer, styles.container]}>
+          <Text style={[styles.errorText, styles.text]}>{error}</Text>
+          <Button mode="contained" onPress={loadWorkouts} style={styles.button}>
             تلاش مجدد
           </Button>
         </View>
@@ -264,7 +261,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
             data={workouts}
             renderItem={renderWorkoutItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, workoutStyles.listContainer]}
+            contentContainerStyle={[styles.listContainer, styles.listContainer]}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -273,18 +270,18 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
               />
             }
             ListEmptyComponent={
-              <View style={[styles.emptyContainer, workoutStyles.container]}>
+              <View style={[styles.emptyContainer, styles.container]}>
                 <MaterialIcons name="fitness-center" size={64} color="#999" />
-                <Text style={[styles.emptyText, workoutStyles.text]}>
+                <Text style={[styles.emptyText, styles.text]}>
                   هیچ تمرینی برای این پلن وجود ندارد
                 </Text>
-                <Text style={[workoutStyles.emptySubtext, workoutStyles.text]}>
+                <Text style={[styles.emptySubtext, styles.text]}>
                   اولین تمرین را به این پلن اضافه کنید
                 </Text>
                 <Button
                   mode="contained"
                   onPress={handleAddWorkout}
-                  style={workoutStyles.emptyButton}
+                  style={styles.emptyButton}
                   icon="plus"
                 >
                   افزودن تمرین
@@ -295,182 +292,12 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
           {/* Floating Action Button */}
           {workouts.length > 0 && (
-            <FAB style={workoutStyles.fab} icon="plus" onPress={handleAddWorkout} color="white" />
+            <FAB style={styles.fab} icon="plus" onPress={handleAddWorkout} color="white" />
           )}
         </>
       )}
     </View>
   );
 };
-
-const workoutStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-  },
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  cardContent: {
-    alignItems: isRTL ? 'flex-end' : 'flex-start',
-  },
-  text: {
-    textAlign: isRTL ? 'right' : 'left',
-    writingDirection: isRTL ? 'rtl' : 'ltr',
-  },
-  workoutHeader: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    width: '100%',
-    marginBottom: 12,
-  },
-  workoutTitleContainer: {
-    flex: 1,
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  detailsContainer: {
-    flexDirection: 'column',
-    alignItems: isRTL ? 'flex-end' : 'flex-start',
-    width: '100%',
-    marginBottom: 16,
-  },
-  detailItem: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  listContainer: {
-    paddingVertical: 8,
-    flexGrow: 1,
-  },
-  button: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-  emptySubtext: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666',
-    textAlign: isRTL ? 'right' : 'left',
-    marginBottom: 16,
-  },
-  emptyButton: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-  exercisesSection: {
-    width: '100%',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingTop: 12,
-    marginBottom: 16,
-  },
-  exercisesTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-  },
-  exercisesList: {
-    width: '100%',
-  },
-  exerciseItemContainer: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    paddingHorizontal: 8,
-  },
-  exerciseItem: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 8,
-    borderRadius: 6,
-    flex: 1,
-  },
-  exerciseIcon: {
-    marginHorizontal: 8,
-  },
-  exerciseText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#333',
-  },
-  exerciseDetails: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-  },
-  exerciseDetailText: {
-    fontSize: 12,
-    color: '#666',
-    marginHorizontal: 4,
-    backgroundColor: '#e9ecef',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  difficultyBadge: {
-    backgroundColor: colors.activeTintColor,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginHorizontal: 8,
-  },
-  difficultyText: {
-    fontSize: 10,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  moreExercisesText: {
-    fontSize: 12,
-    color: colors.activeTintColor,
-    marginTop: 4,
-    textAlign: isRTL ? 'right' : 'left',
-  },
-  noExercisesText: {
-    fontSize: 14,
-    color: '#999',
-    fontStyle: 'italic',
-    textAlign: isRTL ? 'right' : 'left',
-  },
-  loadingExercises: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-  },
-  loadingText: {
-    marginHorizontal: 8,
-    fontSize: 14,
-    color: '#666',
-  },
-  actionButtons: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 8,
-  },
-  detailButton: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  startButton: {
-    flex: 1,
-    marginHorizontal: 4,
-    backgroundColor: '#28a745',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: isRTL ? undefined : 0,
-    left: isRTL ? 0 : undefined,
-    bottom: 0,
-    backgroundColor: colors.activeTintColor,
-  },
-});
 
 export default WorkoutScreen;
