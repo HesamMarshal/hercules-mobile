@@ -17,14 +17,18 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
+import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation';
 
 const isRTL = I18nManager.isRTL;
 
+// interface WorkoutScreenProps {
+//   route: WorkoutScreenRouteProp;
+//   navigation: WorkoutScreenNavigationProp;
+// }
 interface WorkoutScreenProps {
   route: any;
   navigation: any;
 }
-
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const { planId, planName } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -39,7 +43,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       title: planName || 'تمرین‌ها',
     });
     loadWorkouts();
-  }, [planId]);
+  }, [planId, planName]);
 
   const loadWorkouts = async () => {
     if (!token) {
@@ -50,13 +54,14 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
     try {
       setError('');
-      const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(planId);
+      const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(+planId);
 
       if (workoutsData && workoutsData.length > 0) {
         // Load exercises for each workout
         const workoutsWithExercises = await Promise.all(
           workoutsData.map(async (workout: Workout) => {
             try {
+              // TODO get Practices by workout ID
               setExercisesLoading((prev) => ({ ...prev, [workout.id]: true }));
               const exercises = await workoutAPI.getExercisesByWorkoutId(workout.id);
               return { ...workout, exercises: exercises || [] };
@@ -87,14 +92,12 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   };
 
   const handleWorkoutPress = (workout: Workout) => {
-    // Navigate to workout detail or start workout
-    navigation.navigate('WorkoutDetail', {
+    navigation.navigate('PracticeScreen', {
       workoutId: workout.id,
       workoutName: workout.name,
       planId: planId,
     });
   };
-
   const handleStartWorkout = (workout: Workout) => {
     Alert.alert('شروع تمرین', `آیا می‌خواهید تمرین "${workout.name}" را شروع کنید؟`, [
       { text: 'لغو', style: 'cancel' },
@@ -118,6 +121,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     });
   };
 
+  // TODO: Render Practices
   const renderExerciseItem = (exercise: Exercise) => (
     <View
       key={exercise.id}
@@ -145,6 +149,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     const isLoadingExercises = exercisesLoading[item.id];
     const hasExercises = item.exercises && item.exercises.length > 0;
 
+    // TODO: Change difficulty and other items based on workout and practices
     return (
       <Card style={[styles.workoutCard, workoutStyles.card]} mode="elevated">
         <Card.Content style={workoutStyles.cardContent}>
@@ -170,13 +175,15 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
           {/* Workout Details */}
           <View style={workoutStyles.detailsContainer}>
-            {item.description && (
-              <Text style={[styles.detailText, workoutStyles.text]}>{item.description}</Text>
+            {item.day_of_week && (
+              <Text style={[styles.detailText, workoutStyles.text]}>{item.day_of_week}</Text>
             )}
-            {item.duration && (
+            {item.day_of_week && (
               <View style={workoutStyles.detailItem}>
                 <MaterialIcons name="schedule" size={14} color="#666" />
-                <Text style={[styles.detailText, workoutStyles.text]}>{item.duration} دقیقه</Text>
+                <Text style={[styles.detailText, workoutStyles.text]}>
+                  {item.day_of_week} دقیقه
+                </Text>
               </View>
             )}
           </View>
