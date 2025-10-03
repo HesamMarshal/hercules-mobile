@@ -6,20 +6,22 @@ import { enableScreens } from 'react-native-screens';
 import { RTLProvider } from '@/contexts/RTLContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { PaperProvider } from 'react-native-paper';
+import { QueryProvider } from '@/query/QueryProvider';
 
 enableScreens();
 
 export default function App() {
   return (
     // TODO: Check ERROR BOUNDARY
-    // <ErrorBoundary>
-    <PaperProvider>
-      <RTLProvider>
-        <AuthProvider>
-          <AppNavigator />
-        </AuthProvider>
-      </RTLProvider>
-    </PaperProvider>
-    // </ErrorBoundary>
+
+    <QueryProvider>
+      <PaperProvider>
+        <RTLProvider>
+          <AuthProvider>
+            <AppNavigator />
+          </AuthProvider>
+        </RTLProvider>
+      </PaperProvider>
+    </QueryProvider>
   );
 }
