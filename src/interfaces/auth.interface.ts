@@ -1,7 +1,9 @@
 export interface User {
   id: string;
-  mobile: string;
-  name?: string;
+  mobileNumber: string;
+  role: 'admin' | 'trainer' | 'client';
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface AuthState {

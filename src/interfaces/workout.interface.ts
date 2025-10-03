@@ -1,5 +1,5 @@
-import { Exercise } from './exercise';
-import { Practice } from './practice';
+import { Exercise } from '../interfaces/exercise.interface';
+import { Practice } from './practice.interface';
 
 export interface Workout {
   id: string;
