@@ -43,7 +43,11 @@ export const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={({ route }) => ({
+          cardStyle: { flex: 1 },
+        })}
+      >
         {isAuthenticated ? (
           // Authenticated users - show main app with tabs
           <>
@@ -57,6 +61,10 @@ export const AppNavigator = () => {
               component={WorkoutScreen}
               options={({ route }) => ({
                 title: route.params.planName || 'تمرین‌ها',
+                headerTintColor: colors.activeTintColor,
+                paddingBottom: 5,
+                paddingTop: 10,
+                height: 70,
               })}
             />
             <Stack.Screen
