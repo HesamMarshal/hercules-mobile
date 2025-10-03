@@ -7,10 +7,10 @@ import { ActivityIndicator, Button, Card, Title, FAB } from 'react-native-paper'
 import { workoutStyles as styles } from '@/theme/styles';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
-import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
-import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation';
+import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation.type';
 import { practiceAPI } from '@/services/practiceApi';
+import { Workout } from '@/interfaces/workout.interface';
 
 const isRTL = I18nManager.isRTL;
 

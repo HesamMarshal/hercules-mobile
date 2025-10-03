@@ -1,5 +1,4 @@
-import { Workout } from '../types/workout.type';
-import { fetchWithAuth } from './api';
+import { Workout } from '@/interfaces/workout.interface';
 
 export const workoutAPI = {
   // Get all workouts with authentication

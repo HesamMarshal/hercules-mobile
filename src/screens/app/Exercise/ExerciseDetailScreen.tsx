@@ -1,5 +1,5 @@
 import { exerciseAPI } from '@/services/exerciseApi';
-import { Exercise } from '@/types/exercise';
+import { Exercise } from '@/interfaces/exercise.interface';
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import { Card, Title, Paragraph, Text, Chip, Button, Divider } from 'react-native-paper';

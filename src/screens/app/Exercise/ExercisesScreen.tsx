@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { exerciseAPI } from '@/services/exerciseApi';
-import { Exercise } from '@/types/exercise';
+import { Exercise } from '@/interfaces/exercise.interface';
 import { useState, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Title, Paragraph, Chip, Searchbar, Button } from 'react-native-paper';

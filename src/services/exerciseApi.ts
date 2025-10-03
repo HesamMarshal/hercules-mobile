@@ -1,4 +1,4 @@
-import { Exercise } from '../types/exercise';
+import { Exercise } from '../interfaces/exercise.interface';
 import { fetchWithAuth } from './api';
 
 export const exerciseAPI = {

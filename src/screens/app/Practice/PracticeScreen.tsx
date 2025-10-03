@@ -15,8 +15,8 @@ import { ActivityIndicator, Button, Card, Title, FAB, Chip } from 'react-native-
 import { workoutStyles as styles } from '@/theme/styles';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { practiceAPI } from '@/services/practiceApi';
-import { Practice } from '@/types/practice';
-import { PracticeScreenRouteProp, PracticeScreenNavigationProp } from '@/types/navigation';
+import { PracticeScreenRouteProp, PracticeScreenNavigationProp } from '@/types/navigation.type';
+import { Practice } from '@/interfaces/practice.interface';
 
 const isRTL = I18nManager.isRTL;
 
