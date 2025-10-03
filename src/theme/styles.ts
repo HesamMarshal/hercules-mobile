@@ -1,8 +1,8 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, I18nManager } from 'react-native';
 import { colors } from '@/theme/properties/colors';
 import { spacing } from '@/theme/properties/spacing';
 import { fontSizes, typography } from '@/theme/properties/typography';
-
+const isRTL = I18nManager.isRTL;
 export const exerciseStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -85,6 +85,7 @@ export const exerciseStyles = StyleSheet.create({
     fontSize: fontSizes.small,
     color: colors.textSecondary,
   },
+  // TODO: Make it general
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -100,6 +101,7 @@ export const exerciseStyles = StyleSheet.create({
   retryButton: {
     marginTop: spacing.sm,
   },
+  // TODO: General
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -582,6 +584,25 @@ export const planStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+  },
+  card: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  cardContent: {
+    alignItems: isRTL ? 'flex-end' : 'flex-start',
+  },
+  detailsContainer: {
+    flexDirection: 'column',
+    alignItems: isRTL ? 'flex-end' : 'flex-start',
+    width: '100%',
+    marginBottom: 16,
+  },
+  dateContainer: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   header: {
     padding: 20,
@@ -590,6 +611,10 @@ export const planStyles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginBottom: 10,
+  },
+  text: {
+    textAlign: isRTL ? 'right' : 'left',
+    writingDirection: isRTL ? 'rtl' : 'ltr',
   },
   title: {
     fontSize: 28,
@@ -603,6 +628,7 @@ export const planStyles = StyleSheet.create({
   },
   listContainer: {
     padding: 15,
+    paddingVertical: 8,
   },
   planCard: {
     backgroundColor: '#fff',
@@ -619,10 +645,11 @@ export const planStyles = StyleSheet.create({
     elevation: 5,
   },
   planHeader: {
-    flexDirection: 'row',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    width: '100%',
+    marginBottom: 12,
   },
   planName: {
     fontSize: 18,
@@ -647,5 +674,132 @@ export const planStyles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginLeft: 5,
+  },
+  button: {
+    marginTop: 16,
+    alignSelf: 'center',
+  },
+  emptySubtext: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  workoutsSection: {
+    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+  },
+  workoutsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
+  },
+  workoutsList: {
+    width: '100%',
+  },
+  workoutItemContainer: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingHorizontal: 8,
+  },
+  workoutItem: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 8,
+    borderRadius: 6,
+    flex: 1,
+  },
+  workoutIcon: {
+    marginHorizontal: 8,
+  },
+  workoutText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333',
+  },
+  difficultyContainer: {
+    marginLeft: isRTL ? 0 : 8,
+    marginRight: isRTL ? 8 : 0,
+  },
+  difficultyBadge: {
+    backgroundColor: '#e9ecef',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  difficultyText: {
+    fontSize: 10,
+    color: '#666',
+    fontWeight: '500',
+  },
+  moreWorkoutsText: {
+    fontSize: 12,
+    color: colors.activeTintColor,
+    marginTop: 4,
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  noWorkoutsText: {
+    fontSize: 14,
+    color: '#999',
+    fontStyle: 'italic',
+    textAlign: isRTL ? 'right' : 'left',
+  },
+  loadingWorkouts: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+  },
+  loadingText: {
+    marginHorizontal: 8,
+    fontSize: 14,
+    color: '#666',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: isRTL ? undefined : 0,
+    left: isRTL ? 0 : undefined,
+    bottom: 0,
+    backgroundColor: colors.activeTintColor,
+  },
+  emptyButton: {
+    marginTop: 16,
+    alignSelf: 'center',
+  },
+
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  errorText: {
+    fontSize: fontSizes.body,
+    color: colors.error,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.xl,
+  },
+  emptyText: {
+    fontSize: fontSizes.body,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 });

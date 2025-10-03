@@ -5,10 +5,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchWithAuth } from '@/services/api';
 import { ActivityIndicator, Button, Card, FAB, Title } from 'react-native-paper';
-import { workoutStyles as styles } from '@/theme/styles';
+import { planStyles as styles } from '@/theme/styles';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
+import { colors } from '@/theme/properties/colors';
 
 const isRTL = I18nManager.isRTL;
 
@@ -98,14 +99,14 @@ const PlansScreen = ({ navigation }: any) => {
     }
   };
   const renderWorkoutItem = (workout: Workout) => (
-    <View key={workout.id} style={[rtlAware.workoutItem, rtlAware.workoutItemContainer]}>
-      <MaterialIcons name="fitness-center" size={16} color="#666" style={rtlAware.workoutIcon} />
-      <Text style={[rtlAware.workoutText, rtlAware.text]} numberOfLines={1}>
+    <View key={workout.id} style={[styles.workoutItem, styles.workoutItemContainer]}>
+      <MaterialIcons name="fitness-center" size={16} color="#666" style={styles.workoutIcon} />
+      <Text style={[styles.workoutText, styles.text]} numberOfLines={1}>
         {workout.name}
       </Text>
       {workout.day_of_week && (
-        <View style={[rtlAware.difficultyBadge, rtlAware.difficultyContainer]}>
-          <Text style={rtlAware.difficultyText}>{workout.day_of_week}</Text>
+        <View style={[styles.difficultyBadge, styles.difficultyContainer]}>
+          <Text style={styles.difficultyText}>{workout.day_of_week}</Text>
         </View>
       )}
     </View>
@@ -117,16 +118,16 @@ const PlansScreen = ({ navigation }: any) => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('PlanWorkouts', {
+          navigation.navigate('WorkoutScreen', {
             planId: item.id,
             planName: item.name,
           })
         }
       >
-        <Card style={[styles.workoutCard, rtlAware.card]} mode="elevated">
-          <Card.Content style={rtlAware.cardContent}>
-            <View style={rtlAware.planHeader}>
-              <Title style={[styles.workoutName, rtlAware.text]}>{item.name}</Title>
+        <Card style={[styles.planCard, styles.card]} mode="elevated">
+          <Card.Content style={styles.cardContent}>
+            <View style={styles.planHeader}>
+              <Title style={[styles.planName, styles.text]}>{item.name}</Title>
               <MaterialIcons
                 name="chevron-left"
                 size={24}
@@ -135,45 +136,43 @@ const PlansScreen = ({ navigation }: any) => {
               />
             </View>
 
-            <View style={rtlAware.detailsContainer}>
-              <View style={rtlAware.dateContainer}>
+            <View style={styles.detailsContainer}>
+              <View style={styles.dateContainer}>
                 <MaterialIcons name="calendar-today" size={14} color="#666" />
-                <Text style={[styles.detailText, rtlAware.text]}>
+                <Text style={[styles.detailText, styles.text]}>
                   شروع: {formatDate(item.start_date)}
                 </Text>
               </View>
-              <View style={rtlAware.dateContainer}>
+              <View style={styles.dateContainer}>
                 <MaterialIcons name="event-busy" size={14} color="#666" />
-                <Text style={[styles.detailText, rtlAware.text]}>
+                <Text style={[styles.detailText, styles.text]}>
                   پایان: {formatDate(item.end_date)}
                 </Text>
               </View>
             </View>
 
             {/* Workouts Section */}
-            <View style={rtlAware.workoutsSection}>
-              <Text style={[rtlAware.workoutsTitle, rtlAware.text]}>
+            <View style={styles.workoutsSection}>
+              <Text style={[styles.workoutsTitle, styles.text]}>
                 تمرین‌ها ({hasWorkouts ? item.workouts!.length : 0})
               </Text>
 
               {isLoadingWorkouts ? (
-                <View style={rtlAware.loadingWorkouts}>
+                <View style={styles.loadingWorkouts}>
                   <ActivityIndicator size="small" color="#007AFF" />
-                  <Text style={[rtlAware.loadingText, rtlAware.text]}>
-                    در حال بارگذاری تمرین‌ها...
-                  </Text>
+                  <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
                 </View>
               ) : hasWorkouts ? (
-                <View style={rtlAware.workoutsList}>
+                <View style={styles.workoutsList}>
                   {item.workouts!.slice(0, 3).map(renderWorkoutItem)}
                   {item.workouts!.length > 3 && (
-                    <Text style={[rtlAware.moreWorkoutsText, rtlAware.text]}>
+                    <Text style={[styles.moreWorkoutsText, styles.text]}>
                       + {item.workouts!.length - 3} تمرین دیگر
                     </Text>
                   )}
                 </View>
               ) : (
-                <Text style={[rtlAware.noWorkoutsText, rtlAware.text]}>
+                <Text style={[styles.noWorkoutsText, styles.text]}>
                   هیچ تمرینی برای این پلن تعریف نشده
                 </Text>
               )}
@@ -186,19 +185,19 @@ const PlansScreen = ({ navigation }: any) => {
 
   if (loading) {
     return (
-      <View style={[styles.centered, rtlAware.container]}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={[styles.loadingText, rtlAware.text]}>در حال بارگذاری پلن‌ها...</Text>
+      <View style={[styles.centered, styles.container]}>
+        <ActivityIndicator size="large" color={colors.activeTintColor} />
+        <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری پلن‌ها...</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, rtlAware.container]}>
+    <View style={[styles.container, styles.container]}>
       {error ? (
-        <View style={[styles.errorContainer, rtlAware.container]}>
-          <Text style={[styles.errorText, rtlAware.text]}>{error}</Text>
-          <Button mode="contained" onPress={loadPlans} style={rtlAware.button}>
+        <View style={[styles.errorContainer, styles.container]}>
+          <Text style={[styles.errorText, styles.text]}>{error}</Text>
+          <Button mode="contained" onPress={loadPlans} style={styles.button}>
             تلاش مجدد
           </Button>
         </View>
@@ -208,25 +207,25 @@ const PlansScreen = ({ navigation }: any) => {
             data={plans}
             renderItem={renderPlanItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, rtlAware.listContainer]}
+            contentContainerStyle={[styles.listContainer, styles.listContainer]}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                colors={['#007AFF']}
+                colors={[colors.activeTintColor]}
               />
             }
             ListEmptyComponent={
-              <View style={[styles.emptyContainer, rtlAware.container]}>
+              <View style={[styles.emptyContainer, styles.container]}>
                 <MaterialIcons name="assignment" size={64} color="#999" />
-                <Text style={[styles.emptyText, rtlAware.text]}>هیچ پلن تمرینی موجود نیست</Text>
-                <Text style={[rtlAware.emptySubtext, rtlAware.text]}>
+                <Text style={[styles.emptyText, styles.text]}>هیچ پلن تمرینی موجود نیست</Text>
+                <Text style={[styles.emptySubtext, styles.text]}>
                   پلن‌های تمرینی شما در اینجا نمایش داده می‌شوند
                 </Text>
                 <Button
                   mode="contained"
                   onPress={handleCreatePlan}
-                  style={rtlAware.emptyButton}
+                  style={styles.emptyButton}
                   icon="plus"
                 >
                   ایجاد پلن جدید
@@ -236,148 +235,12 @@ const PlansScreen = ({ navigation }: any) => {
           />
           {/* Floating Action Button */}
           {plans.length > 0 && (
-            <FAB style={rtlAware.fab} icon="plus" onPress={handleCreatePlan} color="white" />
+            <FAB style={styles.fab} icon="plus" onPress={handleCreatePlan} color="white" />
           )}
         </>
       )}
     </View>
   );
 };
-
-const rtlAware = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-  },
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  cardContent: {
-    alignItems: isRTL ? 'flex-end' : 'flex-start',
-  },
-  text: {
-    textAlign: isRTL ? 'right' : 'left',
-    writingDirection: isRTL ? 'rtl' : 'ltr',
-  },
-  planHeader: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 12,
-  },
-  detailsContainer: {
-    flexDirection: 'column',
-    alignItems: isRTL ? 'flex-end' : 'flex-start',
-    width: '100%',
-    marginBottom: 16,
-  },
-  dateContainer: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  listContainer: {
-    paddingVertical: 8,
-  },
-  button: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-  emptySubtext: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666',
-    textAlign: isRTL ? 'right' : 'left',
-  },
-  workoutsSection: {
-    width: '100%',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingTop: 12,
-  },
-  workoutsTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-  },
-  workoutsList: {
-    width: '100%',
-  },
-  workoutItemContainer: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    paddingHorizontal: 8,
-  },
-  workoutItem: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 8,
-    borderRadius: 6,
-    flex: 1,
-  },
-  workoutIcon: {
-    marginHorizontal: 8,
-  },
-  workoutText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#333',
-  },
-  difficultyContainer: {
-    marginLeft: isRTL ? 0 : 8,
-    marginRight: isRTL ? 8 : 0,
-  },
-  difficultyBadge: {
-    backgroundColor: '#e9ecef',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  difficultyText: {
-    fontSize: 10,
-    color: '#666',
-    fontWeight: '500',
-  },
-  moreWorkoutsText: {
-    fontSize: 12,
-    color: '#007AFF',
-    marginTop: 4,
-    textAlign: isRTL ? 'right' : 'left',
-  },
-  noWorkoutsText: {
-    fontSize: 14,
-    color: '#999',
-    fontStyle: 'italic',
-    textAlign: isRTL ? 'right' : 'left',
-  },
-  loadingWorkouts: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-  },
-  loadingText: {
-    marginHorizontal: 8,
-    fontSize: 14,
-    color: '#666',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: isRTL ? undefined : 0,
-    left: isRTL ? 0 : undefined,
-    bottom: 0,
-    backgroundColor: '#007AFF',
-  },
-  emptyButton: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-});
 
 export default PlansScreen;
