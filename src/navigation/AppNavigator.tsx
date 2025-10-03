@@ -13,7 +13,7 @@ import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
 import PracticeScreen from '@/screens/app/Practice/PracticeScreen';
 import { colors } from '@/theme/properties/colors';
 // import { createStackNavigator } from '@react-navigation/stack';
-import { RootStackParamList } from '@/types/navigation';
+import { RootStackParamList } from '@/types/navigation.type';
 import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
 import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
 
