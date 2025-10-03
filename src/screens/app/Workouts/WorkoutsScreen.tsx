@@ -1,14 +1,6 @@
 // src/screens/WorkoutScreen.tsx
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  I18nManager,
-  Alert,
-} from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, I18nManager, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityIndicator, Button, Card, Title, FAB } from 'react-native-paper';
@@ -55,14 +47,11 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(+planId);
 
       if (workoutsData && workoutsData.length > 0) {
-        // Load practices for each workout instead of exercises
         const workoutsWithPractices = await Promise.all(
           workoutsData.map(async (workout: Workout) => {
             try {
               setExercisesLoading((prev) => ({ ...prev, [workout.id]: true }));
-              // Get practices by workout ID instead of exercises
               const practices = await practiceAPI.getPracticesByWorkoutId(workout.id);
-
               return { ...workout, practices: practices || [] };
             } catch (error) {
               console.error(`Error loading practices for workout ${workout.id}:`, error);
@@ -247,7 +236,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   }
 
   return (
-    <View style={[styles.container, styles.container]}>
+    <View style={[styles.container]}>
       {error ? (
         <View style={[styles.errorContainer, styles.container]}>
           <Text style={[styles.errorText, styles.text]}>{error}</Text>
@@ -261,7 +250,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
             data={workouts}
             renderItem={renderWorkoutItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, styles.listContainer]}
+            contentContainerStyle={[styles.listContainer]}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
