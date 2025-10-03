@@ -1,15 +1,15 @@
 // src/screens/PlansScreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, I18nManager } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, I18nManager } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchWithAuth } from '@/services/api';
 import { ActivityIndicator, Button, Card, FAB, Title } from 'react-native-paper';
-import { planStyles as styles } from '@/theme/styles';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
+import { planStyles as styles } from '@/theme/styles';
 
 const isRTL = I18nManager.isRTL;
 
@@ -193,7 +193,7 @@ const PlansScreen = ({ navigation }: any) => {
   }
 
   return (
-    <View style={[styles.container, styles.container]}>
+    <View style={[styles.container]}>
       {error ? (
         <View style={[styles.errorContainer, styles.container]}>
           <Text style={[styles.errorText, styles.text]}>{error}</Text>
@@ -207,7 +207,7 @@ const PlansScreen = ({ navigation }: any) => {
             data={plans}
             renderItem={renderPlanItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, styles.listContainer]}
+            contentContainerStyle={[styles.listContainer]}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
