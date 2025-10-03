@@ -15,6 +15,7 @@ import { colors } from '@/theme/properties/colors';
 // import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
 import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
+import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -30,9 +31,7 @@ export const AppNavigator = () => {
   if (loading) {
     return (
       <RTLProvider>
-        <NavigationContainer
-        // theme={CustomTheme}
-        >
+        <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Auth" component={() => null} options={{ headerShown: false }} />
           </Stack.Navigator>
@@ -56,6 +55,24 @@ export const AppNavigator = () => {
               component={MainTabNavigator}
               options={{ headerShown: false }}
             />
+
+            <Stack.Screen
+              name="CreatePlan"
+              component={CreatePlanScreen}
+              options={{
+                title: 'CreatePlan',
+                headerStyle: {
+                  backgroundColor: colors.activeTintColor,
+                },
+                headerTintColor: 'white',
+              }}
+            />
+            <Stack.Screen
+              name="EditPlan"
+              component={EditPlanScreen}
+              options={{ title: 'ویرایش پلن' }}
+            />
+
             <Stack.Screen
               name="WorkoutScreen"
               component={WorkoutScreen}
@@ -84,17 +101,6 @@ export const AppNavigator = () => {
               component={ExerciseDetailScreen}
               options={{
                 title: 'Exercise Details',
-                headerStyle: {
-                  backgroundColor: colors.activeTintColor,
-                },
-                headerTintColor: 'white',
-              }}
-            />
-            <Stack.Screen
-              name="CreatePlan"
-              component={CreatePlanScreen}
-              options={{
-                title: 'CreatePlan',
                 headerStyle: {
                   backgroundColor: colors.activeTintColor,
                 },

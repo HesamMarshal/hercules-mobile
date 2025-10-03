@@ -9,6 +9,7 @@ export type RootStackParamList = {
 
   PlansScreen: undefined;
   CreatePlan: undefined;
+  EditPlan: undefined;
 
   WorkoutScreen: {
     planId: string;
