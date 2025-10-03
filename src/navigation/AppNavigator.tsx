@@ -12,21 +12,14 @@ import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
 import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
 import PracticeScreen from '@/screens/app/Practice/PracticeScreen';
 import { colors } from '@/theme/properties/colors';
+// import { createStackNavigator } from '@react-navigation/stack';
+import { RootStackParamList } from '@/types/navigation';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
 // I18nManager.allowRTL(true);
 
 // TODO  :Implement theme and dark and light theme
-
-export type RootStackParamList = {
-  Auth: undefined;
-  MainTabs: undefined;
-  ExerciseDetail: { exerciseId: string };
-  CreatePlan: undefined;
-  WorkoutScreen: undefined;
-  PracticeScreen: undefined;
-};
 
 const Stack = createStackNavigator<RootStackParamList>();
 

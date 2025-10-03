@@ -1,16 +1,27 @@
 // src/types/navigation.ts
+
+// TODO: add type
 export type RootStackParamList = {
+  Auth: undefined;
+
+  MainTabs: undefined;
+  // Profile, Plans, Exercises, Settings
+
   PlansScreen: undefined;
+  CreatePlan: undefined;
+
   WorkoutScreen: {
     planId: string;
     planName: string;
   };
+
   PracticeScreen: {
     workoutId: string;
     workoutName: string;
     planId: string;
   };
-  // Add other screens as needed
+
+  ExerciseDetail: undefined;
 };
 
 // Use this for route prop typing
