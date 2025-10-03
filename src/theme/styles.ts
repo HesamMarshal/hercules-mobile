@@ -1033,4 +1033,24 @@ export const planStyles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
   },
+  menuButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  menuContent: {
+    borderRadius: 8,
+  },
+  menuItem: {
+    paddingHorizontal: 8,
+  },
+  deleteMenuText: {
+    color: '#d32f2f', // Red color for delete
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  planTitleContainer: {
+    flex: 1,
+  },
 });

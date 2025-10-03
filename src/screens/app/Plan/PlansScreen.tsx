@@ -1,16 +1,17 @@
 // src/screens/PlansScreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, I18nManager } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, I18nManager, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchWithAuth } from '@/services/api';
-import { ActivityIndicator, Button, Card, FAB, Title } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, FAB, Title, Menu, Divider } from 'react-native-paper';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
 import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
 import { planStyles as styles } from '@/theme/styles';
 import { Plan } from '@/types/plan.type';
+import { planAPI } from '@/services/planApi';
 
 const isRTL = I18nManager.isRTL;
 
@@ -20,6 +21,7 @@ const PlansScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [workoutsLoading, setWorkoutsLoading] = useState<{ [key: string]: boolean }>({});
+  const [menuVisible, setMenuVisible] = useState<{ [key: string]: boolean }>({});
   const { token } = useAuth();
 
   useEffect(() => {
@@ -77,10 +79,64 @@ const PlansScreen = ({ navigation }: any) => {
   };
 
   const handleCreatePlan = () => {
-    // Navigate to create plan screen
     navigation.navigate('CreatePlan', {
-      onPlanCreated: loadPlans, // Refresh the list after creating a plan
+      onPlanCreated: loadPlans,
     });
+  };
+
+  const handleEditPlan = (plan: Plan) => {
+    setMenuVisible({ ...menuVisible, [plan.id]: false });
+    navigation.navigate('EditPlan', {
+      planId: plan.id,
+      planName: plan.name,
+      startDate: plan.start_date,
+      endDate: plan.end_date,
+      onPlanUpdated: loadPlans,
+    });
+  };
+
+  const handleDeletePlan = (plan: Plan) => {
+    setMenuVisible({ ...menuVisible, [plan.id]: false });
+
+    deletePlan(plan.id);
+    // Alert.alert(
+    //   'حذف پلن',
+    //   `آیا از حذف پلن "${plan.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+    //   [
+    //     { text: 'لغو', style: 'cancel' },
+    //     {
+    //       text: 'حذف',
+    //       style: 'destructive',
+    //       onPress: () => deletePlan(plan.id),
+    //     },
+    //   ]
+    // );
+  };
+
+  const deletePlan = async (planId: string) => {
+    try {
+      await planAPI.deletePlan(planId);
+      // Remove the plan from local state
+      setPlans(plans.filter((plan) => plan.id !== planId));
+      // Show success message
+      Alert.alert('موفقیت', 'پلن با موفقیت حذف شد');
+    } catch (error: any) {
+      console.error('Error deleting plan:', error);
+      Alert.alert('خطا', 'خطا در حذف پلن. لطفاً مجدداً تلاش کنید.');
+    }
+  };
+
+  const toggleMenu = (planId: string) => {
+    setMenuVisible({
+      ...menuVisible,
+      [planId]: !menuVisible[planId],
+    });
+  };
+
+  const closeAllMenus = () => {
+    // TODO: if all menus all close open the plan
+
+    setMenuVisible({});
   };
 
   const formatDate = (dateString: string) => {
@@ -91,6 +147,7 @@ const PlansScreen = ({ navigation }: any) => {
       return dateString;
     }
   };
+
   const renderWorkoutItem = (workout: Workout) => (
     <View key={workout.id} style={[styles.workoutItem, styles.workoutItemContainer]}>
       <MaterialIcons name="fitness-center" size={16} color="#666" style={styles.workoutIcon} />
@@ -108,25 +165,64 @@ const PlansScreen = ({ navigation }: any) => {
   const renderPlanItem = ({ item }: { item: Plan }) => {
     const isLoadingWorkouts = workoutsLoading[item.id];
     const hasWorkouts = item.workouts && item.workouts.length > 0;
+
     return (
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('WorkoutScreen', {
-            planId: item.id,
-            planName: item.name,
-          })
-        }
-      >
+      <TouchableOpacity onPress={closeAllMenus} activeOpacity={0.9}>
         <Card style={[styles.planCard, styles.card]} mode="elevated">
           <Card.Content style={styles.cardContent}>
+            {/* Plan Header with Menu */}
             <View style={styles.planHeader}>
-              <Title style={[styles.planName, styles.text]}>{item.name}</Title>
-              <MaterialIcons
-                name="chevron-left"
-                size={24}
-                color="#666"
-                style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
-              />
+              <View style={styles.planTitleContainer}>
+                <Title style={[styles.planName, styles.text]}>{item.name}</Title>
+              </View>
+
+              <View style={styles.headerActions}>
+                <Menu
+                  visible={!!menuVisible[item.id]}
+                  onDismiss={() => setMenuVisible({ ...menuVisible, [item.id]: false })}
+                  anchor={
+                    <TouchableOpacity
+                      onPress={() => toggleMenu(item.id)}
+                      style={styles.menuButton}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <MaterialIcons name="more-vert" size={24} color="#666" />
+                    </TouchableOpacity>
+                  }
+                  contentStyle={styles.menuContent}
+                >
+                  <Menu.Item
+                    onPress={() => handleEditPlan(item)}
+                    title="ویرایش"
+                    leadingIcon="pencil"
+                    style={styles.menuItem}
+                  />
+                  <Divider />
+                  <Menu.Item
+                    onPress={() => handleDeletePlan(item)}
+                    title="حذف"
+                    leadingIcon="delete"
+                    titleStyle={styles.deleteMenuText}
+                    style={styles.menuItem}
+                  />
+                </Menu>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('WorkoutScreen', {
+                      planId: item.id,
+                      planName: item.name,
+                    })
+                  }
+                >
+                  <MaterialIcons
+                    name="chevron-left"
+                    size={24}
+                    color="#666"
+                    style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.detailsContainer}>
