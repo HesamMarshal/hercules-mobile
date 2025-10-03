@@ -13,7 +13,6 @@ import PlansScreen from '@/screens/app/Plan/PlansScreen';
 
 export type MainTabParamList = {
   Profile: undefined;
-  Workouts: undefined;
   Exercises: undefined;
   Settings: undefined;
   Plans: undefined;
@@ -32,8 +31,6 @@ export const MainTabNavigator = () => {
 
           if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Workouts') {
-            iconName = focused ? 'alert' : 'alert-outline';
           } else if (route.name === 'Exercises') {
             iconName = focused ? 'fitness' : 'fitness-outline';
           } else if (route.name === 'Plans') {
@@ -84,8 +81,7 @@ export const MainTabNavigator = () => {
     >
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'تنظیمات' }} />
       <Tab.Screen name="Exercises" component={ExercisesScreen} options={{ title: 'حرکات ورزشی' }} />
-      <Tab.Screen name="Plans" component={PlansScreen} options={{ title: 'برنامه' }} />
-      <Tab.Screen name="Workouts" component={WorkoutsScreen} options={{ title: 'تمرینات' }} />
+      <Tab.Screen name="Plans" component={PlansScreen} options={{ title: 'برنامه ها' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'پروفایل' }} />
     </Tab.Navigator>
   );

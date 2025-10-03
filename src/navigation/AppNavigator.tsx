@@ -9,6 +9,7 @@ import ExerciseDetailScreen from '@/screens/app/Exercise/ExerciseDetailScreen';
 import { I18nManager } from 'react-native';
 import { RTLProvider } from '@/contexts/RTLContext';
 import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
+import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -34,6 +35,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   ExerciseDetail: { exerciseId: string };
   CreatePlan: undefined;
+  WorkoutScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -65,6 +67,13 @@ export const AppNavigator = () => {
               name="MainTabs"
               component={MainTabNavigator}
               options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="WorkoutScreen"
+              component={WorkoutScreen}
+              options={({ route }) => ({
+                title: route.params?.planName || 'تمرین‌ها',
+              })}
             />
             <Stack.Screen
               name="ExerciseDetail"
