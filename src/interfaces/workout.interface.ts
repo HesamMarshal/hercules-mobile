@@ -6,6 +6,9 @@ export interface Workout {
   name: string;
   order: number;
   day_of_week: string; //enum
+  planId?: number;
+  user_id?: number;
+  created_by?: number;
   practices?: Practice[];
 }
 
