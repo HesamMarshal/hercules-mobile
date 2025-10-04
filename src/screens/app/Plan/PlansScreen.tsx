@@ -18,6 +18,8 @@ import { Plan } from '@/interfaces/plan.interface';
 import { Workout } from '@/interfaces/workout.interface';
 import { planAPI } from '@/services/planApi';
 import { workoutAPI } from '@/services/workoutsApi';
+import Loading from '@/components/common/Loading';
+import { formatDate } from '@/utils/date.util';
 
 const isRTL = I18nManager.isRTL;
 
@@ -137,15 +139,6 @@ const PlansScreen = ({ navigation }: any) => {
 
   const closeAllMenus = () => {
     setMenuVisible({});
-  };
-
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('fa-IR');
-    } catch {
-      return dateString;
-    }
   };
 
   const renderWorkoutItem = (workout: Workout) => (
@@ -271,12 +264,7 @@ const PlansScreen = ({ navigation }: any) => {
   };
 
   if (loading) {
-    return (
-      <View style={[styles.centered, styles.container]}>
-        <ActivityIndicator size="large" color={colors.activeTintColor} />
-        <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری پلن‌ها...</Text>
-      </View>
-    );
+    return <Loading message="در حال بارگذاری پلن‌ها..." />;
   }
 
   return (
