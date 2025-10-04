@@ -1,17 +1,23 @@
 // src/screens/PlansScreen.tsx
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, I18nManager, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  I18nManager,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchWithAuth } from '@/services/api';
 import { ActivityIndicator, Button, Card, FAB, Title, Menu, Divider } from 'react-native-paper';
-import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
-import { Workout } from '@/types/workout.type';
 import { colors } from '@/theme/properties/colors';
 import { planStyles as styles } from '@/theme/plan.style';
-import { Plan } from '@/types/plan.type';
+import { Plan } from '@/interfaces/plan.interface';
 import { planAPI } from '@/services/planApi';
+import { Workout } from '@/interfaces/workout.interface';
 
 const isRTL = I18nManager.isRTL;
 
@@ -37,17 +43,12 @@ const PlansScreen = ({ navigation }: any) => {
 
     try {
       setError('');
-      const response = await fetchWithAuth('/plan');
-      const data = await response.json();
-      const plans = data.data;
+      // Use the corrected planAPI
+      const plansData = await planAPI.getAllPlans();
 
-      if (plans && plans.length > 0) {
-        await workoutAPI.getAllWorkoutsByPlanId(plans[0].id);
-      }
-
-      if (plans && plans.length > 0) {
+      if (plansData && plansData.length > 0) {
         const plansWithWorkouts = await Promise.all(
-          plans.map(async (plan: Plan) => {
+          plansData.map(async (plan: Plan) => {
             try {
               setWorkoutsLoading((prev) => ({ ...prev, [plan.id]: true }));
               const workouts = await workoutAPI.getAllWorkoutsByPlanId(+plan.id);
@@ -62,7 +63,7 @@ const PlansScreen = ({ navigation }: any) => {
         );
         setPlans(plansWithWorkouts);
       } else {
-        setPlans(plans || []);
+        setPlans(plansData || []);
       }
     } catch (error: any) {
       setError('خطا در بارگذاری پلن‌ها');
