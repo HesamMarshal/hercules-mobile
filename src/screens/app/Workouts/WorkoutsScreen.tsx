@@ -125,19 +125,21 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
   const handleDeleteWorkout = (workout: Workout) => {
     setMenuVisible({ ...menuVisible, [workout.id]: false });
+    deleteWorkout(workout.id);
+    loadWorkouts(true);
 
-    Alert.alert(
-      'حذف تمرین',
-      `آیا از حذف تمرین "${workout.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
-      [
-        { text: 'لغو', style: 'cancel' },
-        {
-          text: 'حذف',
-          style: 'destructive',
-          onPress: () => deleteWorkout(workout.id),
-        },
-      ]
-    );
+    // Alert.alert(
+    //   'حذف تمرین',
+    //   `آیا از حذف تمرین "${workout.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+    //   [
+    //     { text: 'لغو', style: 'cancel' },
+    //     {
+    //       text: 'حذف',
+    //       style: 'destructive',
+    //       onPress: () => deleteWorkout(workout.id),
+    //     },
+    //   ]
+    // );
   };
 
   const deleteWorkout = async (workoutId: string) => {
@@ -173,22 +175,22 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     });
   };
 
-  const handleStartWorkout = (workout: Workout) => {
-    console.log('Call active workout');
-    Alert.alert('شروع تمرین', `آیا می‌خواهید تمرین "${workout.name}" را شروع کنید؟`, [
-      { text: 'لغو', style: 'cancel' },
-      {
-        text: 'شروع',
-        onPress: () => {
-          // Navigate to active workout screen
-          navigation.navigate('ActiveWorkout', {
-            workoutId: workout.id,
-            workoutName: workout.name,
-          });
-        },
-      },
-    ]);
-  };
+  // const handleStartWorkout = (workout: Workout) => {
+  //   console.log('Call active workout');
+  //   Alert.alert('شروع تمرین', `آیا می‌خواهید تمرین "${workout.name}" را شروع کنید؟`, [
+  //     { text: 'لغو', style: 'cancel' },
+  //     {
+  //       text: 'شروع',
+  //       onPress: () => {
+  //         // Navigate to active workout screen
+  //         navigation.navigate('ActiveWorkout', {
+  //           workoutId: workout.id,
+  //           workoutName: workout.name,
+  //         });
+  //       },
+  //     },
+  //   ]);
+  // };
 
   const renderPracticeItem = (practice: Practice) => (
     <View key={practice.id} style={[styles.practiceItem, styles.practiceItemContainer]}>
@@ -220,11 +222,11 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
                 style={styles.workoutTitleContainer}
               >
                 <Title style={[styles.workoutName, styles.text]}>{item.name}</Title>
-                {item.difficulty && (
+                {/* {item.difficulty && (
                   <View style={styles.difficultyBadge}>
                     <Text style={styles.difficultyText}>{item.difficulty}</Text>
                   </View>
-                )}
+                )} */}
               </TouchableOpacity>
 
               <View style={styles.headerActions}>
@@ -270,7 +272,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
             </View>
 
             {/*             Workout Details */}
-            <View style={styles.detailsContainer}>
+            {/* <View style={styles.detailsContainer}>
               {item.description && (
                 <Text style={[styles.detailText, styles.text]}>{item.description}</Text>
               )}
@@ -280,7 +282,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
                   <Text style={[styles.detailText, styles.text]}>{item.duration} دقیقه</Text>
                 </View>
               )}
-            </View>
+            </View> */}
 
             {/* Practices Section */}
             <View style={styles.practicesSection}>
@@ -318,13 +320,13 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
               >
                 مشاهده جزئیات
               </Button>
-              <Button
+              {/* <Button
                 mode="contained"
                 onPress={() => handleStartWorkout(item)}
                 style={styles.startButton}
               >
                 شروع تمرین
-              </Button>
+              </Button> */}
             </View>
           </Card.Content>
         </Card>
