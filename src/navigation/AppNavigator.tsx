@@ -16,6 +16,7 @@ import { RootStackParamList } from '@/types/navigation.type';
 import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
 import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
 import CreateWorkoutScreen from '@/screens/app/Workouts/CreateWorkoutScreen';
+import EditWorkoutScreen from '@/screens/app/Workouts/EditWorkoutScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -89,6 +90,15 @@ export const AppNavigator = () => {
               component={CreateWorkoutScreen}
               options={{
                 title: 'ایجاد تمرین جدید',
+                headerBackTitle: 'بازگشت',
+              }}
+            />
+
+            <Stack.Screen
+              name="EditWorkoutScreen"
+              component={EditWorkoutScreen}
+              options={{
+                title: 'ویرایش تمرین',
                 headerBackTitle: 'بازگشت',
               }}
             />

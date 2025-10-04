@@ -20,6 +20,12 @@ export type RootStackParamList = {
     planId: string;
     onWorkoutCreated: () => void;
   };
+  EditWorkoutScreen: {
+    workoutId: string;
+    planId: string;
+    planName: string;
+    onWorkoutUpdated: () => void;
+  };
 
   PracticeScreen: {
     workoutId: string;
@@ -42,6 +48,12 @@ export type CreateWorkoutRouteProp = RouteProp<RootStackParamList, 'CreateWorkou
 export type CreateWorkoutNavigationProp = StackNavigationProp<
   RootStackParamList,
   'CreateWorkoutScreen'
+>;
+
+export type EditWorkoutRouteProp = RouteProp<RootStackParamList, 'EditWorkoutScreen'>;
+export type EditWorkoutNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'EditWorkoutScreen'
 >;
 
 export type PracticeScreenRouteProp = RouteProp<RootStackParamList, 'PracticeScreen'>;
