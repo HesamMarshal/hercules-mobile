@@ -11,30 +11,30 @@ export const workoutAPI = {
 
   // Get single workout by ID
   getWorkoutById: async (id: string): Promise<Workout> => {
-    const response = await api.get(`/workout/${id}`);
+    const response = await api.get(`/workouts/${id}`);
     return response.data.data || response.data;
   },
 
   // Search workouts
   searchWorkouts: async (query: string): Promise<Workout[]> => {
-    const response = await api.get(`/workout/search?q=${encodeURIComponent(query)}`);
+    const response = await api.get(`/workouts/search?q=${encodeURIComponent(query)}`);
     return response.data.data || response.data;
   },
 
   // Create new workout
   createWorkout: async (workoutData: Partial<Workout>): Promise<Workout> => {
-    const response = await api.post('/workout', workoutData);
+    const response = await api.post('/workouts', workoutData);
     return response.data.data || response.data;
   },
 
   // Update workout
   updateWorkout: async (id: string, workoutData: Partial<Workout>): Promise<Workout> => {
-    const response = await api.patch(`/workout/${id}`, workoutData);
+    const response = await api.patch(`/workouts/${id}`, workoutData);
     return response.data.data || response.data;
   },
 
   // Delete workout
   deleteWorkout: async (id: string): Promise<void> => {
-    await api.delete(`/workout/${id}`);
+    await api.delete(`/workouts/${id}`);
   },
 };
