@@ -1,16 +1,24 @@
 // src/screens/WorkoutScreen.tsx
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, I18nManager, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  I18nManager,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityIndicator, Button, Card, Title, FAB } from 'react-native-paper';
 import { workoutStyles as styles } from '@/theme/styles';
-import { RefreshControl } from 'react-native-gesture-handler';
 import { workoutAPI } from '@/services/workoutsApi';
+import { practiceAPI } from '@/services/practiceApi';
 import { colors } from '@/theme/properties/colors';
 import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation.type';
-import { practiceAPI } from '@/services/practiceApi';
 import { Workout } from '@/interfaces/workout.interface';
+import { Practice } from '@/interfaces/practice.interface';
 
 const isRTL = I18nManager.isRTL;
 
@@ -19,13 +27,20 @@ interface WorkoutScreenProps {
   navigation: WorkoutScreenNavigationProp;
 }
 
+// // Extended interface for workouts with practices
+// interface WorkoutWithPractices extends Workout {
+//   practices?: Practice[];
+// }
+
+// Extended interface for workouts with practices
+
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const { planId, planName } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
-  const [exercisesLoading, setExercisesLoading] = useState<{ [key: string]: boolean }>({});
+  const [practicesLoading, setPracticesLoading] = useState<{ [key: string]: boolean }>({});
   const { token } = useAuth();
 
   useEffect(() => {
@@ -50,14 +65,14 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
         const workoutsWithPractices = await Promise.all(
           workoutsData.map(async (workout: Workout) => {
             try {
-              setExercisesLoading((prev) => ({ ...prev, [workout.id]: true }));
+              setPracticesLoading((prev) => ({ ...prev, [workout.id]: true }));
               const practices = await practiceAPI.getPracticesByWorkoutId(workout.id);
               return { ...workout, practices: practices || [] };
             } catch (error) {
               console.error(`Error loading practices for workout ${workout.id}:`, error);
               return { ...workout, practices: [] };
             } finally {
-              setExercisesLoading((prev) => ({ ...prev, [workout.id]: false }));
+              setPracticesLoading((prev) => ({ ...prev, [workout.id]: false }));
             }
           })
         );
@@ -66,13 +81,14 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
         setWorkouts(workoutsData || []);
       }
     } catch (error: any) {
-      setError('خطا در بارگذاری تمرین‌ها');
       console.error('Error loading workouts:', error);
+      setError('خطا در بارگذاری تمرین‌ها');
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
+
   const handleRefresh = () => {
     setRefreshing(true);
     loadWorkouts();
@@ -85,6 +101,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       planId: planId,
     });
   };
+
   const handleStartWorkout = (workout: Workout) => {
     console.log('Call active workout');
     Alert.alert('شروع تمرین', `آیا می‌خواهید تمرین "${workout.name}" را شروع کنید؟`, [
@@ -93,8 +110,6 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
         text: 'شروع',
         onPress: () => {
           // Navigate to active workout screen
-          // TODO : Create ActiveWorkout screen???  Session
-
           navigation.navigate('ActiveWorkout', {
             workoutId: workout.id,
             workoutName: workout.name,
@@ -105,31 +120,18 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   };
 
   const handleAddWorkout = () => {
-    // TODO: Add CreateWorkoutScreen
     navigation.navigate('CreateWorkout', {
       planId: planId,
       onWorkoutCreated: loadWorkouts,
     });
   };
 
-  // TODO: Render Practices
-  const renderExerciseItem = (exercise: Exercise) => (
-    <View key={exercise.id} style={[styles.exerciseItem, styles.exerciseItemContainer]}>
-      <MaterialIcons name="sports-gymnastics" size={14} color="#666" style={styles.exerciseIcon} />
-      <Text style={[styles.exerciseText, styles.text]} numberOfLines={1}>
-        {exercise.name}
-      </Text>
-      <View style={styles.exerciseDetails}>
-        {exercise.sets && <Text style={styles.exerciseDetailText}>{exercise.sets} ست</Text>}
-        {exercise.reps && <Text style={styles.exerciseDetailText}>{exercise.reps} تکرار</Text>}
-      </View>
-    </View>
-  );
   const renderPracticeItem = (practice: Practice) => (
     <View key={practice.id} style={[styles.practiceItem, styles.practiceItemContainer]}>
       <MaterialIcons name="fitness-center" size={16} color="#666" style={styles.practiceIcon} />
       <Text style={[styles.practiceText, styles.text]} numberOfLines={1}>
-        {practice.exercise.name}
+        {/* Note: You might need to fetch exercise name separately or adjust your Practice interface */}
+        تمرین #{practice.id}
       </Text>
       <View style={styles.practiceDetails}>
         <Text style={styles.practiceDetailText}>{practice.sets} ست</Text>
@@ -139,7 +141,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   );
 
   const renderWorkoutItem = ({ item }: { item: Workout }) => {
-    const isLoadingPractices = exercisesLoading[item.id]; // You might want to rename this state to practicesLoading
+    const isLoadingPractices = practicesLoading[item.id];
     const hasPractices = item.practices && item.practices.length > 0;
 
     return (
@@ -178,7 +180,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
             )}
           </View>
 
-          {/* Practices Section (instead of Exercises) */}
+          {/* Practices Section */}
           <View style={styles.practicesSection}>
             <Text style={[styles.practicesTitle, styles.text]}>
               تمرین‌ها ({hasPractices ? item.practices!.length : 0})
@@ -226,6 +228,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       </Card>
     );
   };
+
   if (loading) {
     return (
       <View style={[styles.centered, styles.container]}>
