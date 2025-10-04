@@ -36,7 +36,7 @@ interface WorkoutScreenProps {
 // Extended interface for workouts with practices
 
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
-  const { planId, planName } = route.params;
+  const { planId, planName, refresh = false } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -48,19 +48,25 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     navigation.setOptions({
       title: planName || 'تمرین‌ها',
     });
-    loadWorkouts();
-  }, [planId, planName]);
+    loadWorkouts(refresh);
+  }, [planId, planName, refresh]);
 
-  const loadWorkouts = async () => {
+  const loadWorkouts = async (forceRefresh = false) => {
     if (!token) {
       setError('لطفاً برای مشاهده تمرین‌ها وارد شوید');
       setLoading(false);
       return;
     }
 
-    console.log('herrrreee');
     try {
       setError('');
+
+      if (forceRefresh) {
+        const workoutCacheKey = `workouts_by_plan_${planId}`;
+        // await CacheService.remove(workoutCacheKey);
+        console.log('🧹 Cleared workout cache for plan:', planId);
+      }
+
       const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(+planId);
 
       if (workoutsData && workoutsData.length > 0) {
@@ -93,13 +99,16 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    loadWorkouts();
+    loadWorkouts(true);
   };
 
   const handleCreateWorkout = () => {
     navigation.navigate('CreateWorkoutScreen', {
       planId: planId,
-      onWorkoutCreated: loadWorkouts, // This will refresh the list after creation
+      onWorkoutCreated: () => {
+        console.log('🔄 Workout created callback called');
+        loadWorkouts(true); // This will force refresh the list after creation
+      },
     });
   };
 
