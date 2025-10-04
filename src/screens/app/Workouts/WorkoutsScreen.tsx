@@ -1,4 +1,4 @@
-// src/screens/WorkoutScreen.tsx
+// src/screens/Workouts/WorkoutScreen.tsx
 import { useState, useEffect } from 'react';
 import {
   View,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { ActivityIndicator, Button, Card, Title, FAB } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Title, FAB, Menu, Divider } from 'react-native-paper';
 import { workoutStyles as styles } from '@/theme/workouts.style';
 import { workoutAPI } from '@/services/workoutsApi';
 import { practiceAPI } from '@/services/practiceApi';
@@ -43,6 +43,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const [error, setError] = useState('');
   const [practicesLoading, setPracticesLoading] = useState<{ [key: string]: boolean }>({});
   const { token } = useAuth();
+  const [menuVisible, setMenuVisible] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     navigation.setOptions({
@@ -112,6 +113,58 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     });
   };
 
+  const handleEditWorkout = (workout: Workout) => {
+    setMenuVisible({ ...menuVisible, [workout.id]: false });
+    navigation.navigate('EditWorkoutScreen', {
+      workoutId: workout.id,
+      planId: planId,
+      planName: planName,
+      onWorkoutUpdated: () => loadWorkouts(true), // Force refresh after update
+    });
+  };
+
+  const handleDeleteWorkout = (workout: Workout) => {
+    setMenuVisible({ ...menuVisible, [workout.id]: false });
+
+    Alert.alert(
+      'حذف تمرین',
+      `آیا از حذف تمرین "${workout.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+      [
+        { text: 'لغو', style: 'cancel' },
+        {
+          text: 'حذف',
+          style: 'destructive',
+          onPress: () => deleteWorkout(workout.id),
+        },
+      ]
+    );
+  };
+
+  const deleteWorkout = async (workoutId: string) => {
+    try {
+      await workoutAPI.deleteWorkout(workoutId);
+
+      // Remove the workout from local state immediately
+      setWorkouts(workouts.filter((workout) => workout.id !== workoutId));
+
+      Alert.alert('موفقیت', 'تمرین با موفقیت حذف شد');
+    } catch (error: any) {
+      console.error('Error deleting workout:', error);
+      Alert.alert('خطا', 'خطا در حذف تمرین. لطفاً مجدداً تلاش کنید.');
+    }
+  };
+
+  const toggleMenu = (workoutId: string) => {
+    setMenuVisible({
+      ...menuVisible,
+      [workoutId]: !menuVisible[workoutId],
+    });
+  };
+
+  const closeAllMenus = () => {
+    setMenuVisible({});
+  };
+
   const handleWorkoutPress = (workout: Workout) => {
     navigation.navigate('PracticeScreen', {
       workoutId: workout.id,
@@ -156,87 +209,126 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     const hasPractices = item.practices && item.practices.length > 0;
 
     return (
-      <Card style={[styles.workoutCard, styles.card]} mode="elevated">
-        <Card.Content style={styles.cardContent}>
-          {/* Workout Header */}
-          <TouchableOpacity onPress={() => handleWorkoutPress(item)}>
+      <TouchableOpacity onPress={closeAllMenus} activeOpacity={0.9}>
+        <Card style={[styles.workoutCard, styles.card]} mode="elevated">
+          <Card.Content style={styles.cardContent}>
+            {/* Workout Header with Menu */}
+
             <View style={styles.workoutHeader}>
-              <View style={styles.workoutTitleContainer}>
+              <TouchableOpacity
+                onPress={() => handleWorkoutPress(item)}
+                style={styles.workoutTitleContainer}
+              >
                 <Title style={[styles.workoutName, styles.text]}>{item.name}</Title>
                 {item.difficulty && (
                   <View style={styles.difficultyBadge}>
                     <Text style={styles.difficultyText}>{item.difficulty}</Text>
                   </View>
                 )}
+              </TouchableOpacity>
+
+              <View style={styles.headerActions}>
+                <Menu
+                  visible={!!menuVisible[item.id]}
+                  onDismiss={() => setMenuVisible({ ...menuVisible, [item.id]: false })}
+                  anchor={
+                    <TouchableOpacity
+                      onPress={() => toggleMenu(item.id)}
+                      style={styles.menuButton}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <MaterialIcons name="more-vert" size={24} color="#666" />
+                    </TouchableOpacity>
+                  }
+                  contentStyle={styles.menuContent}
+                >
+                  <Menu.Item
+                    onPress={() => handleEditWorkout(item)}
+                    title="ویرایش"
+                    leadingIcon="pencil"
+                    style={styles.menuItem}
+                  />
+                  <Divider />
+                  <Menu.Item
+                    onPress={() => handleDeleteWorkout(item)}
+                    title="حذف"
+                    leadingIcon="delete"
+                    titleStyle={styles.deleteMenuText}
+                    style={styles.menuItem}
+                  />
+                </Menu>
+
+                <TouchableOpacity onPress={() => handleWorkoutPress(item)}>
+                  <MaterialIcons
+                    name="chevron-left"
+                    size={24}
+                    color="#666"
+                    style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
+                  />
+                </TouchableOpacity>
               </View>
-              <MaterialIcons
-                name="chevron-left"
-                size={24}
-                color="#666"
-                style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
-              />
             </View>
-          </TouchableOpacity>
 
-          {/* Workout Details */}
-          <View style={styles.detailsContainer}>
-            {item.description && (
-              <Text style={[styles.detailText, styles.text]}>{item.description}</Text>
-            )}
-            {item.duration && (
-              <View style={styles.detailItem}>
-                <MaterialIcons name="schedule" size={14} color="#666" />
-                <Text style={[styles.detailText, styles.text]}>{item.duration} دقیقه</Text>
-              </View>
-            )}
-          </View>
+            {/*             Workout Details */}
+            <View style={styles.detailsContainer}>
+              {item.description && (
+                <Text style={[styles.detailText, styles.text]}>{item.description}</Text>
+              )}
+              {item.duration && (
+                <View style={styles.detailItem}>
+                  <MaterialIcons name="schedule" size={14} color="#666" />
+                  <Text style={[styles.detailText, styles.text]}>{item.duration} دقیقه</Text>
+                </View>
+              )}
+            </View>
 
-          {/* Practices Section */}
-          <View style={styles.practicesSection}>
-            <Text style={[styles.practicesTitle, styles.text]}>
-              تمرین‌ها ({hasPractices ? item.practices!.length : 0})
-            </Text>
-
-            {isLoadingPractices ? (
-              <View style={styles.loadingPractices}>
-                <ActivityIndicator size="small" color="#007AFF" />
-                <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
-              </View>
-            ) : hasPractices ? (
-              <View style={styles.practicesList}>
-                {item.practices!.slice(0, 3).map(renderPracticeItem)}
-                {item.practices!.length > 3 && (
-                  <Text style={[styles.morePracticesText, styles.text]}>
-                    + {item.practices!.length - 3} تمرین دیگر
-                  </Text>
-                )}
-              </View>
-            ) : (
-              <Text style={[styles.noPracticesText, styles.text]}>
-                هیچ تمرینی برای این workout تعریف نشده
+            {/* Practices Section */}
+            <View style={styles.practicesSection}>
+              <Text style={[styles.practicesTitle, styles.text]}>
+                تمرین‌ها ({hasPractices ? item.practices!.length : 0})
               </Text>
-            )}
-          </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => handleWorkoutPress(item)}
-              style={styles.detailButton}
-            >
-              مشاهده جزئیات
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => handleStartWorkout(item)}
-              style={styles.startButton}
-            >
-              شروع تمرین
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
+              {isLoadingPractices ? (
+                <View style={styles.loadingPractices}>
+                  <ActivityIndicator size="small" color="#007AFF" />
+                  <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
+                </View>
+              ) : hasPractices ? (
+                <View style={styles.practicesList}>
+                  {item.practices!.slice(0, 3).map(renderPracticeItem)}
+                  {item.practices!.length > 3 && (
+                    <Text style={[styles.morePracticesText, styles.text]}>
+                      + {item.practices!.length - 3} تمرین دیگر
+                    </Text>
+                  )}
+                </View>
+              ) : (
+                <Text style={[styles.noPracticesText, styles.text]}>
+                  هیچ تمرینی برای این workout تعریف نشده
+                </Text>
+              )}
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              <Button
+                mode="outlined"
+                onPress={() => handleWorkoutPress(item)}
+                style={styles.detailButton}
+              >
+                مشاهده جزئیات
+              </Button>
+              <Button
+                mode="contained"
+                onPress={() => handleStartWorkout(item)}
+                style={styles.startButton}
+              >
+                شروع تمرین
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
     );
   };
 
@@ -249,7 +341,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       {error ? (
         <View style={[styles.errorContainer, styles.container]}>
           <Text style={[styles.errorText, styles.text]}>{error}</Text>
-          <Button mode="contained" onPress={loadWorkouts} style={styles.button}>
+          <Button mode="contained" onPress={() => loadWorkouts(true)} style={styles.button}>
             تلاش مجدد
           </Button>
         </View>
