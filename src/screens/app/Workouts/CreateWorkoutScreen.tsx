@@ -96,7 +96,7 @@ const CreateWorkoutScreen = ({ route, navigation }: CreateWorkoutScreenProps) =>
           />
 
           {/* Description */}
-          <TextInput
+          {/* <TextInput
             label="توضیحات"
             value={formData.description}
             onChangeText={(value) => handleInputChange('description', value)}
@@ -105,7 +105,7 @@ const CreateWorkoutScreen = ({ route, navigation }: CreateWorkoutScreenProps) =>
             numberOfLines={3}
             style={styles.input}
             right={<TextInput.Icon icon="text" />}
-          />
+          /> */}
 
           {/* Day of Week */}
           <TextInput
