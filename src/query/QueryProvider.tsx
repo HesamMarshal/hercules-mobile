@@ -8,8 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 min: cached data treated as fresh
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      staleTime: 300000, //1000 * 60 * 5, // 5 min: cached data treated as fresh
+      gcTime: 86400000, // 1000 * 60 * 60 * 24, // 24 hours
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
     },
