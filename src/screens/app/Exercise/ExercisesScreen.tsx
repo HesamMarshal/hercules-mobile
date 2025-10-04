@@ -1,28 +1,27 @@
+// src/screens/ExercisesScreen.tsx
 import { useAuth } from '@/contexts/AuthContext';
-import { exerciseAPI } from '@/services/exerciseApi';
-import { Exercise } from '@/interfaces/exercise.interface';
+import { exerciseAPI, Exercise } from '@/services/exerciseApi';
 import { useState, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Title, Paragraph, Chip, Searchbar, Button } from 'react-native-paper';
 import { exerciseStyles as styles } from '@/theme/styles';
 import { useTranslation } from 'react-i18next';
 import { useRTLStyles } from '@/utils/rtlStyles';
+import { colors } from '@/theme/properties/colors';
 
 export const ExercisesScreen = ({ navigation }: any) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
-  const [screenLoading, setScreenLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedbody_part, setSelectedbody_part] = useState<string>('all');
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>('all');
   const [error, setError] = useState<string>('');
-  // TODO: Fix loading and isLoading
   const { isAuthenticated, logout, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   const rtlStyles = useRTLStyles();
 
-  // TODO: read from backend
+  // Muscle groups for filtering
   const body_parts = [
     'all',
     'arms',
@@ -55,12 +54,11 @@ export const ExercisesScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     filterExercises();
-  }, [exercises, searchQuery, selectedbody_part]);
+  }, [exercises, searchQuery, selectedMuscleGroup]);
 
   const loadExercises = async () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
-      // TODO: Use Message enum
       setError('لطفاً برای مشاهده حرکات ورزشی وارد شوید');
       setLoading(false);
       return;
@@ -69,16 +67,12 @@ export const ExercisesScreen = ({ navigation }: any) => {
     try {
       setError('');
       const data = await exerciseAPI.getAllExercises();
-      // console.log(data);
       setExercises(data);
     } catch (error: any) {
       console.error('Error loading exercises:', error);
 
-      if (error.message.includes('Unauthorized')) {
-        // TODO: Change the message
+      if (error.response?.status === 401) {
         setError('نشست شما منقضی شده است. لطفاً مجدداً وارد شوید');
-
-        // Optionally auto-logout after 2 seconds
         setTimeout(() => {
           logout();
         }, 2000);
@@ -99,18 +93,22 @@ export const ExercisesScreen = ({ navigation }: any) => {
   const filterExercises = () => {
     let filtered = exercises;
 
-    // if (searchQuery) {
-    //   filtered = filtered.filter(
-    //     (exercise) =>
-    //       exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //       exercise.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //       exercise.body_part.toLowerCase().includes(searchQuery.toLowerCase())
-    //   );
-    // }
-
-    if (selectedbody_part !== 'all') {
+    // Apply search filter
+    if (searchQuery) {
       filtered = filtered.filter(
-        (exercise) => exercise.body_part.toLowerCase() === selectedbody_part.toLowerCase()
+        (exercise) =>
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (exercise.description &&
+            exercise.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.muscle_group &&
+            exercise.muscle_group.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    // Apply muscle group filter
+    if (selectedMuscleGroup !== 'all') {
+      filtered = filtered.filter(
+        (exercise) => exercise.muscle_group?.toLowerCase() === selectedMuscleGroup.toLowerCase()
       );
     }
 
@@ -137,11 +135,11 @@ export const ExercisesScreen = ({ navigation }: any) => {
   const getDifficultyTranslation = (difficulty: string) => {
     switch (difficulty) {
       case 'beginner':
-        return t('beginner');
+        return t('beginner') || 'مبتدی';
       case 'intermediate':
-        return t('intermediate');
+        return t('intermediate') || 'متوسط';
       case 'advanced':
-        return t('advanced');
+        return t('advanced') || 'پیشرفته';
       default:
         return difficulty;
     }
@@ -152,40 +150,43 @@ export const ExercisesScreen = ({ navigation }: any) => {
       <Card style={styles.exerciseCard} mode="elevated">
         <Card.Content>
           <View style={styles.exerciseHeader}>
-            {/* TODO : Deprecated */}
             <Title style={styles.exerciseName}>{item.name}</Title>
-            <Chip
-              mode="outlined"
-              style={[styles.difficultyChip, getDifficultyStyle(item.difficulty)]}
-            >
-              {getDifficultyTranslation(item.difficulty)}
-            </Chip>
+            {item.difficulty && (
+              <Chip
+                mode="outlined"
+                style={[styles.difficultyChip, getDifficultyStyle(item.difficulty)]}
+              >
+                {getDifficultyTranslation(item.difficulty)}
+              </Chip>
+            )}
           </View>
+          {/* 
+          {item.muscle_group && (
+            <Chip mode="flat" style={styles.muscleGroupChip} textStyle={styles.muscleGroupText}>
+              {muscleGroupTranslations[item.muscle_group] || item.muscle_group}
+            </Chip>
+          )} */}
 
-          <Chip mode="flat" style={styles.body_partChip} textStyle={styles.body_partText}>
-            {item.body_part}
-          </Chip>
-          {/* TODO : Deprecated */}
-          <Paragraph numberOfLines={2} style={[styles.exerciseDescription, rtlStyles.text]}>
-            {item.instruction}
-          </Paragraph>
+          {item.description && (
+            <Paragraph numberOfLines={2} style={[styles.exerciseDescription, rtlStyles.text]}>
+              {item.description}
+            </Paragraph>
+          )}
 
-          {item.exercise_type && (
-            <View style={[styles.exercise_typeContainer, rtlStyles.container]}>
-              <Paragraph style={[styles.exercise_typeLabel, rtlStyles.text]}>
-                t(exercise_type):{' '}
-              </Paragraph>
-              <Paragraph style={[styles.exercise_typeValue, rtlStyles.text]}>
-                {item.exercise_type}
+          {/* {item.equipment && (
+            <View style={[styles.equipmentContainer, rtlStyles.container]}>
+              <Paragraph style={[styles.equipmentLabel, rtlStyles.text]}>تجهیزات:</Paragraph>
+              <Paragraph style={[styles.equipmentValue, rtlStyles.text]}>
+                {item.equipment}
               </Paragraph>
             </View>
-          )}
+          )} */}
         </Card.Content>
       </Card>
     </TouchableOpacity>
   );
 
-  const renderbody_partFilter = () => (
+  const renderMuscleGroupFilter = () => (
     <View style={styles.filterContainer}>
       <FlatList
         horizontal
@@ -194,12 +195,12 @@ export const ExercisesScreen = ({ navigation }: any) => {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <Chip
-            mode={selectedbody_part === item ? 'flat' : 'outlined'}
-            selected={selectedbody_part === item}
-            onPress={() => setSelectedbody_part(item)}
-            style={styles.body_partFilterChip}
+            mode={selectedMuscleGroup === item ? 'flat' : 'outlined'}
+            selected={selectedMuscleGroup === item}
+            onPress={() => setSelectedMuscleGroup(item)}
+            style={styles.muscleGroupFilterChip}
           >
-            {item.charAt(0).toUpperCase() + item.slice(1)}
+            {bodyPartTranslations[item] || item}
           </Chip>
         )}
       />
@@ -211,7 +212,6 @@ export const ExercisesScreen = ({ navigation }: any) => {
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
         <Paragraph style={[styles.loadingText, rtlStyles.text]}>
-          {' '}
           در حال بررسی احراز هویت...
         </Paragraph>
       </View>
@@ -225,39 +225,39 @@ export const ExercisesScreen = ({ navigation }: any) => {
           لطفاً برای مشاهده حرکات ورزشی وارد شوید
         </Paragraph>
         <Button mode="contained" onPress={() => navigation.navigate('Auth')}>
-          {t('login')}
+          {t('login') || 'ورود'}
         </Button>
       </View>
     );
   }
 
-  // if (screenLoading) {
-  //   return (
-  //     <View style={styles.centered}>
-  //       <ActivityIndicator size="large" />
-  //       <Paragraph style={[styles.loadingText, rtlStyles.text]}>
-  //         در حال بارگذاری حرکات ورزشی...
-  //       </Paragraph>
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+        <Paragraph style={[styles.loadingText, rtlStyles.text]}>
+          در حال بارگذاری حرکات ورزشی...
+        </Paragraph>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder="Search exercises..."
+        placeholder="جستجوی حرکات ورزشی..."
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchBar}
       />
 
-      {renderbody_partFilter()}
+      {renderMuscleGroupFilter()}
 
       {error ? (
         <View style={styles.errorContainer}>
           <Paragraph style={[styles.errorText, rtlStyles.text]}>{error}</Paragraph>
           <Button mode="contained" onPress={loadExercises} style={styles.retryButton}>
-            Retry
+            تلاش مجدد
           </Button>
         </View>
       ) : (
@@ -271,13 +271,13 @@ export const ExercisesScreen = ({ navigation }: any) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              colors={['#0000ff']}
+              colors={[colors.activeTintColor]}
             />
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Paragraph style={[styles.emptyText, rtlStyles.text]}>
-                {searchQuery || selectedbody_part !== 'all'
+                {searchQuery || selectedMuscleGroup !== 'all'
                   ? 'هیچ حرکت ورزشی مطابق با معیارهای شما یافت نشد'
                   : 'هیچ حرکت ورزشی موجود نیست'}
               </Paragraph>
