@@ -104,19 +104,20 @@ const PlansScreen = ({ navigation }: any) => {
 
   const handleDeletePlan = (plan: Plan) => {
     setMenuVisible({ ...menuVisible, [plan.id]: false });
-
-    Alert.alert(
-      'حذف پلن',
-      `آیا از حذف پلن "${plan.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
-      [
-        { text: 'لغو', style: 'cancel' },
-        {
-          text: 'حذف',
-          style: 'destructive',
-          onPress: () => deletePlan(plan.id),
-        },
-      ]
-    );
+    deletePlan(plan.id);
+    loadPlans();
+    // Alert.alert(
+    //   'حذف پلن',
+    //   `آیا از حذف پلن "${plan.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+    //   [
+    //     { text: 'لغو', style: 'cancel' },
+    //     {
+    //       text: 'حذف',
+    //       style: 'destructive',
+    //       onPress: () => deletePlan(plan.id),
+    //     },
+    //   ]
+    // );
   };
 
   const deletePlan = async (planId: string) => {
