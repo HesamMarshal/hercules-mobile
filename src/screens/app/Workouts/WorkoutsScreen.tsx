@@ -12,13 +12,14 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityIndicator, Button, Card, Title, FAB } from 'react-native-paper';
-import { workoutStyles as styles } from '@/theme/styles';
+import { workoutStyles as styles } from '@/theme/workouts.style';
 import { workoutAPI } from '@/services/workoutsApi';
 import { practiceAPI } from '@/services/practiceApi';
 import { colors } from '@/theme/properties/colors';
 import { WorkoutScreenRouteProp, WorkoutScreenNavigationProp } from '@/types/navigation.type';
 import { Workout } from '@/interfaces/workout.interface';
 import { Practice } from '@/interfaces/practice.interface';
+import Loading from '@/components/common/Loading';
 
 const isRTL = I18nManager.isRTL;
 
@@ -57,6 +58,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
       return;
     }
 
+    console.log('herrrreee');
     try {
       setError('');
       const workoutsData = await workoutAPI.getAllWorkoutsByPlanId(+planId);
@@ -94,6 +96,13 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
     loadWorkouts();
   };
 
+  const handleCreateWorkout = () => {
+    navigation.navigate('CreateWorkoutScreen', {
+      planId: planId,
+      onWorkoutCreated: loadWorkouts, // This will refresh the list after creation
+    });
+  };
+
   const handleWorkoutPress = (workout: Workout) => {
     navigation.navigate('PracticeScreen', {
       workoutId: workout.id,
@@ -117,13 +126,6 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
         },
       },
     ]);
-  };
-
-  const handleAddWorkout = () => {
-    navigation.navigate('CreateWorkout', {
-      planId: planId,
-      onWorkoutCreated: loadWorkouts,
-    });
   };
 
   const renderPracticeItem = (practice: Practice) => (
@@ -230,12 +232,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   };
 
   if (loading) {
-    return (
-      <View style={[styles.centered, styles.container]}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={[styles.loadingText, styles.text]}>در حال بارگذاری تمرین‌ها...</Text>
-      </View>
-    );
+    return <Loading message="در حال بارگذاری تمرین  ها..." />;
   }
 
   return (
@@ -272,7 +269,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
                 </Text>
                 <Button
                   mode="contained"
-                  onPress={handleAddWorkout}
+                  onPress={handleCreateWorkout}
                   style={styles.emptyButton}
                   icon="plus"
                 >
@@ -284,7 +281,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
 
           {/* Floating Action Button */}
           {workouts.length > 0 && (
-            <FAB style={styles.fab} icon="plus" onPress={handleAddWorkout} color="white" />
+            <FAB style={styles.fab} icon="plus" onPress={handleCreateWorkout} color="white" />
           )}
         </>
       )}
