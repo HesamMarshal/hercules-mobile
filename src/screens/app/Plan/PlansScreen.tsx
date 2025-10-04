@@ -12,17 +12,22 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityIndicator, Button, Card, FAB, Title, Menu, Divider } from 'react-native-paper';
-import { workoutAPI } from '@/services/workoutsApi';
 import { colors } from '@/theme/properties/colors';
 import { planStyles as styles } from '@/theme/plan.style';
 import { Plan } from '@/interfaces/plan.interface';
-import { planAPI } from '@/services/planApi';
 import { Workout } from '@/interfaces/workout.interface';
+import { planAPI } from '@/services/planApi';
+import { workoutAPI } from '@/services/workoutsApi';
 
 const isRTL = I18nManager.isRTL;
 
+// Extended interface for plans with workouts
+interface PlanWithWorkouts extends Plan {
+  workouts?: Workout[];
+}
+
 const PlansScreen = ({ navigation }: any) => {
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plans, setPlans] = useState<PlanWithWorkouts[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -43,7 +48,6 @@ const PlansScreen = ({ navigation }: any) => {
 
     try {
       setError('');
-      // Use the corrected planAPI
       const plansData = await planAPI.getAllPlans();
 
       if (plansData && plansData.length > 0) {
@@ -66,8 +70,8 @@ const PlansScreen = ({ navigation }: any) => {
         setPlans(plansData || []);
       }
     } catch (error: any) {
-      setError('خطا در بارگذاری پلن‌ها');
       console.error('Error loading plans:', error);
+      setError('خطا در بارگذاری پلن‌ها');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -99,27 +103,24 @@ const PlansScreen = ({ navigation }: any) => {
   const handleDeletePlan = (plan: Plan) => {
     setMenuVisible({ ...menuVisible, [plan.id]: false });
 
-    deletePlan(plan.id);
-    // Alert.alert(
-    //   'حذف پلن',
-    //   `آیا از حذف پلن "${plan.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
-    //   [
-    //     { text: 'لغو', style: 'cancel' },
-    //     {
-    //       text: 'حذف',
-    //       style: 'destructive',
-    //       onPress: () => deletePlan(plan.id),
-    //     },
-    //   ]
-    // );
+    Alert.alert(
+      'حذف پلن',
+      `آیا از حذف پلن "${plan.name}" اطمینان دارید؟ این عمل غیرقابل بازگشت است.`,
+      [
+        { text: 'لغو', style: 'cancel' },
+        {
+          text: 'حذف',
+          style: 'destructive',
+          onPress: () => deletePlan(plan.id),
+        },
+      ]
+    );
   };
 
   const deletePlan = async (planId: string) => {
     try {
       await planAPI.deletePlan(planId);
-      // Remove the plan from local state
       setPlans(plans.filter((plan) => plan.id !== planId));
-      // Show success message
       Alert.alert('موفقیت', 'پلن با موفقیت حذف شد');
     } catch (error: any) {
       console.error('Error deleting plan:', error);
@@ -135,8 +136,6 @@ const PlansScreen = ({ navigation }: any) => {
   };
 
   const closeAllMenus = () => {
-    // TODO: if all menus all close open the plan
-
     setMenuVisible({});
   };
 
@@ -163,7 +162,7 @@ const PlansScreen = ({ navigation }: any) => {
     </View>
   );
 
-  const renderPlanItem = ({ item }: { item: Plan }) => {
+  const renderPlanItem = ({ item }: { item: PlanWithWorkouts }) => {
     const isLoadingWorkouts = workoutsLoading[item.id];
     const hasWorkouts = item.workouts && item.workouts.length > 0;
 
