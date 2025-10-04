@@ -1,7 +1,8 @@
 // src/theme/workouts.styles.ts
 import { I18nManager, StyleSheet } from 'react-native';
 import { colors } from './properties/colors';
-import { fontSizes } from './properties/typography';
+import { fontSizes, typography } from './properties/typography';
+import { spacing } from './properties/spacing';
 
 const isRTL = I18nManager.isRTL;
 
@@ -298,12 +299,34 @@ export const workoutStyles = StyleSheet.create({
     bottom: 0,
     backgroundColor: colors.activeTintColor,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuButton: {
+    padding: 4,
+    marginRight: 8,
+  },
+  menuContent: {
+    borderRadius: 8,
+  },
+  menuItem: {
+    paddingHorizontal: 8,
+  },
+  deleteMenuText: {
+    color: '#FF3B30', // Red color for delete
+  },
 });
 
 export const createWorkoutStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
     margin: 16,
@@ -314,6 +337,12 @@ export const createWorkoutStyles = StyleSheet.create({
     marginBottom: 24,
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  subtitle: {
+    ...typography.body,
+    textAlign: 'center',
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
   },
   input: {
     marginBottom: 16,
