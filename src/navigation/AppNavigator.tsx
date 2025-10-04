@@ -12,10 +12,10 @@ import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
 import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
 import PracticeScreen from '@/screens/app/Practice/PracticeScreen';
 import { colors } from '@/theme/properties/colors';
-// import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation.type';
 import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
 import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
+import CreateWorkoutScreen from '@/screens/app/Workouts/CreateWorkoutScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -84,6 +84,15 @@ export const AppNavigator = () => {
                 height: 70,
               })}
             />
+            <Stack.Screen
+              name="CreateWorkoutScreen"
+              component={CreateWorkoutScreen}
+              options={{
+                title: 'ایجاد تمرین جدید',
+                headerBackTitle: 'بازگشت',
+              }}
+            />
+
             <Stack.Screen
               name="PracticeScreen"
               component={PracticeScreen}
