@@ -1,50 +1,46 @@
-import { Exercise } from '../interfaces/exercise.interface';
-import { fetchWithAuth } from './api';
+// src/services/exerciseApi.ts
+import { Exercise } from '@/interfaces/exercise.interface';
+import { api } from './api';
 
 export const exerciseAPI = {
-  // Get all exercises with authentication
+  // Get all exercises
   getAllExercises: async (): Promise<Exercise[]> => {
-    const response = await fetchWithAuth('/exercise');
-    const { data } = await response.json();
-    return data.exercise || data;
+    const response = await api.get('/exercise');
+    return response.data.data || response.data;
   },
 
-  // Get single exercise by ID with authentication
+  // Get exercise by ID
   getExerciseById: async (id: string): Promise<Exercise> => {
-    const response = await fetchWithAuth(`/exercise/${id}`);
-    const result = await response.json();
-    return result.data;
+    const response = await api.get(`/exercise/${id}`);
+    return response.data.data || response.data;
   },
 
-  // Search exercises with authentication
+  // Search exercises
   searchExercises: async (query: string): Promise<Exercise[]> => {
-    const response = await fetchWithAuth(`/exercise/search?q=${encodeURIComponent(query)}`);
-    const data = await response.json();
-    return data.exercises || data;
+    const response = await api.get(`/exercise/search?q=${encodeURIComponent(query)}`);
+    return response.data.data || response.data;
   },
 
   // Create new exercise (if needed for trainers/admins)
   createExercise: async (exerciseData: Partial<Exercise>): Promise<Exercise> => {
-    const response = await fetchWithAuth('/exercise', {
-      method: 'POST',
-      body: JSON.stringify(exerciseData),
-    });
-    return await response.json();
+    const response = await api.post('/exercise', exerciseData);
+    return response.data.data || response.data;
   },
 
-  // Update exercise (if needed for trainers/admins)
+  // Update exercise
   updateExercise: async (id: string, exerciseData: Partial<Exercise>): Promise<Exercise> => {
-    const response = await fetchWithAuth(`/exercise/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(exerciseData),
-    });
-    return await response.json();
+    const response = await api.patch(`/exercise/${id}`, exerciseData);
+    return response.data.data || response.data;
   },
 
-  // Delete exercise (if needed for trainers/admins)
+  // Delete exercise
   deleteExercise: async (id: string): Promise<void> => {
-    await fetchWithAuth(`/exercise/${id}`, {
-      method: 'DELETE',
-    });
+    await api.delete(`/exercise/${id}`);
+  },
+
+  // Get exercises by muscle group
+  getExercisesByMuscleGroup: async (muscleGroup: string): Promise<Exercise[]> => {
+    const response = await api.get(`/exercises/muscle-group/${encodeURIComponent(muscleGroup)}`);
+    return response.data.data || response.data;
   },
 };

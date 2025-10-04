@@ -1,16 +1,12 @@
-import { fetchWithAuth } from './api';
+// src/services/practiceApi.ts
+import { Practice } from '@/interfaces/practice.interface';
+import { api } from './api';
 
 export const practiceAPI = {
   // Get practices by workout ID
-  getPracticesByWorkoutId: async (workoutId: string) => {
-    try {
-      const response = await fetchWithAuth(`/practices/workout/${workoutId}`);
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error('Error fetching practices:', error);
-      throw error;
-    }
+  getPracticesByWorkoutId: async (workoutId: string): Promise<Practice[]> => {
+    const response = await api.get(`/practices/workout/${workoutId}`);
+    return response.data.data || response.data;
   },
 
   // Create a new practice
@@ -22,51 +18,28 @@ export const practiceAPI = {
     weight: number;
     rest_time: number;
     order: number;
-  }) => {
-    try {
-      const response = await fetchWithAuth('/practice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(practiceData),
-      });
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error('Error creating practice:', error);
-      throw error;
-    }
+  }): Promise<Practice> => {
+    const response = await api.post('/practice', practiceData);
+    return response.data.data || response.data;
   },
 
   // Update a practice
-  updatePractice: async (practiceId: string, practiceData: any) => {
-    try {
-      const response = await fetchWithAuth(`/practice/${practiceId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(practiceData),
-      });
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error('Error updating practice:', error);
-      throw error;
-    }
+  updatePractice: async (
+    practiceId: string,
+    practiceData: Partial<Practice>
+  ): Promise<Practice> => {
+    const response = await api.put(`/practice/${practiceId}`, practiceData);
+    return response.data.data || response.data;
+  },
+
+  // Update practice with PATCH (if you prefer partial updates)
+  patchPractice: async (practiceId: string, practiceData: Partial<Practice>): Promise<Practice> => {
+    const response = await api.patch(`/practice/${practiceId}`, practiceData);
+    return response.data.data || response.data;
   },
 
   // Delete a practice
-  deletePractice: async (practiceId: string) => {
-    try {
-      const response = await fetchWithAuth(`/practice/${practiceId}`, {
-        method: 'DELETE',
-      });
-      return response.ok;
-    } catch (error) {
-      console.error('Error deleting practice:', error);
-      throw error;
-    }
+  deletePractice: async (practiceId: string): Promise<void> => {
+    await api.delete(`/practice/${practiceId}`);
   },
 };

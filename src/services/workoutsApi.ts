@@ -1,49 +1,40 @@
+// src/services/workoutsApi.ts
 import { Workout } from '@/interfaces/workout.interface';
+import { api } from './api';
 
 export const workoutAPI = {
-  // Get all workouts with authentication
+  // Get all workouts by plan ID
   getAllWorkoutsByPlanId: async (id: number): Promise<Workout[]> => {
-    const response = await fetchWithAuth(`/workouts/byPlan/${id}`);
-    const { data } = await response.json();
-    return data.workout || data;
+    const response = await api.get(`/workouts/byPlan/${id}`);
+    return response.data.data || response.data;
   },
 
-  // Get single workout by ID with authentication
+  // Get single workout by ID
   getWorkoutById: async (id: string): Promise<Workout> => {
-    const response = await fetchWithAuth(`/workout/${id}`);
-    const result = await response.json();
-    return result.data;
+    const response = await api.get(`/workout/${id}`);
+    return response.data.data || response.data;
   },
 
-  // Search workouts with authentication
+  // Search workouts
   searchWorkouts: async (query: string): Promise<Workout[]> => {
-    const response = await fetchWithAuth(`/workout/search?q=${encodeURIComponent(query)}`);
-    const data = await response.json();
-    return data.data || data;
+    const response = await api.get(`/workout/search?q=${encodeURIComponent(query)}`);
+    return response.data.data || response.data;
   },
 
-  // Create new workout (if needed for trainers/admins)
+  // Create new workout
   createWorkout: async (workoutData: Partial<Workout>): Promise<Workout> => {
-    const response = await fetchWithAuth('/workout', {
-      method: 'POST',
-      body: JSON.stringify(workoutData),
-    });
-    return await response.json();
+    const response = await api.post('/workout', workoutData);
+    return response.data.data || response.data;
   },
 
-  // Update workout (if needed for trainers/admins)
+  // Update workout
   updateWorkout: async (id: string, workoutData: Partial<Workout>): Promise<Workout> => {
-    const response = await fetchWithAuth(`/workout/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(workoutData),
-    });
-    return await response.json();
+    const response = await api.patch(`/workout/${id}`, workoutData);
+    return response.data.data || response.data;
   },
 
-  // Delete workout (if needed for trainers/admins)
+  // Delete workout
   deleteWorkout: async (id: string): Promise<void> => {
-    await fetchWithAuth(`/workout/${id}`, {
-      method: 'DELETE',
-    });
+    await api.delete(`/workout/${id}`);
   },
 };
