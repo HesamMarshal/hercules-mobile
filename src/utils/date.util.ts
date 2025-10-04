@@ -91,3 +91,12 @@ export const persianToGregorian = (persianDate: string): string => {
     return '';
   }
 };
+
+export const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fa-IR');
+  } catch {
+    return dateString;
+  }
+};
