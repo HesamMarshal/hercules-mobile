@@ -28,13 +28,6 @@ interface WorkoutScreenProps {
   navigation: WorkoutScreenNavigationProp;
 }
 
-// // Extended interface for workouts with practices
-// interface WorkoutWithPractices extends Workout {
-//   practices?: Practice[];
-// }
-
-// Extended interface for workouts with practices
-
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const { planId, planName, refresh = false } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
