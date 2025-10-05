@@ -28,6 +28,19 @@ interface WorkoutScreenProps {
   navigation: WorkoutScreenNavigationProp;
 }
 
+// Helper function to get practice code (first letter of category or exercise name)
+const getPracticeCode = (practice: Practice, index: number): string => {
+  // You might need to adjust this based on your actual data structure
+  if (practice.exercise?.name) {
+    return practice.exercise.name.charAt(0).toUpperCase();
+  }
+  // if (practice.category) {
+  //   return practice.category.charAt(0).toUpperCase();
+  // }
+  // Fallback: use letters in sequence A, B, C, D...
+  return String.fromCharCode(65 + (index % 26));
+};
+
 const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   const { planId, planName, refresh = false } = route.params;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -185,16 +198,17 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
   //   ]);
   // };
 
-  const renderPracticeItem = (practice: Practice) => (
-    <View key={practice.id} style={[styles.practiceItem, styles.practiceItemContainer]}>
-      <MaterialIcons name="fitness-center" size={16} color="#666" style={styles.practiceIcon} />
-      <Text style={[styles.practiceText, styles.text]} numberOfLines={1}>
-        {/* Note: You might need to fetch exercise name separately or adjust your Practice interface */}
-        تمرین #{practice.id}
-      </Text>
-      <View style={styles.practiceDetails}>
-        <Text style={styles.practiceDetailText}>{practice.sets} ست</Text>
-        <Text style={styles.practiceDetailText}>{practice.reps} تکرار</Text>
+  const renderPracticeItem = (practice: Practice, index: number) => (
+    <View key={practice.id} style={styles.practiceItemRow}>
+      <View style={styles.practiceCodeContainer}>
+        <Text style={styles.practiceCode}>{getPracticeCode(practice, index)}</Text>
+      </View>
+
+      <View style={styles.practiceDetailsContainer}>
+        <Text style={styles.practiceName}>
+          {practice.sets} × {practice.exercise?.name || `تمرین ${practice.id}`}
+        </Text>
+        {/* <Text style={styles.practiceCategory}>{getPracticeCategory(practice)}</Text> */}
       </View>
     </View>
   );
