@@ -2,8 +2,8 @@ import { Exercise } from './exercise.interface';
 
 export interface Practice {
   id: string;
-  workout_id: string;
-  exercise_id: string;
+  workoutId: string;
+  exerciseId: string;
   sets: number;
   reps: number;
   weight: number;
