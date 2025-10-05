@@ -10,37 +10,41 @@ export const exerciseAPI = {
   },
 
   // Get exercise by ID
-  getExerciseById: async (id: string): Promise<Exercise> => {
-    const response = await api.get(`/exercise/${id}`);
+  getExerciseById: async (exerciseId: string): Promise<Exercise> => {
+    const response = await api.get(`/exercise/${exerciseId}`);
     return response.data.data || response.data;
   },
 
   // Search exercises
   searchExercises: async (query: string): Promise<Exercise[]> => {
-    const response = await api.get(`/exercise/search?q=${encodeURIComponent(query)}`);
+    const response = await api.get(`/exercise/search?q=${query}`);
     return response.data.data || response.data;
   },
 
-  // Create new exercise (if needed for trainers/admins)
-  createExercise: async (exerciseData: Partial<Exercise>): Promise<Exercise> => {
+  // Create a new exercise
+  createExercise: async (exerciseData: {
+    name: string;
+    category: string;
+    description?: string;
+    difficulty?: string;
+    equipment?: string;
+    muscle_group?: string;
+  }): Promise<Exercise> => {
     const response = await api.post('/exercise', exerciseData);
     return response.data.data || response.data;
   },
 
-  // Update exercise
-  updateExercise: async (id: string, exerciseData: Partial<Exercise>): Promise<Exercise> => {
-    const response = await api.patch(`/exercise/${id}`, exerciseData);
+  // Update an exercise
+  updateExercise: async (
+    exerciseId: string,
+    exerciseData: Partial<Exercise>
+  ): Promise<Exercise> => {
+    const response = await api.put(`/exercise/${exerciseId}`, exerciseData);
     return response.data.data || response.data;
   },
 
-  // Delete exercise
-  deleteExercise: async (id: string): Promise<void> => {
-    await api.delete(`/exercise/${id}`);
-  },
-
-  // Get exercises by muscle group
-  getExercisesByMuscleGroup: async (muscleGroup: string): Promise<Exercise[]> => {
-    const response = await api.get(`/exercises/muscle-group/${encodeURIComponent(muscleGroup)}`);
-    return response.data.data || response.data;
+  // Delete an exercise
+  deleteExercise: async (exerciseId: string): Promise<void> => {
+    await api.delete(`/exercise/${exerciseId}`);
   },
 };
