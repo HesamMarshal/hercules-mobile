@@ -34,7 +34,7 @@ export const practiceAPI = {
     practiceId: string,
     practiceData: Partial<Practice>
   ): Promise<Practice> => {
-    const response = await api.put(`/practices/${practiceId}`, practiceData);
+    const response = await api.patch(`/practices/${practiceId}`, practiceData);
     return response.data.data || response.data;
   },
 

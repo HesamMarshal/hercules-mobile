@@ -94,3 +94,8 @@ export type CreatePracticeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'CreatePracticeScreen'
 >;
+export type EditPracticeScreenRouteProp = RouteProp<RootStackParamList, 'EditPracticeScreen'>;
+export type EditPracticeScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'EditPracticeScreen'
+>;

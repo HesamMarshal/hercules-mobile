@@ -17,6 +17,7 @@ import CreatePracticeScreen from '@/screens/app/Practice/CreatePracticeScreen';
 import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
 import CreateWorkoutScreen from '@/screens/app/Workouts/CreateWorkoutScreen';
 import EditWorkoutScreen from '@/screens/app/Workouts/EditWorkoutScreen';
+import EditPracticeScreen from '@/screens/app/Practice/EditPracticeScreen';
 
 // Force RTL at app level
 // I18nManager.forceRTL(true);
@@ -113,6 +114,12 @@ export const AppNavigator = () => {
             <Stack.Screen
               name="CreatePracticeScreen"
               component={CreatePracticeScreen}
+              options={{ title: 'افزودن تمرین' }}
+            />
+
+            <Stack.Screen
+              name="EditPracticeScreen"
+              component={EditPracticeScreen}
               options={{ title: 'افزودن تمرین' }}
             />
             <Stack.Screen

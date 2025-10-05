@@ -323,3 +323,188 @@ export const createPracticeStyles = StyleSheet.create({
     paddingVertical: 8,
   },
 });
+
+export const editPracticeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  card: {
+    margin: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  selectedExerciseCard: {
+    backgroundColor: '#f8f9fa',
+    marginBottom: 16,
+    borderColor: '#007AFF',
+    borderWidth: 1,
+  },
+  selectedExerciseTitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  selectedExerciseName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  changeExerciseButton: {
+    alignSelf: 'flex-start',
+  },
+  exerciseSelectionSection: {
+    marginBottom: 16,
+  },
+  formSection: {
+    marginTop: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12,
+  },
+  searchBar: {
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  exercisesList: {
+    maxHeight: 300,
+  },
+  exercisesListContent: {
+    paddingBottom: 8,
+  },
+  exerciseItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  selectedExerciseItem: {
+    borderColor: '#007AFF',
+    backgroundColor: '#f0f8ff',
+  },
+  exerciseInfo: {
+    flex: 1,
+  },
+  exerciseName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  exerciseMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 4,
+  },
+  exerciseCategory: {
+    fontSize: 14,
+    color: '#007AFF',
+    fontWeight: '500',
+  },
+  exerciseMuscle: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  exerciseDifficulty: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  exerciseEquipment: {
+    fontSize: 12,
+    color: '#999',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
+  },
+  emptyExercises: {
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyExercisesText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+  formRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  formField: {
+    flex: 0.48,
+  },
+  orderInput: {
+    marginBottom: 16,
+  },
+  actionButtonsContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    flex: 0.3,
+    borderColor: '#ff3b30',
+  },
+  updateButton: {
+    flex: 0.65,
+    borderRadius: 8,
+  },
+  updateButtonContent: {
+    paddingVertical: 8,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 24,
+  },
+  errorButton: {
+    marginTop: 8,
+  },
+});
