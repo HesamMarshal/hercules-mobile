@@ -1,4 +1,5 @@
 // src/screens/practice/PracticeScreen.tsx
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -7,11 +8,11 @@ import {
   TouchableOpacity,
   I18nManager,
   RefreshControl,
-  ScrollView,
+  Alert,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { ActivityIndicator, Card, Title, Button } from 'react-native-paper';
+import { ActivityIndicator, Card, Title, Button, FAB, Menu, Divider } from 'react-native-paper';
 import { practiceAPI } from '@/services/practiceApi';
 import { colors } from '@/theme/properties/colors';
 import { PracticeScreenRouteProp, PracticeScreenNavigationProp } from '@/types/navigation.type';
@@ -52,6 +53,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [menuVisible, setMenuVisible] = useState<{ [key: string]: boolean }>({});
   const { token } = useAuth();
 
   useEffect(() => {
@@ -71,7 +73,9 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     try {
       setError('');
       const practicesData = await practiceAPI.getPracticesByWorkoutId(workoutId);
-      setPractices(practicesData || []);
+      // Sort practices by order if available, otherwise by creation order
+      const sortedPractices = practicesData?.sort((a, b) => (a.order || 0) - (b.order || 0)) || [];
+      setPractices(sortedPractices);
     } catch (error: any) {
       console.error('Error loading practices:', error);
       setError('خطا در بارگذاری تمرین‌ها');
@@ -87,7 +91,6 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
   };
 
   const handleStartWorkout = () => {
-    // Navigate to active workout screen
     navigation.navigate('ActiveWorkout', {
       workoutId: workoutId,
       workoutName: workoutName,
@@ -95,8 +98,19 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     });
   };
 
+  const handleAddPractice = () => {
+    navigation.navigate('CreatePracticeScreen', {
+      workoutId: workoutId,
+      workoutName: workoutName,
+      onPracticeCreated: () => {
+        console.log('🔄 Practice created callback called');
+        loadPractices(true);
+      },
+    });
+  };
+
   const handleEditPractice = (practice: Practice) => {
-    // Navigate to edit practice screen
+    setMenuVisible({ ...menuVisible, [practice.id]: false });
     navigation.navigate('EditPracticeScreen', {
       practiceId: practice.id,
       workoutId: workoutId,
@@ -105,50 +119,119 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     });
   };
 
+  const handleDeletePractice = (practice: Practice) => {
+    setMenuVisible({ ...menuVisible, [practice.id]: false });
+
+    Alert.alert(
+      'حذف تمرین',
+      `آیا از حذف تمرین "${practice.exercise?.name || `تمرین ${practice.id}`}" اطمینان دارید؟`,
+      [
+        { text: 'لغو', style: 'cancel' },
+        {
+          text: 'حذف',
+          style: 'destructive',
+          onPress: () => deletePractice(practice.id),
+        },
+      ]
+    );
+  };
+
+  const deletePractice = async (practiceId: string) => {
+    try {
+      await practiceAPI.deletePractice(practiceId);
+
+      // Remove the practice from local state immediately
+      setPractices(practices.filter((practice) => practice.id !== practiceId));
+
+      Alert.alert('موفقیت', 'تمرین با موفقیت حذف شد');
+    } catch (error: any) {
+      console.error('Error deleting practice:', error);
+      Alert.alert('خطا', 'خطا در حذف تمرین. لطفاً مجدداً تلاش کنید.');
+    }
+  };
+
+  const toggleMenu = (practiceId: string) => {
+    setMenuVisible({
+      ...menuVisible,
+      [practiceId]: !menuVisible[practiceId],
+    });
+  };
+
+  const closeAllMenus = () => {
+    setMenuVisible({});
+  };
+
   const renderPracticeItem = ({ item, index }: { item: Practice; index: number }) => (
-    <Card style={practiceStyles.practiceCard} mode="elevated">
-      <Card.Content style={practiceStyles.practiceContent}>
-        <View style={practiceStyles.practiceItemRow}>
-          {/* Practice Code Circle */}
-          <View style={practiceStyles.practiceCodeContainer}>
-            <Text style={practiceStyles.practiceCode}>{getPracticeCode(item, index)}</Text>
-          </View>
-
-          {/* Practice Details */}
-          <View style={practiceStyles.practiceDetailsContainer}>
-            <View style={practiceStyles.practiceTextContainer}>
-              <Text style={practiceStyles.practiceName}>
-                {item.sets} × {item.exercise?.name || `تمرین ${item.id}`}
-              </Text>
-              <Text style={practiceStyles.practiceCategory}>{getPracticeCategory(item)}</Text>
+    <TouchableOpacity onPress={closeAllMenus} activeOpacity={0.9}>
+      <Card style={practiceStyles.practiceCard} mode="elevated">
+        <Card.Content style={practiceStyles.practiceContent}>
+          <View style={practiceStyles.practiceItemRow}>
+            {/* Practice Code Circle */}
+            <View style={practiceStyles.practiceCodeContainer}>
+              <Text style={practiceStyles.practiceCode}>{getPracticeCode(item, index)}</Text>
             </View>
 
-            {/* Practice Metrics */}
-            <View style={practiceStyles.practiceMetrics}>
-              {item.reps > 0 && (
-                <Text style={practiceStyles.practiceMetricText}>{item.reps} تکرار</Text>
-              )}
-              {item.weight > 0 && (
-                <Text style={practiceStyles.practiceMetricText}>{item.weight} کیلوگرم</Text>
-              )}
-              {item.rest_time > 0 && (
-                <Text style={practiceStyles.practiceMetricText}>
-                  استراحت: {item.rest_time} ثانیه
+            {/* Practice Details */}
+            <View style={practiceStyles.practiceDetailsContainer}>
+              <View style={practiceStyles.practiceTextContainer}>
+                <Text style={practiceStyles.practiceName}>
+                  {item.sets} × {item.exercise?.name || `تمرین ${item.id}`}
                 </Text>
-              )}
+                <Text style={practiceStyles.practiceCategory}>{getPracticeCategory(item)}</Text>
+              </View>
+
+              {/* Practice Metrics */}
+              <View style={practiceStyles.practiceMetrics}>
+                {item.reps > 0 && (
+                  <Text style={practiceStyles.practiceMetricText}>{item.reps} تکرار</Text>
+                )}
+                {item.weight > 0 && (
+                  <Text style={practiceStyles.practiceMetricText}>{item.weight} کیلوگرم</Text>
+                )}
+                {item.rest_time > 0 && (
+                  <Text style={practiceStyles.practiceMetricText}>
+                    استراحت: {item.rest_time} ثانیه
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {/* Menu Button */}
+            <View style={practiceStyles.menuContainer}>
+              <Menu
+                visible={!!menuVisible[item.id]}
+                onDismiss={() => setMenuVisible({ ...menuVisible, [item.id]: false })}
+                anchor={
+                  <TouchableOpacity
+                    onPress={() => toggleMenu(item.id)}
+                    style={practiceStyles.menuButton}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <MaterialIcons name="more-vert" size={24} color="#666" />
+                  </TouchableOpacity>
+                }
+                contentStyle={practiceStyles.menuContent}
+              >
+                <Menu.Item
+                  onPress={() => handleEditPractice(item)}
+                  title="ویرایش"
+                  leadingIcon="pencil"
+                  style={practiceStyles.menuItem}
+                />
+                <Divider />
+                <Menu.Item
+                  onPress={() => handleDeletePractice(item)}
+                  title="حذف"
+                  leadingIcon="delete"
+                  titleStyle={practiceStyles.deleteMenuText}
+                  style={practiceStyles.menuItem}
+                />
+              </Menu>
             </View>
           </View>
-
-          {/* Edit Button */}
-          <TouchableOpacity
-            onPress={() => handleEditPractice(item)}
-            style={practiceStyles.editButton}
-          >
-            <MaterialIcons name="edit" size={20} color="#666" />
-          </TouchableOpacity>
-        </View>
-      </Card.Content>
-    </Card>
+        </Card.Content>
+      </Card>
+    </TouchableOpacity>
   );
 
   if (loading) {
@@ -173,8 +256,21 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
           {/* Workout Header */}
           <Card style={practiceStyles.headerCard}>
             <Card.Content style={practiceStyles.headerContent}>
-              <Title style={practiceStyles.workoutTitle}>{workoutName}</Title>
-              <Text style={practiceStyles.practiceCount}>{practices.length} تمرین</Text>
+              <View style={practiceStyles.headerTitleContainer}>
+                <Title style={practiceStyles.workoutTitle}>{workoutName}</Title>
+                <Text style={practiceStyles.practiceCount}>{practices.length} تمرین</Text>
+              </View>
+
+              {/* Add Practice Button in Header */}
+              <Button
+                mode="contained"
+                onPress={handleAddPractice}
+                style={practiceStyles.addButton}
+                icon="plus"
+                compact
+              >
+                افزودن تمرین
+              </Button>
             </Card.Content>
           </Card>
 
@@ -198,6 +294,14 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
                 <Text style={practiceStyles.emptySubtext}>
                   اولین تمرین را به این workout اضافه کنید
                 </Text>
+                <Button
+                  mode="contained"
+                  onPress={handleAddPractice}
+                  style={practiceStyles.emptyButton}
+                  icon="plus"
+                >
+                  افزودن تمرین
+                </Button>
               </View>
             }
           />
@@ -214,6 +318,11 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
                 شروع تمرین
               </Button>
             </View>
+          )}
+
+          {/* Floating Action Button for Mobile */}
+          {practices.length > 0 && (
+            <FAB style={practiceStyles.fab} icon="plus" onPress={handleAddPractice} color="white" />
           )}
         </>
       )}
