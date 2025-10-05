@@ -316,6 +316,44 @@ export const workoutStyles = StyleSheet.create({
   deleteMenuText: {
     color: '#FF3B30', // Red color for delete
   },
+  // New styles for practice items
+  practiceItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  practiceCodeContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  practiceCode: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  practiceDetailsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  practiceName: {
+    fontSize: 14,
+    color: '#333',
+    flex: 1,
+  },
+  practiceCategory: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 8,
+  },
 });
 
 export const createWorkoutStyles = StyleSheet.create({
