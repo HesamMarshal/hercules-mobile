@@ -111,7 +111,7 @@ export const AppNavigator = () => {
               })}
             />
             <Stack.Screen
-              name="CreatePractice"
+              name="CreatePracticeScreen"
               component={CreatePracticeScreen}
               options={{ title: 'افزودن تمرین' }}
             />
