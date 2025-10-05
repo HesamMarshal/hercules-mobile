@@ -22,14 +22,21 @@ export const practiceStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
   },
+  headerTitleContainer: {
+    flex: 1,
+  },
   workoutTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 4,
   },
   practiceCount: {
     fontSize: 14,
     color: '#666',
+  },
+  addButton: {
+    marginLeft: 16,
   },
   listContainer: {
     padding: 16,
@@ -92,8 +99,20 @@ export const practiceStyles = StyleSheet.create({
     color: '#666',
     marginBottom: 2,
   },
-  editButton: {
-    padding: 8,
+  menuContainer: {
+    marginLeft: 8,
+  },
+  menuButton: {
+    padding: 4,
+  },
+  menuContent: {
+    borderRadius: 8,
+  },
+  menuItem: {
+    paddingHorizontal: 8,
+  },
+  deleteMenuText: {
+    color: '#ff3b30',
   },
   startButtonContainer: {
     padding: 16,
@@ -101,6 +120,13 @@ export const practiceStyles = StyleSheet.create({
   },
   startButton: {
     paddingVertical: 8,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.activeTintColor,
   },
   errorContainer: {
     flex: 1,
@@ -134,5 +160,9 @@ export const practiceStyles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+    marginBottom: 24,
+  },
+  emptyButton: {
+    marginTop: 8,
   },
 });
