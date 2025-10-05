@@ -1,33 +1,50 @@
-// src/screens/PracticeScreen.tsx
+// src/screens/practice/PracticeScreen.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   FlatList,
   TouchableOpacity,
   I18nManager,
-  Alert,
+  RefreshControl,
+  ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { ActivityIndicator, Button, Card, Title, FAB, Chip } from 'react-native-paper';
-import { workoutStyles as styles } from '@/theme/styles';
-import { RefreshControl } from 'react-native-gesture-handler';
+import { ActivityIndicator, Card, Title, Button } from 'react-native-paper';
 import { practiceAPI } from '@/services/practiceApi';
+import { colors } from '@/theme/properties/colors';
 import { PracticeScreenRouteProp, PracticeScreenNavigationProp } from '@/types/navigation.type';
 import { Practice } from '@/interfaces/practice.interface';
+import Loading from '@/components/common/Loading';
+import { practiceStyles } from '@/theme/practice.style';
 
 const isRTL = I18nManager.isRTL;
 
-// interface PracticeScreenProps {
-//   route: PracticeScreenRouteProp;
-//   navigation: PracticeScreenNavigationProp;
-// }
 interface PracticeScreenProps {
-  route: any;
-  navigation: any;
+  route: PracticeScreenRouteProp;
+  navigation: PracticeScreenNavigationProp;
 }
+
+// Helper function to get practice code (first letter of exercise name or category)
+const getPracticeCode = (practice: Practice, index: number): string => {
+  if (practice.exercise?.name) {
+    return practice.exercise.name.charAt(0).toUpperCase();
+  }
+  // Fallback: use letters in sequence A, B, C, D...
+  return String.fromCharCode(65 + (index % 26));
+};
+
+// Helper function to get practice category
+const getPracticeCategory = (practice: Practice): string => {
+  if (practice.exercise?.category) {
+    return practice.exercise.category;
+  }
+  if (practice.exercise?.body_part) {
+    return practice.exercise.body_part;
+  }
+  return 'Other';
+};
 
 const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
   const { workoutId, workoutName, planId } = route.params;
@@ -44,7 +61,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     loadPractices();
   }, [workoutId, workoutName]);
 
-  const loadPractices = async () => {
+  const loadPractices = async (forceRefresh = false) => {
     if (!token) {
       setError('لطفاً برای مشاهده تمرین‌ها وارد شوید');
       setLoading(false);
@@ -53,12 +70,11 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
 
     try {
       setError('');
-      // Assuming we have an API method to get practices by workout ID
       const practicesData = await practiceAPI.getPracticesByWorkoutId(workoutId);
       setPractices(practicesData || []);
     } catch (error: any) {
-      setError('خطا در بارگذاری تمرین‌ها');
       console.error('Error loading practices:', error);
+      setError('خطا در بارگذاری تمرین‌ها');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -67,367 +83,142 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    loadPractices();
+    loadPractices(true);
   };
 
-  const handlePracticePress = (practice: Practice) => {
-    navigation.navigate('PracticeDetail', {
-      practiceId: practice.id,
-      practiceName: practice.exercise.name,
+  const handleStartWorkout = () => {
+    // Navigate to active workout screen
+    navigation.navigate('ActiveWorkout', {
       workoutId: workoutId,
+      workoutName: workoutName,
+      planId: planId,
     });
   };
 
-  const handleStartPractice = (practice: Practice) => {
-    Alert.alert('شروع تمرین', `آیا می‌خواهید "${practice.exercise.name}" را شروع کنید؟`, [
-      { text: 'لغو', style: 'cancel' },
-      {
-        text: 'شروع',
-        onPress: () => {
-          navigation.navigate('ActivePractice', {
-            practiceId: practice.id,
-            practiceName: practice.exercise.name,
-          });
-        },
-      },
-    ]);
-  };
-
-  const handleAddPractice = () => {
-    navigation.navigate('CreatePractice', {
-      workoutId: workoutId,
-      onPracticeCreated: loadPractices,
-    });
-  };
-
-  const handleLogSet = (practice: Practice) => {
-    navigation.navigate('LogSet', {
+  const handleEditPractice = (practice: Practice) => {
+    // Navigate to edit practice screen
+    navigation.navigate('EditPracticeScreen', {
       practiceId: practice.id,
-      practiceName: practice.exercise.name,
-      currentSets: practice.sets,
+      workoutId: workoutId,
+      workoutName: workoutName,
+      onPracticeUpdated: () => loadPractices(true),
     });
   };
 
-  const renderPracticeItem = ({ item }: { item: Practice }) => {
-    return (
-      <Card style={[practiceStyles.card]} mode="elevated">
-        <Card.Content style={practiceStyles.cardContent}>
-          {/* Practice Header */}
-          <TouchableOpacity onPress={() => handlePracticePress(item)}>
-            <View style={practiceStyles.practiceHeader}>
-              <View style={practiceStyles.practiceTitleContainer}>
-                <Title style={[practiceStyles.practiceName, practiceStyles.text]}>
-                  {item.exercise.name}
-                </Title>
-                <View style={practiceStyles.chipsContainer}>
-                  <Chip
-                    mode="outlined"
-                    style={practiceStyles.chip}
-                    textStyle={practiceStyles.chipText}
-                  >
-                    {item.exercise.difficulty}
-                  </Chip>
-                  <Chip
-                    mode="outlined"
-                    style={practiceStyles.chip}
-                    textStyle={practiceStyles.chipText}
-                  >
-                    {item.exercise.primary_muscle_group}
-                  </Chip>
-                </View>
-              </View>
-              <MaterialIcons
-                name="chevron-left"
-                size={24}
-                color="#666"
-                style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          {/* Exercise Description */}
-          {item.exercise.description && (
-            <Text style={[practiceStyles.description, practiceStyles.text]}>
-              {item.exercise.description}
-            </Text>
-          )}
+  const renderPracticeItem = ({ item, index }: { item: Practice; index: number }) => (
+    <Card style={practiceStyles.practiceCard} mode="elevated">
+      <Card.Content style={practiceStyles.practiceContent}>
+        <View style={practiceStyles.practiceItemRow}>
+          {/* Practice Code Circle */}
+          <View style={practiceStyles.practiceCodeContainer}>
+            <Text style={practiceStyles.practiceCode}>{getPracticeCode(item, index)}</Text>
+          </View>
 
           {/* Practice Details */}
-          <View style={practiceStyles.detailsGrid}>
-            <View style={practiceStyles.detailItem}>
-              <MaterialIcons name="repeat" size={20} color="#007AFF" />
-              <Text style={practiceStyles.detailLabel}>ست‌ها</Text>
-              <Text style={practiceStyles.detailValue}>{item.sets}</Text>
+          <View style={practiceStyles.practiceDetailsContainer}>
+            <View style={practiceStyles.practiceTextContainer}>
+              <Text style={practiceStyles.practiceName}>
+                {item.sets} × {item.exercise?.name || `تمرین ${item.id}`}
+              </Text>
+              <Text style={practiceStyles.practiceCategory}>{getPracticeCategory(item)}</Text>
             </View>
 
-            <View style={practiceStyles.detailItem}>
-              <MaterialIcons name="replay" size={20} color="#007AFF" />
-              <Text style={practiceStyles.detailLabel}>تکرار</Text>
-              <Text style={practiceStyles.detailValue}>{item.reps}</Text>
-            </View>
-
-            <View style={practiceStyles.detailItem}>
-              <MaterialIcons name="fitness-center" size={20} color="#007AFF" />
-              <Text style={practiceStyles.detailLabel}>وزن (kg)</Text>
-              <Text style={practiceStyles.detailValue}>{item.weight}</Text>
-            </View>
-
-            <View style={practiceStyles.detailItem}>
-              <MaterialIcons name="timer" size={20} color="#007AFF" />
-              <Text style={practiceStyles.detailLabel}>استراحت (ثانیه)</Text>
-              <Text style={practiceStyles.detailValue}>{item.rest_time}</Text>
+            {/* Practice Metrics */}
+            <View style={practiceStyles.practiceMetrics}>
+              {item.reps > 0 && (
+                <Text style={practiceStyles.practiceMetricText}>{item.reps} تکرار</Text>
+              )}
+              {item.weight > 0 && (
+                <Text style={practiceStyles.practiceMetricText}>{item.weight} کیلوگرم</Text>
+              )}
+              {item.rest_time > 0 && (
+                <Text style={practiceStyles.practiceMetricText}>
+                  استراحت: {item.rest_time} ثانیه
+                </Text>
+              )}
             </View>
           </View>
 
-          {/* Equipment and Muscle Groups */}
-          <View style={practiceStyles.tagsContainer}>
-            <View style={practiceStyles.tag}>
-              <MaterialIcons name="build" size={14} color="#666" />
-              <Text style={practiceStyles.tagText}>{item.exercise.equipment}</Text>
-            </View>
-            {item.exercise.secondary_muscle_group && (
-              <View style={practiceStyles.tag}>
-                <MaterialIcons name="sports" size={14} color="#666" />
-                <Text style={practiceStyles.tagText}>{item.exercise.secondary_muscle_group}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Action Buttons */}
-          <View style={practiceStyles.actionButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => handlePracticePress(item)}
-              style={practiceStyles.detailButton}
-              icon="information"
-            >
-              جزئیات
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => handleLogSet(item)}
-              style={practiceStyles.logButton}
-              icon="plus-circle"
-            >
-              ثبت ست
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => handleStartPractice(item)}
-              style={practiceStyles.startButton}
-              icon="play-circle"
-            >
-              شروع
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
-    );
-  };
+          {/* Edit Button */}
+          <TouchableOpacity
+            onPress={() => handleEditPractice(item)}
+            style={practiceStyles.editButton}
+          >
+            <MaterialIcons name="edit" size={20} color="#666" />
+          </TouchableOpacity>
+        </View>
+      </Card.Content>
+    </Card>
+  );
 
   if (loading) {
-    return (
-      <View style={[styles.centered, practiceStyles.container]}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={[styles.loadingText, practiceStyles.text]}>در حال بارگذاری تمرین‌ها...</Text>
-      </View>
-    );
+    return <Loading message="در حال بارگذاری تمرین‌ها..." />;
   }
 
   return (
-    <View style={[styles.container, practiceStyles.container]}>
+    <View style={practiceStyles.container}>
       {error ? (
-        <View style={[styles.errorContainer, practiceStyles.container]}>
-          <Text style={[styles.errorText, practiceStyles.text]}>{error}</Text>
-          <Button mode="contained" onPress={loadPractices} style={practiceStyles.button}>
+        <View style={practiceStyles.errorContainer}>
+          <Text style={practiceStyles.errorText}>{error}</Text>
+          <Button
+            mode="contained"
+            onPress={() => loadPractices(true)}
+            style={practiceStyles.button}
+          >
             تلاش مجدد
           </Button>
         </View>
       ) : (
         <>
+          {/* Workout Header */}
+          <Card style={practiceStyles.headerCard}>
+            <Card.Content style={practiceStyles.headerContent}>
+              <Title style={practiceStyles.workoutTitle}>{workoutName}</Title>
+              <Text style={practiceStyles.practiceCount}>{practices.length} تمرین</Text>
+            </Card.Content>
+          </Card>
+
+          {/* Practices List */}
           <FlatList
             data={practices}
             renderItem={renderPracticeItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, practiceStyles.listContainer]}
+            contentContainerStyle={practiceStyles.listContainer}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                colors={['#007AFF']}
+                colors={[colors.activeTintColor]}
               />
             }
             ListEmptyComponent={
-              <View style={[styles.emptyContainer, practiceStyles.container]}>
-                <MaterialIcons name="sports-gymnastics" size={64} color="#999" />
-                <Text style={[styles.emptyText, practiceStyles.text]}>
-                  هیچ تمرینی برای این workout وجود ندارد
-                </Text>
-                <Text style={[practiceStyles.emptySubtext, practiceStyles.text]}>
+              <View style={practiceStyles.emptyContainer}>
+                <MaterialIcons name="fitness-center" size={64} color="#999" />
+                <Text style={practiceStyles.emptyText}>هیچ تمرینی برای این workout تعریف نشده</Text>
+                <Text style={practiceStyles.emptySubtext}>
                   اولین تمرین را به این workout اضافه کنید
                 </Text>
-                <Button
-                  mode="contained"
-                  onPress={handleAddPractice}
-                  style={practiceStyles.emptyButton}
-                  icon="plus"
-                >
-                  افزودن تمرین
-                </Button>
               </View>
             }
           />
 
-          {/* Floating Action Button */}
+          {/* Start Workout Button */}
           {practices.length > 0 && (
-            <FAB style={practiceStyles.fab} icon="plus" onPress={handleAddPractice} color="white" />
+            <View style={practiceStyles.startButtonContainer}>
+              <Button
+                mode="contained"
+                onPress={handleStartWorkout}
+                style={practiceStyles.startButton}
+                icon="play"
+              >
+                شروع تمرین
+              </Button>
+            </View>
           )}
         </>
       )}
     </View>
   );
 };
-
-const practiceStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-  },
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  cardContent: {
-    alignItems: isRTL ? 'flex-end' : 'flex-start',
-  },
-  text: {
-    textAlign: isRTL ? 'right' : 'left',
-    writingDirection: isRTL ? 'rtl' : 'ltr',
-  },
-  practiceHeader: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    width: '100%',
-    marginBottom: 12,
-  },
-  practiceTitleContainer: {
-    flex: 1,
-  },
-  practiceName: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  chipsContainer: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    marginHorizontal: 4,
-    marginVertical: 2,
-    height: 28,
-  },
-  chipText: {
-    fontSize: 12,
-  },
-  description: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  detailsGrid: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 16,
-    backgroundColor: '#f8f9fa',
-    padding: 12,
-    borderRadius: 8,
-  },
-  detailItem: {
-    alignItems: 'center',
-    width: '48%',
-    marginBottom: 12,
-  },
-  detailLabel: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
-  },
-  detailValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 2,
-  },
-  tagsContainer: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  tag: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    backgroundColor: '#e9ecef',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginHorizontal: 4,
-    marginBottom: 4,
-  },
-  tagText: {
-    fontSize: 12,
-    color: '#666',
-    marginHorizontal: 4,
-  },
-  listContainer: {
-    paddingVertical: 8,
-    flexGrow: 1,
-  },
-  button: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-  emptySubtext: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666',
-    textAlign: isRTL ? 'right' : 'left',
-    marginBottom: 16,
-  },
-  emptyButton: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-  actionButtons: {
-    flexDirection: isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  detailButton: {
-    flex: 1,
-    marginHorizontal: 2,
-  },
-  logButton: {
-    flex: 1,
-    marginHorizontal: 2,
-    backgroundColor: '#28a745',
-  },
-  startButton: {
-    flex: 1,
-    marginHorizontal: 2,
-    backgroundColor: '#007AFF',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: isRTL ? undefined : 0,
-    left: isRTL ? 0 : undefined,
-    bottom: 0,
-    backgroundColor: '#007AFF',
-  },
-});
 
 export default PracticeScreen;
