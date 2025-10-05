@@ -5,8 +5,14 @@ import { View, ScrollView, Alert } from 'react-native';
 import { Text, TextInput, Button, Title, Card } from 'react-native-paper';
 import { persianToGregorian, toPersianDate } from '@/utils/date.util';
 import { editPlanstyles as styles } from '@/theme/plan.style';
+import { EditPlanNavigationProp, EditPlanRouteProp } from '@/types/navigation.type';
 
-const EditPlanScreen = ({ navigation, route }: any) => {
+interface EditPlanScreenProps {
+  route: EditPlanRouteProp;
+  navigation: EditPlanNavigationProp;
+}
+
+const EditPlanScreen = ({ navigation, route }: EditPlanScreenProps) => {
   const {
     planId,
     planName: initialPlanName,

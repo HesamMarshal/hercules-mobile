@@ -8,8 +8,17 @@ export type RootStackParamList = {
   // Profile, Plans, Exercises, Settings
 
   PlansScreen: undefined;
-  CreatePlan: undefined;
-  EditPlan: undefined;
+  CreatePlan: {
+    onPlanCreated: () => void;
+  };
+
+  EditPlan: {
+    planId: string;
+    planName: string;
+    startDate: string;
+    endDate: string;
+    onPlanUpdated: () => void;
+  };
 
   WorkoutScreen: {
     planId: string;
@@ -40,6 +49,9 @@ export type RootStackParamList = {
 // Use this for route prop typing
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+
+export type EditPlanRouteProp = RouteProp<RootStackParamList, 'EditPlan'>;
+export type EditPlanNavigationProp = StackNavigationProp<RootStackParamList, 'EditPlan'>;
 
 export type WorkoutScreenRouteProp = RouteProp<RootStackParamList, 'WorkoutScreen'>;
 export type WorkoutScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WorkoutScreen'>;
