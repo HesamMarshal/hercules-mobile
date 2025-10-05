@@ -200,22 +200,6 @@ const PlansScreen = ({ navigation }: any) => {
                     style={styles.menuItem}
                   />
                 </Menu>
-
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('WorkoutScreen', {
-                      planId: item.id,
-                      planName: item.name,
-                    })
-                  }
-                >
-                  <MaterialIcons
-                    name="chevron-left"
-                    size={24}
-                    color="#666"
-                    style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
-                  />
-                </TouchableOpacity>
               </View>
             </View>
 
@@ -257,6 +241,21 @@ const PlansScreen = ({ navigation }: any) => {
                   هیچ تمرینی برای این پلن تعریف نشده
                 </Text>
               )}
+            </View>
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              <Button
+                mode="outlined"
+                onPress={() =>
+                  navigation.navigate('WorkoutScreen', {
+                    planId: item.id,
+                    planName: item.name,
+                  })
+                }
+                style={styles.detailButton}
+              >
+                مشاهده جزئیات
+              </Button>
             </View>
           </Card.Content>
         </Card>

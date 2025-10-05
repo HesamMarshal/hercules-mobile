@@ -246,6 +246,16 @@ export const planStyles = StyleSheet.create({
   planTitleContainer: {
     flex: 1,
   },
+  actionButtons: {
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 8,
+  },
+  detailButton: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
 });
 
 export const createPlanStyles = StyleSheet.create({
