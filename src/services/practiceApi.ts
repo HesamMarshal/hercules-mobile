@@ -11,21 +11,21 @@ export const practiceAPI = {
 
   // Get practice by ID with exercise details
   getPracticeById: async (practiceId: string): Promise<Practice> => {
-    const response = await api.get(`/practice/${practiceId}`);
+    const response = await api.get(`/practices/${practiceId}`);
     return response.data.data || response.data;
   },
 
   // Create a new practice
   createPractice: async (practiceData: {
-    workout_id: string;
-    exercise_id: string;
+    workoutId: string;
+    exerciseId: string;
     sets: number;
     reps: number;
     weight: number;
     rest_time: number;
     order: number;
   }): Promise<Practice> => {
-    const response = await api.post('/practice', practiceData);
+    const response = await api.post('/practices', practiceData);
     return response.data.data || response.data;
   },
 
@@ -34,18 +34,18 @@ export const practiceAPI = {
     practiceId: string,
     practiceData: Partial<Practice>
   ): Promise<Practice> => {
-    const response = await api.put(`/practice/${practiceId}`, practiceData);
+    const response = await api.put(`/practices/${practiceId}`, practiceData);
     return response.data.data || response.data;
   },
 
   // Update practice with PATCH
   patchPractice: async (practiceId: string, practiceData: Partial<Practice>): Promise<Practice> => {
-    const response = await api.patch(`/practice/${practiceId}`, practiceData);
+    const response = await api.patch(`/practices/${practiceId}`, practiceData);
     return response.data.data || response.data;
   },
 
   // Delete a practice
   deletePractice: async (practiceId: string): Promise<void> => {
-    await api.delete(`/practice/${practiceId}`);
+    await api.delete(`/practices/${practiceId}`);
   },
 };
