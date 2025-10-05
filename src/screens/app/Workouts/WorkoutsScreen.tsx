@@ -252,15 +252,6 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
                     style={styles.menuItem}
                   />
                 </Menu>
-
-                <TouchableOpacity onPress={() => handleWorkoutPress(item)}>
-                  <MaterialIcons
-                    name="chevron-left"
-                    size={24}
-                    color="#666"
-                    style={isRTL ? {} : { transform: [{ rotate: '180deg' }] }}
-                  />
-                </TouchableOpacity>
               </View>
             </View>
 
