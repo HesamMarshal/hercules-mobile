@@ -9,6 +9,12 @@ export const practiceAPI = {
     return response.data.data || response.data;
   },
 
+  // Get practice by ID with exercise details
+  getPracticeById: async (practiceId: string): Promise<Practice> => {
+    const response = await api.get(`/practice/${practiceId}`);
+    return response.data.data || response.data;
+  },
+
   // Create a new practice
   createPractice: async (practiceData: {
     workout_id: string;
@@ -32,7 +38,7 @@ export const practiceAPI = {
     return response.data.data || response.data;
   },
 
-  // Update practice with PATCH (if you prefer partial updates)
+  // Update practice with PATCH
   patchPractice: async (practiceId: string, practiceData: Partial<Practice>): Promise<Practice> => {
     const response = await api.patch(`/practice/${practiceId}`, practiceData);
     return response.data.data || response.data;
