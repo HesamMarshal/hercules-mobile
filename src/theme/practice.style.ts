@@ -165,6 +165,40 @@ export const practiceStyles = StyleSheet.create({
   emptyButton: {
     marginTop: 8,
   },
+  practiceMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  setType: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  status: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  notesContainer: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#007AFF',
+  },
+  notesLabel: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 6,
+  },
+  notesText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
+  },
 });
 
 export const createPracticeStyles = StyleSheet.create({
@@ -321,6 +355,20 @@ export const createPracticeStyles = StyleSheet.create({
   },
   createButtonContent: {
     paddingVertical: 8,
+  },
+
+  subSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  notesInput: {
+    marginBottom: 16,
+  },
+  setTypeSelector: {
+    width: '100%',
   },
 });
 
@@ -506,5 +554,41 @@ export const editPracticeStyles = StyleSheet.create({
   },
   errorButton: {
     marginTop: 8,
+  },
+  setTypeSelector: {
+    width: '100%',
+  },
+
+  notesInput: {
+    marginBottom: 16,
+  },
+
+  subSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  currentPerformanceCard: {
+    backgroundColor: '#f0f8ff',
+    marginBottom: 16,
+    borderColor: '#007AFF',
+    borderWidth: 1,
+  },
+  currentPerformanceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  currentPerformanceText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  completedAtText: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });
