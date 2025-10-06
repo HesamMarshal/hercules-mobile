@@ -15,15 +15,17 @@ export const practiceAPI = {
     return response.data.data || response.data;
   },
 
-  // Create a new practice
   createPractice: async (practiceData: {
     workoutId: string;
     exerciseId: string;
-    sets: number;
-    reps: number;
-    weight: number;
-    rest_time: number;
     order: number;
+    set_number: number;
+    set_type: string;
+    previous_weight?: number;
+    previous_reps?: number;
+    previous_time?: number;
+    previous_rest?: number;
+    notes?: string;
   }): Promise<Practice> => {
     const response = await api.post('/practices', practiceData);
     return response.data.data || response.data;
