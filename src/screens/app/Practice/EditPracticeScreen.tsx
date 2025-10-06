@@ -1,7 +1,17 @@
 // src/screens/Practice/EditPracticeScreen.tsx
+// src/screens/Workouts/EditPracticeScreen.tsx
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, FlatList, TouchableOpacity, Text } from 'react-native';
-import { Button, TextInput, Title, Card, Searchbar, ActivityIndicator } from 'react-native-paper';
+import {
+  Button,
+  TextInput,
+  Title,
+  Card,
+  Searchbar,
+  ActivityIndicator,
+  Menu,
+  Divider,
+} from 'react-native-paper';
 import { practiceAPI } from '@/services/practiceApi';
 import { exerciseAPI } from '@/services/exerciseApi';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +19,7 @@ import {
   EditPracticeScreenRouteProp,
   EditPracticeScreenNavigationProp,
 } from '@/types/navigation.type';
-import { Practice } from '@/interfaces/practice.interface';
+import { Practice, SetType, PracticeStatus } from '@/interfaces/practice.interface';
 import { Exercise } from '@/interfaces/exercise.interface';
 import { editPracticeStyles } from '@/theme/practice.style';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -33,12 +43,16 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
   const [practiceLoading, setPracticeLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    sets: 0,
-    reps: 0,
-    weight: 0,
-    rest_time: 0,
     order: 1,
+    set_number: 1,
+    set_type: SetType.WORKING,
+    previous_weight: 0,
+    previous_reps: 0,
+    previous_rest: 60,
+    notes: '',
   });
+
+  const [setTypeMenuVisible, setSetTypeMenuVisible] = useState(false);
 
   useEffect(() => {
     loadPracticeData();
@@ -69,14 +83,16 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
       setPracticeLoading(true);
       const practiceData = await practiceAPI.getPracticeById(practiceId);
       setPractice(practiceData);
-      console.log(practiceData);
+
       // Pre-fill form data
       setFormData({
-        sets: practiceData.sets || 0,
-        reps: practiceData.reps || 0,
-        weight: practiceData.weight || 0,
-        rest_time: practiceData.rest_time || 0,
         order: practiceData.order || 1,
+        set_number: practiceData.set_number || 1,
+        set_type: practiceData.set_type || SetType.WORKING,
+        previous_weight: practiceData.previous_weight || 0,
+        previous_reps: practiceData.previous_reps || 0,
+        previous_rest: practiceData.previous_rest || 60,
+        notes: practiceData.notes || '',
       });
 
       // If practice has exercise data, set it as selected
@@ -85,7 +101,7 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
       }
     } catch (error: any) {
       console.error('Error loading practice:', error);
-      Alert.alert('خطا', 'خطا در بارگذاری اطلاعات تمرین');
+      Alert.alert('خطا', 'خطا در بارگذاری اطلاعات ست');
     } finally {
       setPracticeLoading(false);
     }
@@ -121,34 +137,36 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
     }
 
     if (!practice) {
-      Alert.alert('خطا', 'اطلاعات تمرین یافت نشد');
+      Alert.alert('خطا', 'اطلاعات ست یافت نشد');
       return;
     }
 
     try {
       setLoading(true);
       await practiceAPI.updatePractice(practiceId, {
-        exerciseId: selectedExercise.id,
-        sets: formData.sets,
-        reps: formData.reps,
-        weight: formData.weight,
-        rest_time: formData.rest_time,
+        exerciseId: +selectedExercise.id,
         order: formData.order,
+        set_number: formData.set_number,
+        set_type: formData.set_type,
+        previous_weight: formData.previous_weight,
+        previous_reps: formData.previous_reps,
+        previous_rest: formData.previous_rest,
+        notes: formData.notes,
       });
 
-      Alert.alert('موفقیت', 'تمرین با موفقیت بروزرسانی شد');
+      Alert.alert('موفقیت', 'ست با موفقیت بروزرسانی شد');
       onPracticeUpdated();
       navigation.goBack();
     } catch (error: any) {
       console.error('Error updating practice:', error);
-      Alert.alert('خطا', 'خطا در بروزرسانی تمرین. لطفاً مجدداً تلاش کنید.');
+      Alert.alert('خطا', 'خطا در بروزرسانی ست. لطفاً مجدداً تلاش کنید.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeletePractice = () => {
-    Alert.alert('حذف تمرین', `آیا از حذف این تمرین اطمینان دارید؟`, [
+    Alert.alert('حذف ست', `آیا از حذف این ست اطمینان دارید؟`, [
       { text: 'لغو', style: 'cancel' },
       {
         text: 'حذف',
@@ -163,12 +181,12 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
       setLoading(true);
       await practiceAPI.deletePractice(practiceId);
 
-      Alert.alert('موفقیت', 'تمرین با موفقیت حذف شد');
+      Alert.alert('موفقیت', 'ست با موفقیت حذف شد');
       onPracticeUpdated();
       navigation.goBack();
     } catch (error: any) {
       console.error('Error deleting practice:', error);
-      Alert.alert('خطا', 'خطا در حذف تمرین. لطفاً مجدداً تلاش کنید.');
+      Alert.alert('خطا', 'خطا در حذف ست. لطفاً مجدداً تلاش کنید.');
     } finally {
       setLoading(false);
     }
@@ -176,6 +194,21 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
 
   const handleExerciseSelect = (exercise: Exercise) => {
     setSelectedExercise(exercise);
+  };
+
+  const getSetTypeDisplay = (setType: SetType): string => {
+    switch (setType) {
+      case SetType.WARMUP:
+        return 'گرم کردن';
+      case SetType.WORKING:
+        return 'اصلی';
+      case SetType.DROPSET:
+        return 'دراپ ست';
+      case SetType.FAILURE:
+        return 'تا شکست';
+      default:
+        return setType;
+    }
   };
 
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
@@ -212,7 +245,7 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
     return (
       <View style={editPracticeStyles.loadingContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={editPracticeStyles.loadingText}>در حال بارگذاری اطلاعات تمرین...</Text>
+        <Text style={editPracticeStyles.loadingText}>در حال بارگذاری اطلاعات ست...</Text>
       </View>
     );
   }
@@ -221,7 +254,7 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
     return (
       <View style={editPracticeStyles.errorContainer}>
         <MaterialIcons name="error" size={64} color="#ff3b30" />
-        <Text style={editPracticeStyles.errorText}>اطلاعات تمرین یافت نشد</Text>
+        <Text style={editPracticeStyles.errorText}>اطلاعات ست یافت نشد</Text>
         <Button
           mode="contained"
           onPress={() => navigation.goBack()}
@@ -238,7 +271,7 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
       <ScrollView style={editPracticeStyles.scrollView}>
         <Card style={editPracticeStyles.card}>
           <Card.Content>
-            <Title style={editPracticeStyles.title}>ویرایش تمرین</Title>
+            <Title style={editPracticeStyles.title}>ویرایش ست</Title>
 
             {/* Selected Exercise Display */}
             {selectedExercise && (
@@ -303,16 +336,16 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
             {selectedExercise && (
               <View style={editPracticeStyles.formSection}>
                 <Text style={editPracticeStyles.sectionTitle}>
-                  جزئیات تمرین: {selectedExercise.name}
+                  جزئیات ست: {selectedExercise.name}
                 </Text>
 
                 <View style={editPracticeStyles.formRow}>
                   <View style={editPracticeStyles.formField}>
                     <TextInput
-                      label="تعداد ست‌ها"
-                      value={formData.sets.toString()}
+                      label="ترتیب در تمرین"
+                      value={formData.order.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, sets: parseInt(text) || 0 })
+                        setFormData({ ...formData, order: parseInt(text) || 1 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -321,10 +354,95 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
 
                   <View style={editPracticeStyles.formField}>
                     <TextInput
-                      label="تعداد تکرار"
-                      value={formData.reps.toString()}
+                      label="شماره ست"
+                      value={formData.set_number.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, reps: parseInt(text) || 0 })
+                        setFormData({ ...formData, set_number: parseInt(text) || 1 })
+                      }
+                      keyboardType="numeric"
+                      mode="outlined"
+                    />
+                  </View>
+                </View>
+
+                {/* Set Type Selection */}
+                <View style={editPracticeStyles.formRow}>
+                  <View style={editPracticeStyles.formField}>
+                    <Menu
+                      visible={setTypeMenuVisible}
+                      onDismiss={() => setSetTypeMenuVisible(false)}
+                      anchor={
+                        <TouchableOpacity
+                          onPress={() => setSetTypeMenuVisible(true)}
+                          style={editPracticeStyles.setTypeSelector}
+                        >
+                          <TextInput
+                            label="نوع ست"
+                            value={getSetTypeDisplay(formData.set_type)}
+                            mode="outlined"
+                            editable={false}
+                            pointerEvents="none"
+                            right={<TextInput.Icon icon="menu-down" />}
+                          />
+                        </TouchableOpacity>
+                      }
+                    >
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.WARMUP });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="گرم کردن"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.WORKING });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="اصلی"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.DROPSET });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="دراپ ست"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.FAILURE });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="تا شکست"
+                      />
+                    </Menu>
+                  </View>
+                </View>
+
+                <Text style={editPracticeStyles.subSectionTitle}>عملکرد قبلی (اختیاری)</Text>
+
+                <View style={editPracticeStyles.formRow}>
+                  <View style={editPracticeStyles.formField}>
+                    <TextInput
+                      label="وزن قبلی (کیلوگرم)"
+                      value={formData.previous_weight.toString()}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, previous_weight: parseFloat(text) || 0 })
+                      }
+                      keyboardType="numeric"
+                      mode="outlined"
+                    />
+                  </View>
+
+                  <View style={editPracticeStyles.formField}>
+                    <TextInput
+                      label="تکرارهای قبلی"
+                      value={formData.previous_reps.toString()}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, previous_reps: parseInt(text) || 0 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -335,22 +453,10 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
                 <View style={editPracticeStyles.formRow}>
                   <View style={editPracticeStyles.formField}>
                     <TextInput
-                      label="وزن (کیلوگرم)"
-                      value={formData.weight.toString()}
+                      label="زمان استراحت قبلی (ثانیه)"
+                      value={formData.previous_rest.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, weight: parseFloat(text) || 0 })
-                      }
-                      keyboardType="numeric"
-                      mode="outlined"
-                    />
-                  </View>
-
-                  <View style={editPracticeStyles.formField}>
-                    <TextInput
-                      label="زمان استراحت (ثانیه)"
-                      value={formData.rest_time.toString()}
-                      onChangeText={(text) =>
-                        setFormData({ ...formData, rest_time: parseInt(text) || 0 })
+                        setFormData({ ...formData, previous_rest: parseInt(text) || 60 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -359,13 +465,43 @@ const EditPracticeScreen = ({ route, navigation }: EditPracticeScreenProps) => {
                 </View>
 
                 <TextInput
-                  label="ترتیب اجرا"
-                  value={formData.order.toString()}
-                  onChangeText={(text) => setFormData({ ...formData, order: parseInt(text) || 1 })}
-                  keyboardType="numeric"
+                  label="یادداشت (اختیاری)"
+                  value={formData.notes}
+                  onChangeText={(text) => setFormData({ ...formData, notes: text })}
                   mode="outlined"
-                  style={editPracticeStyles.orderInput}
+                  multiline
+                  numberOfLines={3}
+                  style={editPracticeStyles.notesInput}
                 />
+
+                {/* Current Performance (Read-only) */}
+                {(practice.current_weight !== null || practice.current_reps !== null) && (
+                  <>
+                    <Text style={editPracticeStyles.subSectionTitle}>عملکرد فعلی</Text>
+                    <Card style={editPracticeStyles.currentPerformanceCard}>
+                      <Card.Content>
+                        <View style={editPracticeStyles.currentPerformanceRow}>
+                          {practice.current_weight !== null && (
+                            <Text style={editPracticeStyles.currentPerformanceText}>
+                              وزن: {practice.current_weight} کیلوگرم
+                            </Text>
+                          )}
+                          {practice.current_reps !== null && (
+                            <Text style={editPracticeStyles.currentPerformanceText}>
+                              تکرار: {practice.current_reps}
+                            </Text>
+                          )}
+                        </View>
+                        {practice.completed_at && (
+                          <Text style={editPracticeStyles.completedAtText}>
+                            تکمیل شده در:{' '}
+                            {new Date(practice.completed_at).toLocaleDateString('fa-IR')}
+                          </Text>
+                        )}
+                      </Card.Content>
+                    </Card>
+                  </>
+                )}
               </View>
             )}
           </Card.Content>

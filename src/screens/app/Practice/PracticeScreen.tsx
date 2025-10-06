@@ -1,5 +1,4 @@
-// src/screens/practice/PracticeScreen.tsx
-
+// src/screens/Practice/PracticeScreen.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -16,7 +15,7 @@ import { ActivityIndicator, Card, Title, Button, FAB, Menu, Divider } from 'reac
 import { practiceAPI } from '@/services/practiceApi';
 import { colors } from '@/theme/properties/colors';
 import { PracticeScreenRouteProp, PracticeScreenNavigationProp } from '@/types/navigation.type';
-import { Practice } from '@/interfaces/practice.interface';
+import { Practice, SetType, PracticeStatus } from '@/interfaces/practice.interface';
 import Loading from '@/components/common/Loading';
 import { practiceStyles } from '@/theme/practice.style';
 
@@ -27,24 +26,44 @@ interface PracticeScreenProps {
   navigation: PracticeScreenNavigationProp;
 }
 
-// Helper function to get practice code (first letter of exercise name or category)
+// Helper function to get practice code
 const getPracticeCode = (practice: Practice, index: number): string => {
   if (practice.exercise?.name) {
     return practice.exercise.name.charAt(0).toUpperCase();
   }
-  // Fallback: use letters in sequence A, B, C, D...
   return String.fromCharCode(65 + (index % 26));
 };
 
-// Helper function to get practice category
-const getPracticeCategory = (practice: Practice): string => {
-  if (practice.exercise?.category) {
-    return practice.exercise.category;
+// Helper function to get set type display text
+const getSetTypeDisplay = (setType: SetType): string => {
+  switch (setType) {
+    case SetType.WARMUP:
+      return 'گرم کردن';
+    case SetType.WORKING:
+      return 'اصلی';
+    case SetType.DROPSET:
+      return 'دراپ ست';
+    case SetType.FAILURE:
+      return 'تا شکست';
+    default:
+      return setType;
   }
-  if (practice.exercise?.body_part) {
-    return practice.exercise.body_part;
+};
+
+// Helper function to get status display text
+const getStatusDisplay = (status: PracticeStatus): string => {
+  switch (status) {
+    case PracticeStatus.PLANNED:
+      return 'برنامه‌ریزی شده';
+    case PracticeStatus.IN_PROGRESS:
+      return 'در حال انجام';
+    case PracticeStatus.COMPLETED:
+      return 'تکمیل شده';
+    case PracticeStatus.SKIPPED:
+      return 'رد شده';
+    default:
+      return status;
   }
-  return 'Other';
 };
 
 const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
@@ -73,8 +92,12 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     try {
       setError('');
       const practicesData = await practiceAPI.getPracticesByWorkoutId(workoutId);
-      // Sort practices by order if available, otherwise by creation order
-      const sortedPractices = practicesData?.sort((a, b) => (a.order || 0) - (b.order || 0)) || [];
+      // Sort by order and set_number
+      const sortedPractices =
+        practicesData?.sort((a, b) => {
+          if (a.order !== b.order) return a.order - b.order;
+          return a.set_number - b.set_number;
+        }) || [];
       setPractices(sortedPractices);
     } catch (error: any) {
       console.error('Error loading practices:', error);
@@ -103,7 +126,6 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
       workoutId: workoutId,
       workoutName: workoutName,
       onPracticeCreated: () => {
-        console.log('🔄 Practice created callback called');
         loadPractices(true);
       },
     });
@@ -112,7 +134,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
   const handleEditPractice = (practice: Practice) => {
     setMenuVisible({ ...menuVisible, [practice.id]: false });
     navigation.navigate('EditPracticeScreen', {
-      practiceId: practice.id,
+      practiceId: practice.id.toString(),
       workoutId: workoutId,
       workoutName: workoutName,
       onPracticeUpdated: () => loadPractices(true),
@@ -123,8 +145,8 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     setMenuVisible({ ...menuVisible, [practice.id]: false });
 
     Alert.alert(
-      'حذف تمرین',
-      `آیا از حذف تمرین "${practice.exercise?.name || `تمرین ${practice.id}`}" اطمینان دارید؟`,
+      'حذف ست',
+      `آیا از حذف ست ${practice.set_number} از "${practice.exercise?.name}" اطمینان دارید؟`,
       [
         { text: 'لغو', style: 'cancel' },
         {
@@ -136,21 +158,18 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
     );
   };
 
-  const deletePractice = async (practiceId: string) => {
+  const deletePractice = async (practiceId: number) => {
     try {
-      await practiceAPI.deletePractice(practiceId);
-
-      // Remove the practice from local state immediately
+      await practiceAPI.deletePractice(practiceId.toString());
       setPractices(practices.filter((practice) => practice.id !== practiceId));
-
-      Alert.alert('موفقیت', 'تمرین با موفقیت حذف شد');
+      Alert.alert('موفقیت', 'ست با موفقیت حذف شد');
     } catch (error: any) {
       console.error('Error deleting practice:', error);
-      Alert.alert('خطا', 'خطا در حذف تمرین. لطفاً مجدداً تلاش کنید.');
+      Alert.alert('خطا', 'خطا در حذف ست. لطفاً مجدداً تلاش کنید.');
     }
   };
 
-  const toggleMenu = (practiceId: string) => {
+  const toggleMenu = (practiceId: number) => {
     setMenuVisible({
       ...menuVisible,
       [practiceId]: !menuVisible[practiceId],
@@ -175,22 +194,28 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
             <View style={practiceStyles.practiceDetailsContainer}>
               <View style={practiceStyles.practiceTextContainer}>
                 <Text style={practiceStyles.practiceName}>
-                  {item.sets} × {item.exercise?.name || `تمرین ${item.id}`}
+                  ست {item.set_number} - {item.exercise?.name}
                 </Text>
-                <Text style={practiceStyles.practiceCategory}>{getPracticeCategory(item)}</Text>
+                <View style={practiceStyles.practiceMeta}>
+                  <Text style={practiceStyles.practiceCategory}>{item.exercise?.category}</Text>
+                  <Text style={practiceStyles.setType}>• {getSetTypeDisplay(item.set_type)}</Text>
+                  <Text style={practiceStyles.status}>• {getStatusDisplay(item.status)}</Text>
+                </View>
               </View>
 
               {/* Practice Metrics */}
               <View style={practiceStyles.practiceMetrics}>
-                {item.reps > 0 && (
-                  <Text style={practiceStyles.practiceMetricText}>{item.reps} تکرار</Text>
-                )}
-                {item.weight > 0 && (
-                  <Text style={practiceStyles.practiceMetricText}>{item.weight} کیلوگرم</Text>
-                )}
-                {item.rest_time > 0 && (
+                {item.previous_weight !== null && item.previous_weight !== undefined && (
                   <Text style={practiceStyles.practiceMetricText}>
-                    استراحت: {item.rest_time} ثانیه
+                    قبلی: {item.previous_weight} کیلوگرم
+                  </Text>
+                )}
+                {item.previous_reps !== null && item.previous_reps !== undefined && (
+                  <Text style={practiceStyles.practiceMetricText}>{item.previous_reps} تکرار</Text>
+                )}
+                {item.previous_rest !== null && item.previous_rest !== undefined && (
+                  <Text style={practiceStyles.practiceMetricText}>
+                    استراحت: {item.previous_rest} ثانیه
                   </Text>
                 )}
               </View>
@@ -229,13 +254,21 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
               </Menu>
             </View>
           </View>
+
+          {/* Notes */}
+          {item.notes && (
+            <View style={practiceStyles.notesContainer}>
+              <Text style={practiceStyles.notesLabel}>یادداشت:</Text>
+              <Text style={practiceStyles.notesText}>{item.notes}</Text>
+            </View>
+          )}
         </Card.Content>
       </Card>
     </TouchableOpacity>
   );
 
   if (loading) {
-    return <Loading message="در حال بارگذاری تمرین‌ها..." />;
+    return <Loading message="در حال بارگذاری ست‌ها..." />;
   }
 
   return (
@@ -258,7 +291,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
             <Card.Content style={practiceStyles.headerContent}>
               <View style={practiceStyles.headerTitleContainer}>
                 <Title style={practiceStyles.workoutTitle}>{workoutName}</Title>
-                <Text style={practiceStyles.practiceCount}>{practices.length} تمرین</Text>
+                <Text style={practiceStyles.practiceCount}>{practices.length} ست</Text>
               </View>
 
               {/* Add Practice Button in Header */}
@@ -269,7 +302,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
                 icon="plus"
                 compact
               >
-                افزودن تمرین
+                افزودن ست
               </Button>
             </Card.Content>
           </Card>
@@ -278,7 +311,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
           <FlatList
             data={practices}
             renderItem={renderPracticeItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={practiceStyles.listContainer}
             refreshControl={
               <RefreshControl
@@ -290,9 +323,9 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
             ListEmptyComponent={
               <View style={practiceStyles.emptyContainer}>
                 <MaterialIcons name="fitness-center" size={64} color="#999" />
-                <Text style={practiceStyles.emptyText}>هیچ تمرینی برای این workout تعریف نشده</Text>
+                <Text style={practiceStyles.emptyText}>هیچ ستی برای این workout تعریف نشده</Text>
                 <Text style={practiceStyles.emptySubtext}>
-                  اولین تمرین را به این workout اضافه کنید
+                  اولین ست را به این workout اضافه کنید
                 </Text>
                 <Button
                   mode="contained"
@@ -300,7 +333,7 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
                   style={practiceStyles.emptyButton}
                   icon="plus"
                 >
-                  افزودن تمرین
+                  افزودن ست
                 </Button>
               </View>
             }
@@ -318,11 +351,6 @@ const PracticeScreen = ({ route, navigation }: PracticeScreenProps) => {
                 شروع تمرین
               </Button>
             </View>
-          )}
-
-          {/* Floating Action Button for Mobile */}
-          {practices.length > 0 && (
-            <FAB style={practiceStyles.fab} icon="plus" onPress={handleAddPractice} color="white" />
           )}
         </>
       )}

@@ -1,15 +1,25 @@
 // src/screens/Practice/CreatePracticeScreen.tsx
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, FlatList, TouchableOpacity, Text } from 'react-native';
-import { Button, TextInput, Title, Card, Searchbar, ActivityIndicator } from 'react-native-paper';
+import {
+  Button,
+  TextInput,
+  Title,
+  Card,
+  Searchbar,
+  ActivityIndicator,
+  Menu,
+  Divider,
+} from 'react-native-paper';
 import { practiceAPI } from '@/services/practiceApi';
-import { exerciseAPI } from '@/services/exerciseApi'; // You'll need to create this
+import { exerciseAPI } from '@/services/exerciseApi';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   CreatePracticeScreenRouteProp,
   CreatePracticeScreenNavigationProp,
 } from '@/types/navigation.type';
 import { Exercise } from '@/interfaces/exercise.interface';
+import { SetType, PracticeStatus } from '@/interfaces/practice.interface';
 import { createPracticeStyles } from '@/theme/practice.style';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -30,12 +40,16 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
   const [exercisesLoading, setExercisesLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    sets: 3,
-    reps: 10,
-    weight: 0,
-    rest_time: 60,
     order: 1,
+    set_number: 1,
+    set_type: SetType.WORKING,
+    previous_weight: 0,
+    previous_reps: 0,
+    previous_rest: 60,
+    notes: '',
   });
+
+  const [setTypeMenuVisible, setSetTypeMenuVisible] = useState(false);
 
   useEffect(() => {
     loadExercises();
@@ -63,7 +77,6 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
 
     try {
       setExercisesLoading(true);
-      // Assuming you have an exerciseAPI with getAllExercises method
       const exercisesData = await exerciseAPI.getAllExercises();
       setExercises(exercisesData || []);
       setFilteredExercises(exercisesData || []);
@@ -91,19 +104,21 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
       await practiceAPI.createPractice({
         workoutId: workoutId,
         exerciseId: selectedExercise.id,
-        sets: formData.sets,
-        reps: formData.reps,
-        weight: formData.weight,
-        rest_time: formData.rest_time,
         order: formData.order,
+        set_number: formData.set_number,
+        set_type: formData.set_type,
+        previous_weight: formData.previous_weight,
+        previous_reps: formData.previous_reps,
+        previous_rest: formData.previous_rest,
+        notes: formData.notes,
       });
 
-      Alert.alert('موفقیت', 'تمرین با موفقیت ایجاد شد');
+      Alert.alert('موفقیت', 'ست با موفقیت ایجاد شد');
       onPracticeCreated();
       navigation.goBack();
     } catch (error: any) {
       console.error('Error creating practice:', error);
-      Alert.alert('خطا', 'خطا در ایجاد تمرین. لطفاً مجدداً تلاش کنید.');
+      Alert.alert('خطا', 'خطا در ایجاد ست. لطفاً مجدداً تلاش کنید.');
     } finally {
       setLoading(false);
     }
@@ -111,6 +126,21 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
 
   const handleExerciseSelect = (exercise: Exercise) => {
     setSelectedExercise(exercise);
+  };
+
+  const getSetTypeDisplay = (setType: SetType): string => {
+    switch (setType) {
+      case SetType.WARMUP:
+        return 'گرم کردن';
+      case SetType.WORKING:
+        return 'اصلی';
+      case SetType.DROPSET:
+        return 'دراپ ست';
+      case SetType.FAILURE:
+        return 'تا شکست';
+      default:
+        return setType;
+    }
   };
 
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
@@ -148,7 +178,7 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
       <ScrollView style={createPracticeStyles.scrollView}>
         <Card style={createPracticeStyles.card}>
           <Card.Content>
-            <Title style={createPracticeStyles.title}>افزودن تمرین جدید</Title>
+            <Title style={createPracticeStyles.title}>افزودن ست جدید</Title>
 
             {/* Selected Exercise Display */}
             {selectedExercise && (
@@ -215,16 +245,16 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
             {selectedExercise && (
               <View style={createPracticeStyles.formSection}>
                 <Text style={createPracticeStyles.sectionTitle}>
-                  جزئیات تمرین: {selectedExercise.name}
+                  جزئیات ست: {selectedExercise.name}
                 </Text>
 
                 <View style={createPracticeStyles.formRow}>
                   <View style={createPracticeStyles.formField}>
                     <TextInput
-                      label="تعداد ست‌ها"
-                      value={formData.sets.toString()}
+                      label="ترتیب در تمرین"
+                      value={formData.order.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, sets: parseInt(text) || 0 })
+                        setFormData({ ...formData, order: parseInt(text) || 1 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -233,10 +263,95 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
 
                   <View style={createPracticeStyles.formField}>
                     <TextInput
-                      label="تعداد تکرار"
-                      value={formData.reps.toString()}
+                      label="شماره ست"
+                      value={formData.set_number.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, reps: parseInt(text) || 0 })
+                        setFormData({ ...formData, set_number: parseInt(text) || 1 })
+                      }
+                      keyboardType="numeric"
+                      mode="outlined"
+                    />
+                  </View>
+                </View>
+
+                {/* Set Type Selection */}
+                <View style={createPracticeStyles.formRow}>
+                  <View style={createPracticeStyles.formField}>
+                    <Menu
+                      visible={setTypeMenuVisible}
+                      onDismiss={() => setSetTypeMenuVisible(false)}
+                      anchor={
+                        <TouchableOpacity
+                          onPress={() => setSetTypeMenuVisible(true)}
+                          style={createPracticeStyles.setTypeSelector}
+                        >
+                          <TextInput
+                            label="نوع ست"
+                            value={getSetTypeDisplay(formData.set_type)}
+                            mode="outlined"
+                            editable={false}
+                            pointerEvents="none"
+                            right={<TextInput.Icon icon="menu-down" />}
+                          />
+                        </TouchableOpacity>
+                      }
+                    >
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.WARMUP });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="گرم کردن"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.WORKING });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="اصلی"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.DROPSET });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="دراپ ست"
+                      />
+                      <Divider />
+                      <Menu.Item
+                        onPress={() => {
+                          setFormData({ ...formData, set_type: SetType.FAILURE });
+                          setSetTypeMenuVisible(false);
+                        }}
+                        title="تا شکست"
+                      />
+                    </Menu>
+                  </View>
+                </View>
+
+                <Text style={createPracticeStyles.subSectionTitle}>عملکرد قبلی (اختیاری)</Text>
+
+                <View style={createPracticeStyles.formRow}>
+                  <View style={createPracticeStyles.formField}>
+                    <TextInput
+                      label="وزن قبلی (کیلوگرم)"
+                      value={formData.previous_weight.toString()}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, previous_weight: parseFloat(text) || 0 })
+                      }
+                      keyboardType="numeric"
+                      mode="outlined"
+                    />
+                  </View>
+
+                  <View style={createPracticeStyles.formField}>
+                    <TextInput
+                      label="تکرارهای قبلی"
+                      value={formData.previous_reps.toString()}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, previous_reps: parseInt(text) || 0 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -247,22 +362,10 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
                 <View style={createPracticeStyles.formRow}>
                   <View style={createPracticeStyles.formField}>
                     <TextInput
-                      label="وزن (کیلوگرم)"
-                      value={formData.weight.toString()}
+                      label="زمان استراحت قبلی (ثانیه)"
+                      value={formData.previous_rest.toString()}
                       onChangeText={(text) =>
-                        setFormData({ ...formData, weight: parseFloat(text) || 0 })
-                      }
-                      keyboardType="numeric"
-                      mode="outlined"
-                    />
-                  </View>
-
-                  <View style={createPracticeStyles.formField}>
-                    <TextInput
-                      label="زمان استراحت (ثانیه)"
-                      value={formData.rest_time.toString()}
-                      onChangeText={(text) =>
-                        setFormData({ ...formData, rest_time: parseInt(text) || 0 })
+                        setFormData({ ...formData, previous_rest: parseInt(text) || 60 })
                       }
                       keyboardType="numeric"
                       mode="outlined"
@@ -271,12 +374,13 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
                 </View>
 
                 <TextInput
-                  label="ترتیب اجرا"
-                  value={formData.order.toString()}
-                  onChangeText={(text) => setFormData({ ...formData, order: parseInt(text) || 1 })}
-                  keyboardType="numeric"
+                  label="یادداشت (اختیاری)"
+                  value={formData.notes}
+                  onChangeText={(text) => setFormData({ ...formData, notes: text })}
                   mode="outlined"
-                  style={createPracticeStyles.orderInput}
+                  multiline
+                  numberOfLines={3}
+                  style={createPracticeStyles.notesInput}
                 />
               </View>
             )}
@@ -295,7 +399,7 @@ const CreatePracticeScreen = ({ route, navigation }: CreatePracticeScreenProps) 
             style={createPracticeStyles.createButton}
             contentStyle={createPracticeStyles.createButtonContent}
           >
-            ایجاد تمرین
+            ایجاد ست
           </Button>
         </View>
       )}
