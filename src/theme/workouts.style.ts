@@ -8,11 +8,10 @@ const isRTL = I18nManager.isRTL;
 
 export const workoutStyles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: colors.background,
     color: colors.text,
-    flex: 1,
     flexDirection: isRTL ? 'row-reverse' : 'row',
-    padding: 16,
   },
   centered: {
     flex: 1,
@@ -67,7 +66,7 @@ export const workoutStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: spacing.xl,
   },
   emptyText: {
     fontSize: fontSizes.body,

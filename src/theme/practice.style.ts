@@ -1,6 +1,7 @@
 // src/theme/practice.style.ts
 import { StyleSheet } from 'react-native';
 import { colors } from './properties/colors';
+import { spacing } from './properties/spacing';
 
 export const practiceStyles = StyleSheet.create({
   container: {
@@ -149,7 +150,7 @@ export const practiceStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: spacing.xl,
   },
   emptyText: {
     fontSize: 16,

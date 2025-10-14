@@ -360,7 +360,7 @@ const WorkoutScreen = ({ route, navigation }: WorkoutScreenProps) => {
               />
             }
             ListEmptyComponent={
-              <View style={[styles.emptyContainer, styles.container]}>
+              <View style={[styles.emptyContainer]}>
                 <MaterialIcons name="fitness-center" size={64} color="#999" />
                 <Text style={[styles.emptyText, styles.text]}>
                   هیچ تمرینی برای این پلن وجود ندارد

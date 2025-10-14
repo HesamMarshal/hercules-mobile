@@ -291,7 +291,7 @@ const PlansScreen = ({ navigation }: any) => {
               />
             }
             ListEmptyComponent={
-              <View style={[styles.emptyContainer, styles.container]}>
+              <View style={[styles.emptyContainer]}>
                 <MaterialIcons name="assignment" size={64} color="#999" />
                 <Text style={[styles.emptyText, styles.text]}>هیچ پلن تمرینی موجود نیست</Text>
                 <Text style={[styles.emptySubtext, styles.text]}>
