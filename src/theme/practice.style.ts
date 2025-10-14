@@ -43,6 +43,7 @@ export const practiceStyles = StyleSheet.create({
     paddingTop: 8,
   },
   practiceCard: {
+    backgroundColor: '#fff',
     marginBottom: 12,
     elevation: 2,
     shadowColor: '#000',

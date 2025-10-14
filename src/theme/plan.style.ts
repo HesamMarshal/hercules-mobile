@@ -265,6 +265,7 @@ export const createPlanStyles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   card: {
+    backgroundColor: '#fff',
     marginVertical: 8,
   },
   title: {

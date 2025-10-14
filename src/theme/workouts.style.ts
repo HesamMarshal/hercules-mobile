@@ -144,6 +144,7 @@ export const workoutStyles = StyleSheet.create({
   },
 
   card: {
+    backgroundColor: '#fff',
     marginHorizontal: 16,
     marginVertical: 8,
   },

@@ -19,6 +19,7 @@ export const exerciseStyles = StyleSheet.create({
     ...typography.caption,
   },
   searchBar: {
+    backgroundColor: '#fff',
     marginBottom: spacing.md,
     elevation: 2,
   },
@@ -37,6 +38,7 @@ export const exerciseStyles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   exerciseHeader: {
+    backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -143,6 +145,7 @@ export const exerciseDetailStyles = StyleSheet.create({
     marginTop: 8,
   },
   card: {
+    backgroundColor: '#fff',
     margin: 16,
     elevation: 4,
   },
@@ -240,6 +243,7 @@ export const profileStyles = StyleSheet.create({
     marginTop: 8,
   },
   card: {
+    backgroundColor: '#fff',
     marginBottom: 20,
   },
   title: {
