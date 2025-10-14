@@ -71,18 +71,13 @@ export const MainTabNavigator = () => {
         animation: 'shift',
         // TODO: Set to right for android and center for ios
         headerTitleAlign: 'center',
-
-        // This ensures proper RTL behavior in React Navigation
-        // animation: I18nManager.isRTL ? 'shift' : 'default',
       })}
       initialRouteName="Profile"
-      // Force RTL layout direction
-      // screenLayoutDirection={I18nManager.isRTL ? 'rtl' : 'ltr'}
     >
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'تنظیمات' }} />
-      <Tab.Screen name="Exercises" component={ExercisesScreen} options={{ title: 'حرکات ورزشی' }} />
-      <Tab.Screen name="Plans" component={PlansScreen} options={{ title: 'برنامه ها' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'پروفایل' }} />
+      <Tab.Screen name="Plans" component={PlansScreen} options={{ title: 'برنامه ها' }} />
+      <Tab.Screen name="Exercises" component={ExercisesScreen} options={{ title: 'حرکات ورزشی' }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'تنظیمات' }} />
     </Tab.Navigator>
   );
 };
