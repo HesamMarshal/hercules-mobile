@@ -7,7 +7,8 @@ const isRTL = I18nManager.isRTL;
 export const planStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
     flexDirection: isRTL ? 'row-reverse' : 'row',
   },
   card: {
@@ -262,7 +263,8 @@ export const createPlanStyles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
   },
   card: {
     backgroundColor: '#fff',
@@ -313,7 +315,8 @@ export const editPlanstyles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
   },
   card: {
     marginVertical: 8,

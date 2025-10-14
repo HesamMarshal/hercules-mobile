@@ -119,8 +119,8 @@ export const colors = {
   paper: '#fafafa',
 
   // Text colors
-  text: '#212121',
-  text2: '#333',
+  // text: '#212121',
+  text: '#333',
   textSecondary: '#757575',
   textDisabled: '#9e9e9e',
 

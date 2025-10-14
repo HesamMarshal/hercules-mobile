@@ -5,7 +5,8 @@ import { colors } from './properties/colors';
 export const practiceStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
   },
   headerCard: {
     margin: 16,
@@ -205,7 +206,8 @@ export const practiceStyles = StyleSheet.create({
 export const createPracticeStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
   },
   scrollView: {
     flex: 1,
@@ -376,7 +378,8 @@ export const createPracticeStyles = StyleSheet.create({
 export const editPracticeStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+    color: colors.text,
   },
   scrollView: {
     flex: 1,

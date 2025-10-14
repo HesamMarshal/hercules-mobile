@@ -3,10 +3,21 @@ import { colors } from '@/theme/properties/colors';
 import { spacing } from '@/theme/properties/spacing';
 import { fontSizes, typography } from '@/theme/properties/typography';
 const isRTL = I18nManager.isRTL;
+
+export const generalStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    color: colors.text,
+    padding: spacing.md,
+  },
+});
+
 export const exerciseStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
     padding: spacing.md,
   },
   centered: {
@@ -122,6 +133,7 @@ export const exerciseDetailStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
     padding: spacing.md,
   },
   centered: {
@@ -186,12 +198,12 @@ export const exerciseDetailStyles = StyleSheet.create({
   description: {
     fontSize: fontSizes.body,
     lineHeight: 24,
-    color: colors.text2, // TODO : fix text
+    color: colors.text, // TODO : fix text
   },
   instructions: {
     fontSize: fontSizes.body,
     lineHeight: 24,
-    color: colors.text2, // TODO : fix text
+    color: colors.text, // TODO : fix text
   },
   detailRow: {
     flexDirection: 'row',
@@ -204,7 +216,7 @@ export const exerciseDetailStyles = StyleSheet.create({
   detailLabel: {
     fontWeight: 'bold',
     fontSize: fontSizes.body,
-    color: colors.text2, // TODO : fix text
+    color: colors.text, // TODO : fix text
   },
   detailValue: {
     fontSize: fontSizes.body,
@@ -220,6 +232,7 @@ export const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
     padding: 16,
   },
   centered: {
@@ -263,7 +276,7 @@ export const profileStyles = StyleSheet.create({
   label: {
     fontSize: fontSizes.body,
     fontWeight: 'bold',
-    color: colors.text2, // TODO : fix text
+    color: colors.text, // TODO : fix text
   },
   value: {
     fontSize: fontSizes.body,
@@ -289,6 +302,7 @@ export const OTPVerificationStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -437,12 +451,11 @@ export const settingsStyles = StyleSheet.create({
 });
 
 // TODO : Use Above variable and consts
-
-// TODO : Use Above variable and consts
 export const authStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -454,7 +467,7 @@ export const authStyles = StyleSheet.create({
     fontSize: fontSizes.displayPlus,
     fontWeight: 'bold',
     marginBottom: 40,
-    color: colors.text2, // TODO : fix text
+    color: colors.text, // TODO : fix text
   },
   instruction: {
     fontSize: fontSizes.small,
@@ -518,5 +531,3 @@ export const authStyles = StyleSheet.create({
     fontSize: fontSizes.body,
   },
 });
-
-// TODO : Use Above variable and consts
