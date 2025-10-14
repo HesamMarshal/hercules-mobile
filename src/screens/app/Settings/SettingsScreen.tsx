@@ -5,6 +5,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useRTL } from '@/contexts/RTLContext';
 import { settingsStyles as styles } from '@/theme/styles';
+import { colors } from '@/theme/properties/colors';
 
 const SettingsScreen = () => {
   const { logout } = useAuth();
@@ -44,19 +45,25 @@ const SettingsScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <List.Section>
-        <List.Subheader>Account</List.Subheader>
+        <List.Subheader style={styles.subHeader}>Account</List.Subheader>
         <List.Item
           title="Edit Profile"
+          titleStyle={styles.listItem}
           description="Update your personal information"
-          left={(props) => <List.Icon {...props} icon="account-edit" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => (
+            <List.Icon {...props} icon="account-edit" color={colors.textSecondary} />
+          )}
           onPress={() => {
             /* Navigate to edit profile */
           }}
         />
         <List.Item
           title="Change Password"
+          titleStyle={styles.listItem}
           description="Update your password"
-          left={(props) => <List.Icon {...props} icon="lock-reset" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="lock-reset" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to change password */
           }}
@@ -64,27 +71,54 @@ const SettingsScreen = () => {
       </List.Section>
       <Divider style={styles.divider} />
       <List.Section>
-        <List.Subheader>Preferences</List.Subheader>
+        <List.Subheader style={styles.subHeader}>{t('language')}</List.Subheader>
+        <List.Item
+          title={t('persian')}
+          titleStyle={styles.listItem}
+          description="فارسی"
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="earth" color={colors.textSecondary} />}
+          right={(props) =>
+            language === 'fa' ? (
+              <List.Icon {...props} icon="check" color={colors.textSecondary} />
+            ) : null
+          }
+          onPress={() => changeLanguage('fa')}
+        />
+        <List.Item
+          title={t('english')}
+          titleStyle={styles.listItem}
+          description="English"
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="earth" color={colors.textSecondary} />}
+          right={(props) =>
+            language === 'en' ? (
+              <List.Icon {...props} icon="check" color={colors.textSecondary} />
+            ) : null
+          }
+          onPress={() => changeLanguage('en')}
+        />
+      </List.Section>
+      <Divider style={styles.divider} />
+      <List.Section>
+        <List.Subheader style={styles.subHeader}>Preferences</List.Subheader>
         <List.Item
           title="Notifications"
+          titleStyle={styles.listItem}
           description="Manage your notification preferences"
-          left={(props) => <List.Icon {...props} icon="bell" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="bell" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to notifications */
           }}
         />
-        <List.Item
-          title="Language"
-          description="English"
-          left={(props) => <List.Icon {...props} icon="translate" />}
-          onPress={() => {
-            /* Navigate to language settings */
-          }}
-        />
+
         <List.Item
           title="Units"
+          titleStyle={styles.listItem}
           description="Metric (kg, cm)"
-          left={(props) => <List.Icon {...props} icon="ruler" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="ruler" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to units settings */
           }}
@@ -92,11 +126,13 @@ const SettingsScreen = () => {
       </List.Section>
       <Divider style={styles.divider} />
       <List.Section>
-        <List.Subheader>Support</List.Subheader>
+        <List.Subheader style={styles.subHeader}>Support</List.Subheader>
         <List.Item
           title="Help & Support"
+          titleStyle={styles.listItem}
           description="Get help with the app"
-          left={(props) => <List.Icon {...props} icon="help-circle" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="help-circle" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to help */
           }}
@@ -104,15 +140,19 @@ const SettingsScreen = () => {
         <List.Item
           title="Contact Us"
           description="Get in touch with our team"
-          left={(props) => <List.Icon {...props} icon="email" />}
+          titleStyle={styles.listItem}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="email" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to contact */
           }}
         />
         <List.Item
           title="About"
+          titleStyle={styles.listItem}
           description="App version and information"
-          left={(props) => <List.Icon {...props} icon="information" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="information" color={colors.textSecondary} />}
           onPress={() => {
             /* Navigate to about */
           }}
@@ -120,46 +160,33 @@ const SettingsScreen = () => {
       </List.Section>
       <Divider style={styles.divider} />
       <List.Section>
-        <List.Subheader>Data</List.Subheader>
+        <List.Subheader style={styles.subHeader}>Data</List.Subheader>
         <List.Item
           title="Clear Cache"
+          titleStyle={styles.listItem}
           description="Free up storage space"
-          left={(props) => <List.Icon {...props} icon="delete" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="delete" color={colors.textSecondary} />}
           onPress={handleClearCache}
         />
         <List.Item
           title="Export Data"
+          titleStyle={styles.listItem}
           description="Download your workout data"
-          left={(props) => <List.Icon {...props} icon="download" />}
+          descriptionStyle={styles.itemDescription}
+          left={(props) => <List.Icon {...props} icon="download" color={colors.textSecondary} />}
           onPress={() => {
             /* Implement data export */
           }}
         />
       </List.Section>
 
-      <List.Section>
-        <List.Subheader>{t('language')}</List.Subheader>
-        <List.Item
-          title={t('persian')}
-          description="فارسی"
-          left={(props) => <List.Icon {...props} icon="earth" />}
-          right={(props) => (language === 'fa' ? <List.Icon {...props} icon="check" /> : null)}
-          onPress={() => changeLanguage('fa')}
-        />
-        <List.Item
-          title={t('english')}
-          description="English"
-          left={(props) => <List.Icon {...props} icon="earth" />}
-          right={(props) => (language === 'en' ? <List.Icon {...props} icon="check" /> : null)}
-          onPress={() => changeLanguage('en')}
-        />
-      </List.Section>
       <View style={styles.logoutContainer}>
         <Button
           mode="outlined"
           onPress={handleLogout}
           style={styles.logoutButton}
-          textColor="#d32f2f"
+          textColor={colors.error}
         >
           Logout
         </Button>
