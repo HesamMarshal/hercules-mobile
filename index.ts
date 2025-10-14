@@ -5,7 +5,7 @@ import { AppRegistry, I18nManager } from 'react-native';
 import App from './App';
 
 // import { expo as appName } from './app.json';
-const appName = 'HerculesFitness'; // Use the same name as in app.json
+const appName = 'Arnad'; // Use the same name as in app.json
 
 // Force RTL on startup for Persian
 I18nManager.forceRTL(true);

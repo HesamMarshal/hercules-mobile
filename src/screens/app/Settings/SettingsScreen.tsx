@@ -164,7 +164,7 @@ const SettingsScreen = () => {
           Logout
         </Button>
 
-        <Text style={styles.versionText}>Hercules Fitness v1.0.0</Text>
+        <Text style={styles.versionText}>Arnad Fitness v1.0.0</Text>
       </View>
     </ScrollView>
   );

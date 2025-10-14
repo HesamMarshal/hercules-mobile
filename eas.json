@@ -5,21 +5,20 @@
   },
   "build": {
     "production": {
-       "env": {
+      "env": {
         "NODE_ENV": "production",
         "API_BASE_URL": "https://hercules.hesammarshal.ir"
       },
       "autoIncrement": true,
       "android": {
-          "buildType": "apk",
-          "gradleCommand": ":app:assembleRelease"
-        },
-       
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+
       "ios": {
         "enterpriseProvisioning": "universal"
       }
-      
-      },
+    },
 
     "development": {
       "developmentClient": true,
@@ -27,7 +26,7 @@
       "android": {
         "buildType": "apk"
       },
-       "env": {
+      "env": {
         "NODE_ENV": "development",
         "API_BASE_URL": "http://localhost:3000"
       }
@@ -38,7 +37,6 @@
         "buildType": "apk"
       }
     }
-    
   },
   "submit": {
     "production": {}

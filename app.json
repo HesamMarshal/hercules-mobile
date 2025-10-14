@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "hercules-mobile",
-    "slug": "hercules-mobile",
+    "name": "Arnad",
+    "slug": "Every Rep Counts",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,7 @@
     },
     "sdkVersion": "54.0.0",
     "android": {
-      "package": "com.hesammarshal.hercules",
+      "package": "com.hesammarshal.arnad",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-logo.png",
         "backgroundColor": "#ffffff"

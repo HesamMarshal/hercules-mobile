@@ -101,10 +101,8 @@ export function AuthScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* <Text style={styles.title}>Hercules Fitness</Text> */}
         <Text style={[styles.title, rtlStyles.text]}>{t('welcome')}</Text>
-        {/* TODO : USE t() for hercules  */}
-        <Text style={[styles.subtitle, rtlStyles.text]}>هرکولس فیتنس</Text>
+        <Text style={[styles.subtitle, rtlStyles.text]}>آرناد</Text>
 
         {step === 'mobile' ? (
           <View style={styles.form}>
