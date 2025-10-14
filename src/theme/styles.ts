@@ -31,6 +31,7 @@ export const exerciseStyles = StyleSheet.create({
   },
   searchBar: {
     backgroundColor: '#fff',
+    color: colors.textSecondary,
     marginBottom: spacing.md,
     elevation: 2,
   },
@@ -49,7 +50,6 @@ export const exerciseStyles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   exerciseHeader: {
-    backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -59,6 +59,7 @@ export const exerciseStyles = StyleSheet.create({
     flex: 1,
     ...typography.h3,
     marginRight: spacing.sm,
+    color: colors.text,
   },
   difficultyChip: {
     alignSelf: 'flex-start',
@@ -125,6 +126,10 @@ export const exerciseStyles = StyleSheet.create({
     fontSize: fontSizes.body,
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  muscleGroupFilterChip: {
+    backgroundColor: colors.background,
+    color: '#000 ',
   },
 });
 
@@ -430,7 +435,16 @@ export const settingsStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    color: colors.text,
   },
+  subHeader: {
+    color: colors.text,
+  },
+  listItem: {
+    color: colors.text,
+  },
+  itemDescription: { color: colors.textSecondary },
+
   divider: {
     marginVertical: 8,
   },

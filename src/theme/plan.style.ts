@@ -267,7 +267,7 @@ export const createPlanStyles = StyleSheet.create({
     color: colors.text,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
     marginVertical: 8,
   },
   title: {
@@ -276,6 +276,7 @@ export const createPlanStyles = StyleSheet.create({
     fontSize: 20,
   },
   input: {
+    backgroundColor: colors.background,
     marginBottom: 16,
   },
   buttonContainer: {

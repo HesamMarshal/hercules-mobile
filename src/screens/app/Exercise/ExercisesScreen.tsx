@@ -1,6 +1,6 @@
 // src/screens/ExercisesScreen.tsx
 import { useAuth } from '@/contexts/AuthContext';
-import { exerciseAPI, Exercise } from '@/services/exerciseApi';
+import { exerciseAPI } from '@/services/exerciseApi';
 import { useState, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Title, Paragraph, Chip, Searchbar, Button } from 'react-native-paper';
@@ -8,6 +8,7 @@ import { exerciseStyles as styles } from '@/theme/styles';
 import { useTranslation } from 'react-i18next';
 import { useRTLStyles } from '@/utils/rtlStyles';
 import { colors } from '@/theme/properties/colors';
+import { Exercise } from '@/interfaces/exercise.interface';
 
 export const ExercisesScreen = ({ navigation }: any) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -98,17 +99,17 @@ export const ExercisesScreen = ({ navigation }: any) => {
       filtered = filtered.filter(
         (exercise) =>
           exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (exercise.description &&
-            exercise.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (exercise.muscle_group &&
-            exercise.muscle_group.toLowerCase().includes(searchQuery.toLowerCase()))
+          (exercise.instruction &&
+            exercise.instruction.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.body_part &&
+            exercise.body_part.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
     // Apply muscle group filter
     if (selectedMuscleGroup !== 'all') {
       filtered = filtered.filter(
-        (exercise) => exercise.muscle_group?.toLowerCase() === selectedMuscleGroup.toLowerCase()
+        (exercise) => exercise.body_part?.toLowerCase() === selectedMuscleGroup.toLowerCase()
       );
     }
 
@@ -161,15 +162,15 @@ export const ExercisesScreen = ({ navigation }: any) => {
             )}
           </View>
           {/* 
-          {item.muscle_group && (
+          {item.body_part && (
             <Chip mode="flat" style={styles.muscleGroupChip} textStyle={styles.muscleGroupText}>
-              {muscleGroupTranslations[item.muscle_group] || item.muscle_group}
+              {muscleGroupTranslations[item.body_part] || item.body_part}
             </Chip>
           )} */}
 
-          {item.description && (
+          {item.instruction && (
             <Paragraph numberOfLines={2} style={[styles.exerciseDescription, rtlStyles.text]}>
-              {item.description}
+              {item.instruction}
             </Paragraph>
           )}
 
@@ -198,6 +199,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
             mode={selectedMuscleGroup === item ? 'flat' : 'outlined'}
             selected={selectedMuscleGroup === item}
             onPress={() => setSelectedMuscleGroup(item)}
+            textStyle={{ color: colors.text }}
             style={styles.muscleGroupFilterChip}
           >
             {bodyPartTranslations[item] || item}
@@ -248,6 +250,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
         placeholder="جستجوی حرکات ورزشی..."
         onChangeText={setSearchQuery}
         value={searchQuery}
+        inputStyle={{ color: colors.textSecondary }}
         style={styles.searchBar}
       />
 
