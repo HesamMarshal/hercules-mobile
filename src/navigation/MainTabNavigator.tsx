@@ -10,6 +10,7 @@ import { useRTL } from '../contexts/RTLContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme/properties/colors';
 import PlansScreen from '@/screens/app/Plan/PlansScreen';
+import { Platform } from 'react-native';
 
 export type MainTabParamList = {
   Profile: undefined;
@@ -23,6 +24,11 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 export const MainTabNavigator = () => {
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
+
+  // Calculate safe area padding for Android
+  const tabBarPaddingBottom = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : 5;
+  const tabBarHeight = Platform.OS === 'android' ? 60 + insets.bottom : 60;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -49,17 +55,14 @@ export const MainTabNavigator = () => {
           backgroundColor: colors.tabBackgroundColor,
           borderTopWidth: 1,
           borderTopColor: colors.tabBorderTopColor,
-          // Add safe area padding here:
-          paddingBottom: 5,
+          // Apply safe area padding
+          paddingBottom: tabBarPaddingBottom,
           paddingTop: 10,
-          height: 70, // Increase total height if needed
-          // flexDirection: 'row-reverse',
-          // paddingBottom: insets.bottom + 10,
-          // paddingTop: 10,
-          // height: 60 + insets.bottom, // Adjust base height as needed
-          // Ensure RTL layout
-          // flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
-          // flexDirection: isRTL ? 'row-reverse' : 'row',
+          height: tabBarHeight,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: Platform.OS === 'android' ? 0 : 4, // Adjust label margin for Android
         },
         headerStyle: {
           backgroundColor: colors.activeTintColor,

@@ -6,7 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { AuthScreen } from '../screens/auth/AuthScreen';
 import { MainTabNavigator } from './MainTabNavigator';
 import ExerciseDetailScreen from '@/screens/app/Exercise/ExerciseDetailScreen';
-import { I18nManager } from 'react-native';
 import { RTLProvider } from '@/contexts/RTLContext';
 import CreatePlanScreen from '@/screens/app/Plan/CreatePlanScreen';
 import WorkoutScreen from '@/screens/app/Workouts/WorkoutsScreen';
@@ -18,10 +17,7 @@ import EditPlanScreen from '@/screens/app/Plan/EditPlanScreen';
 import CreateWorkoutScreen from '@/screens/app/Workouts/CreateWorkoutScreen';
 import EditWorkoutScreen from '@/screens/app/Workouts/EditWorkoutScreen';
 import EditPracticeScreen from '@/screens/app/Practice/EditPracticeScreen';
-
-// Force RTL at app level
-// I18nManager.forceRTL(true);
-// I18nManager.allowRTL(true);
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // TODO  :Implement theme and dark and light theme
 

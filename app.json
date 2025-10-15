@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hesammarshal.arnad"
     },
     "sdkVersion": "54.0.0",
     "android": {
@@ -22,12 +23,17 @@
         "foregroundImage": "./assets/adaptive-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"],
-      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "edgeToEdgeEnabled": false,
       "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize",
       "navigationBar": {
         "backgroundColor": "#ffffff",
-        "barStyle": "dark-content"
+        "barStyle": "dark-content",
+        "visible": true
       }
     },
     "web": {

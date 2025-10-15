@@ -7,7 +7,7 @@ import { RTLProvider } from '@/contexts/RTLContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { PaperProvider } from 'react-native-paper';
 import { QueryProvider } from '@/query/QueryProvider';
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 enableScreens();
 
 export default function App() {
