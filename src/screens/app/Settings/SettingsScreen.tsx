@@ -13,6 +13,7 @@ const SettingsScreen = () => {
   const { t } = useTranslation();
 
   const handleLogout = () => {
+    logout();
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {
         text: 'Cancel',
