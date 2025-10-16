@@ -3,22 +3,20 @@ import { API_BASE_URL } from '@/services/api';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Button, Card, Title, Paragraph } from 'react-native-paper';
-import { profileStyles as styles } from '@/theme/styles';
-
-interface User {
-  id: string;
-  mobileNumber: string;
-  role: 'admin' | 'trainer' | 'client';
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-}
+import { profileStyles as styles } from '@/theme/profile.styles';
+import { UserProfile } from '@/interfaces/user.interface';
+import { profileAPI } from '@/services/profileApi';
+import { t } from 'i18next';
+import { calculateAge } from '@/utils/date.util';
+import { StyleSheet, I18nManager } from 'react-native';
 
 const ProfileScreen = ({ navigation }: any) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { token, logout } = useAuth();
+
+  const isRTL = I18nManager.isRTL || true;
 
   useEffect(() => {
     fetchUserProfile();
@@ -29,33 +27,20 @@ const ProfileScreen = ({ navigation }: any) => {
       setLoading(true);
       setError('');
 
-      // logout();
-      const response = await fetch(`${API_BASE_URL}/user/my`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      // console.log(response);
+      const response = await profileAPI.getProfile();
 
-      if (!response.ok) {
+      if (!response) {
         logout();
-        throw new Error('Failed  to fetch user profile');
+        throw new Error('Failed to fetch user profile');
       }
 
-      const userData = await response.json();
-      setUser(userData);
+      setUser(response);
     } catch (error: any) {
       console.error('Error fetching user profile:', error);
       setError(error.message || 'Failed to load profile');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    logout();
   };
 
   if (loading) {
@@ -82,43 +67,54 @@ const ProfileScreen = ({ navigation }: any) => {
     <ScrollView style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.title}>Profile</Title>
-
           {user ? (
             <>
-              <View style={styles.infoSection}>
-                <Text style={styles.label}>Mobile Number:</Text>
-                <Text style={styles.value}>{user.mobileNumber}</Text>
-              </View>
-
-              <View style={styles.infoSection}>
-                <Text style={styles.label}>Role:</Text>
-                <Text style={styles.value}>{user.role}</Text>
-              </View>
-
-              {user.firstName && (
-                <View style={styles.infoSection}>
-                  <Text style={styles.label}>First Name:</Text>
-                  <Text style={styles.value}>{user.firstName}</Text>
-                </View>
+              {user.first_name ? (
+                <>
+                  <Title style={styles.title}>
+                    {user.first_name} {user.last_name}
+                  </Title>
+                  <View style={styles.infoSection}>
+                    <Text style={styles.value}>{t(user.role)}</Text>
+                    <Text style={styles.value}>{t('role')}</Text>
+                  </View>
+                </>
+              ) : (
+                <Title style={styles.title}>{t('profile')}</Title>
               )}
-
-              {user.lastName && (
-                <View style={styles.infoSection}>
-                  <Text style={styles.label}>Last Name:</Text>
-                  <Text style={styles.value}>{user.lastName}</Text>
-                </View>
-              )}
+              <View style={styles.infoSection}>
+                <Text style={styles.label}>{t('mobileNumber')}:</Text>
+                <Text style={styles.value}>{user.mobile}</Text>
+              </View>
 
               {user.email && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Email:</Text>
+                  <Text style={styles.label}>{t('email')}:</Text>
                   <Text style={styles.value}>{user.email}</Text>
+                </View>
+              )}
+              {user.birth_date && (
+                <View style={styles.infoSection}>
+                  <Text style={styles.label}>{t('age')}:</Text>
+
+                  <Text style={styles.value}>
+                    {calculateAge(user.birth_date).years} {t('years')},{' '}
+                    {calculateAge(user.birth_date).days} {t('days')}{' '}
+                  </Text>
+                </View>
+              )}
+              {user.score.toString() && (
+                <View style={styles.infoSection}>
+                  <Text style={styles.label}>{t('score')}:</Text>
+                  <Text style={styles.value}>{user.score}</Text>
                 </View>
               )}
             </>
           ) : (
-            <Text style={styles.noData}>No user data available</Text>
+            <>
+              <Title style={styles.title}>{t('profile')}</Title>
+              <Text style={styles.noData}>No user data available</Text>
+            </>
           )}
         </Card.Content>
       </Card>
@@ -129,10 +125,6 @@ const ProfileScreen = ({ navigation }: any) => {
         style={styles.button}
       >
         Browse Exercises
-      </Button>
-
-      <Button mode="outlined" onPress={handleLogout} style={styles.logoutButton}>
-        Logout
       </Button>
     </ScrollView>
   );
