@@ -18,6 +18,7 @@ const resources = {
   fa: {
     translation: {
       // Common
+      appName: 'آرناد',
       welcome: 'خوش آمدید',
       loading: 'در حال بارگذاری...',
       error: 'خطا',
@@ -32,7 +33,7 @@ const resources = {
       logout: 'خروج',
       mobileNumber: 'شماره موبایل',
       enterMobileNumber: 'شماره موبایل خود را وارد کنید',
-      sendVerificationCode: 'ارسال کد تأیید',
+      sendVerificationCode: 'ارسال رمز یکبار مصرف',
       verificationCode: 'کد تأیید',
       enterVerificationCode: 'کد تأیید را وارد کنید',
       verify: 'تأیید',
@@ -41,6 +42,7 @@ const resources = {
 
       // Navigation
       profile: 'پروفایل',
+      plans: 'برنامه ها',
       workouts: 'تمرینات',
       exercises: 'حرکات ورزشی',
       settings: 'تنظیمات',
@@ -66,9 +68,13 @@ const resources = {
       lastName: 'نام خانوادگی',
       email: 'ایمیل',
       role: 'نقش',
-      client: 'کاربر',
+      client: 'ورزشکار',
       trainer: 'مربی',
       admin: 'مدیر',
+      age: 'سن',
+      years: 'سال',
+      days: 'روز',
+      score: 'امتیاز',
 
       // Settings
       language: 'زبان',
