@@ -54,7 +54,7 @@ export const profileStyles = StyleSheet.create({
   label: {
     fontSize: fontSizes.body,
     fontWeight: 'bold',
-    color: colors.text, // TODO : fix text
+    color: colors.text,
   },
   value: {
     fontSize: fontSizes.body,

@@ -203,12 +203,12 @@ export const exerciseDetailStyles = StyleSheet.create({
   description: {
     fontSize: fontSizes.body,
     lineHeight: 24,
-    color: colors.text, // TODO : fix text
+    color: colors.text,
   },
   instructions: {
     fontSize: fontSizes.body,
     lineHeight: 24,
-    color: colors.text, // TODO : fix text
+    color: colors.text,
   },
   detailRow: {
     flexDirection: 'row',
@@ -221,7 +221,7 @@ export const exerciseDetailStyles = StyleSheet.create({
   detailLabel: {
     fontWeight: 'bold',
     fontSize: fontSizes.body,
-    color: colors.text, // TODO : fix text
+    color: colors.text,
   },
   detailValue: {
     fontSize: fontSizes.body,
@@ -412,7 +412,7 @@ export const authStyles = StyleSheet.create({
     fontSize: fontSizes.displayPlus,
     fontWeight: 'bold',
     marginBottom: 40,
-    color: colors.text, // TODO : fix text
+    color: colors.text,
   },
   instruction: {
     fontSize: fontSizes.small,

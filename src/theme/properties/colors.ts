@@ -95,7 +95,7 @@ export const palette = {
   },
 };
 
-//TODO :  Use Palette Colors
+// TODO :  Use Palette Colors
 export const colors = {
   // Primary colors
   primary: '#2196f3',
@@ -148,7 +148,7 @@ export const colors = {
   otpBorder: '#dee2e6',
   otpText: '#495057',
 
-  //   TODO: Create good colors
+  // TODO: Create good colors
   body_part: '#fff8e1',
   activeTintColor: palette.info[600], // '#007AFF',
   inactiveTintColor: 'gray',
