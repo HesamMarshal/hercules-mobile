@@ -101,8 +101,8 @@ export function AuthScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={[styles.title, rtlStyles.text]}>{t('welcome')}</Text>
-        <Text style={[styles.subtitle, rtlStyles.text]}>آرناد</Text>
+        <Text style={[styles.title, rtlStyles.text]}>{t('appName')}</Text>
+        <Text style={[styles.subtitle, rtlStyles.text]}>{t('welcome')}</Text>
 
         {step === 'mobile' ? (
           <View style={styles.form}>
@@ -118,15 +118,7 @@ export function AuthScreen({ navigation }: any) {
               autoFocus={true}
               textAlign={I18nManager.isRTL ? 'right' : 'left'}
             />
-            {/* TODO: CAn be used:
-             <Button 
-              mode="contained" 
-              onPress={handleRequestOTP}
-              loading={isLoading}
-              disabled={isLoading || mobile.replace(/\D/g, '').length < 10}
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-            >              */}
+
             <TouchableOpacity
               style={[
                 styles.button,
@@ -156,19 +148,6 @@ export function AuthScreen({ navigation }: any) {
               textAlign={I18nManager.isRTL ? 'right' : 'left'}
             />
 
-            {/* TODO: can be replaced:
-            
-            <Button 
-              mode="contained" 
-              onPress={handleVerifyOTP}
-              loading={isLoading}
-              disabled={isLoading || code.length < 4}
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-            >
-              {isLoading ? 'در حال تأیید...' : t('verify')}
-            </Button>
-            */}
             <TouchableOpacity
               style={[styles.button, (isLoading || code.length < 4) && styles.buttonDisabled]}
               onPress={handleVerifyOTP}
@@ -181,9 +160,9 @@ export function AuthScreen({ navigation }: any) {
                 setStep('mobile');
                 setCode('');
               }}
-              style={styles.backButton}
+              style={[styles.button, styles.backButton]}
             >
-              <Text style={[styles.backText, rtlStyles.text]}>{t('changeMobileNumber')}</Text>
+              <Text style={[styles.backText]}>{t('changeMobileNumber')}</Text>
             </TouchableOpacity>
           </View>
         )}
