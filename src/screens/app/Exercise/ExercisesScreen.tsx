@@ -23,7 +23,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
   const rtlStyles = useRTLStyles();
 
   // Muscle groups for filtering
-  const body_parts = [
+  const muscle_groups = [
     'all',
     'arms',
     'back',
@@ -98,18 +98,20 @@ export const ExercisesScreen = ({ navigation }: any) => {
     if (searchQuery) {
       filtered = filtered.filter(
         (exercise) =>
-          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (exercise.instruction &&
-            exercise.instruction.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (exercise.body_part &&
-            exercise.body_part.toLowerCase().includes(searchQuery.toLowerCase()))
+          exercise.name_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (exercise.name_fa && exercise.name_fa.includes(searchQuery)) ||
+          (exercise.instruction_en &&
+            exercise.instruction_en.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.instruction_fa && exercise.instruction_fa.includes(searchQuery)) ||
+          (exercise.muscle_group &&
+            exercise.muscle_group.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
     // Apply muscle group filter
     if (selectedMuscleGroup !== 'all') {
       filtered = filtered.filter(
-        (exercise) => exercise.body_part?.toLowerCase() === selectedMuscleGroup.toLowerCase()
+        (exercise) => exercise.muscle_group?.toLowerCase() === selectedMuscleGroup.toLowerCase()
       );
     }
 
@@ -120,6 +122,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
     navigation.navigate('ExerciseDetail', { exerciseId: exercise.id });
   };
 
+  // TODO: Move to a utility file, and beterr translations mechanism
   const getDifficultyStyle = (difficulty: string) => {
     switch (difficulty) {
       case 'beginner':
@@ -151,7 +154,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
       <Card style={styles.exerciseCard} mode="elevated">
         <Card.Content>
           <View style={styles.exerciseHeader}>
-            <Title style={styles.exerciseName}>{item.name}</Title>
+            <Title style={styles.exerciseName}>{item.name_fa}</Title>
             {item.difficulty && (
               <Chip
                 mode="outlined"
@@ -162,15 +165,15 @@ export const ExercisesScreen = ({ navigation }: any) => {
             )}
           </View>
           {/* 
-          {item.body_part && (
+          {item.muscle_group && (
             <Chip mode="flat" style={styles.muscleGroupChip} textStyle={styles.muscleGroupText}>
-              {muscleGroupTranslations[item.body_part] || item.body_part}
+              {muscleGroupTranslations[item.muscle_group] || item.muscle_group}
             </Chip>
           )} */}
 
-          {item.instruction && (
+          {item.instruction_fa && (
             <Paragraph numberOfLines={2} style={[styles.exerciseDescription, rtlStyles.text]}>
-              {item.instruction}
+              {item.instruction_fa}
             </Paragraph>
           )}
 
@@ -191,7 +194,7 @@ export const ExercisesScreen = ({ navigation }: any) => {
     <View style={styles.filterContainer}>
       <FlatList
         horizontal
-        data={body_parts}
+        data={muscle_groups}
         keyExtractor={(item) => item}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
